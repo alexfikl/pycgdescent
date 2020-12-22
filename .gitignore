@@ -4,6 +4,7 @@ __pycache__
 .mypy_cache
 docs/_build
 *.egg-info
+build
 
 # generated files
 MANIFEST
