@@ -1,3 +1,5 @@
+#pragma once
+
 #include <limits.h>
 #include <float.h>
 #include <string.h>
@@ -18,6 +20,11 @@
 
 #ifndef NULL
 #define NULL 0
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
 #endif
 
 /*============================================================================
@@ -231,3 +238,7 @@ void cg_default /* set default parameter values */
 (
     cg_parameter   *Parm
 ) ;
+
+#ifdef __cplusplus
+}
+#endif

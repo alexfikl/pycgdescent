@@ -1,3 +1,5 @@
+#pragma once
+
 /* If the BLAS are not installed, then the following definitions
    can be ignored. If the BLAS are available, then to use them,
    comment out the the next statement (#define NOBLAS) and make
@@ -60,6 +62,11 @@
 
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void CG_DGEMV (char *trans, BLAS_INT *m, BLAS_INT *n, double *alpha, double *A,
         BLAS_INT *lda, double *X, BLAS_INT *incx,
         double *beta, double *Y, BLAS_INT *incy) ;
@@ -79,3 +86,7 @@ void CG_DCOPY (BLAS_INT *n, double *DX, BLAS_INT *incx, double *DY,
         BLAS_INT *incy) ;
 
 BLAS_INT CG_IDAMAX (BLAS_INT *n, double *DX, BLAS_INT *incx) ;
+
+#ifdef __cplusplus
+}
+#endif

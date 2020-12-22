@@ -1,3 +1,5 @@
+#pragma once
+
 #include <math.h>
 #include <limits.h>
 #include <float.h>
@@ -11,6 +13,11 @@
 #define ONE ((double) 1)
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef struct cg_com_struct /* common variables */
 {
@@ -262,3 +269,7 @@ PRIVATE void cg_printParms
 (
     cg_parameter  *Parm
 ) ;
+
+#ifdef __cplusplus
+}
+#endif

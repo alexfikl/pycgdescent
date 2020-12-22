@@ -23,3 +23,7 @@ except ImportError:
     import importlib_metadata as metadata
 
 __version__ = metadata.version("pycgdescent")
+
+from _cg_descent import (
+        cg_parameter,
+        cg_default)
