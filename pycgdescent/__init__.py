@@ -26,4 +26,5 @@ __version__ = metadata.version("pycgdescent")
 
 from _cg_descent import (
         cg_parameter,
-        cg_default)
+        cg_default,
+        cg_descent)
