@@ -201,6 +201,15 @@ py::tuple cg_descent_wrapper(
 
 // }}}
 
+// {{{ cg_default wrapper
+
+void cg_default_wrapper(py::object param)
+{
+    cg_default(param.cast<cg_parameter_wrapper*>()->data());
+}
+
+// }}}
+
 PYBIND11_MODULE(_cg_descent, m)
 {
     {
@@ -279,6 +288,6 @@ PYBIND11_MODULE(_cg_descent, m)
         ;
     }
 
-    m.def("cg_default", &cg_default);
+    m.def("cg_default", &cg_default_wrapper);
     m.def("cg_descent", &cg_descent_wrapper);
 }
