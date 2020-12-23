@@ -31,6 +31,7 @@ namespace py = pybind11;
 class cg_parameter_wrapper
 {
 public:
+    cg_parameter_wrapper(cg_parameter *param): obj(param) {};
     cg_parameter_wrapper()
     {
         obj = new cg_parameter;
@@ -147,7 +148,7 @@ void grad_trampoline(double *_g, double *_x, INT n)
     (*grad)(g, x);
 }
 
-double fngrad_t_trampoline(double *_g, double *_x, INT n)
+double fngrad_trampoline(double *_g, double *_x, INT n)
 {
     WRAP_RAW_POINTER(g, _g, n);
     WRAP_RAW_POINTER(x, _x, n);
@@ -157,16 +158,17 @@ double fngrad_t_trampoline(double *_g, double *_x, INT n)
 
 py::tuple cg_descent_wrapper(
         py::array_t<double> x,
-        cg::fn_t &value,
-        cg::grad_t &grad,
-        cg::fngrad_t_t &fngrad_t,
         double grad_tol,
-        cg_parameter_wrapper &param
+        cg_parameter_wrapper *param,
+        cg::fn_t &fn,
+        cg::grad_t &grad,
+        cg::fngrad_t *fngrad,
+        py::array_t<double> *work,
         )
 {
     int ret = 0;
     cg_stats_wrapper *stats = new cg_stats_wrapper;
-    cg_parameter *p = param.data();
+    cg_parameter *p = param == nullptr ? nullptr : param->data();
 
     int n = x.shape(0);
     double *ptr = new double[n];
@@ -176,11 +178,13 @@ py::tuple cg_descent_wrapper(
     }
 
     // FIXME: figure out a nicer way to pass std::functions
-    cg::fn = &value;
+    cg::fn = &fn;
     cg::grad = &grad;
-    cg::fngrad_t = &fngrad_t;
+    cg::fngrad = fngrad;
 
-    ret = cg_descent(
+    auto *fngrad_trampoline = fngrad == nullptr ? nullptr : cg::fngrad_trampoline;
+
+    status = cg_descent(
             ptr,
             x.shape(0),
             stats->data(),
@@ -188,15 +192,15 @@ py::tuple cg_descent_wrapper(
             grad_tol,
             cg::fn_trampoline,
             cg::grad_trampoline,
-            cg::fngrad_t_trampoline,
-            NULL);
+            fngrad_trampoline,
+            work);
 
     return py::make_tuple(
             py::array(n, ptr),
             py::cast(
                 stats,
                 py::return_value_policy::take_ownership),
-            ret
+            status
             );
 }
 
@@ -217,6 +221,11 @@ PYBIND11_MODULE(_cg_descent, m)
         typedef cg_parameter_wrapper cl;
         py::class_<cl>(m, "cg_parameter")
             .def(py::init())
+            .def("__deepcopy__", [](const cl &self, py::object) {
+                cg_parameter *other = new cg_parameter;
+                memcpy(oher, self.data(), sizeof(cg_parameter));
+                return cg_parameter_wrapper(other);
+            })
             .DEF_PROPERTY(PrintFinal)
             .DEF_PROPERTY(PrintLevel)
             .DEF_PROPERTY(PrintParms)
@@ -292,7 +301,10 @@ PYBIND11_MODULE(_cg_descent, m)
     m.def("cg_default", &cg_default_wrapper);
     m.def("cg_descent", &cg_descent_wrapper,
             py::arg("x"),
-            py::arg("value"), py::arg("grad"), py::arg("fngrad_t"),
-            py::arg("grad_tol") = 1.0e-8,
-            py::arg("param") = cg_parameter_wrapper());
+            py::arg("grad_tol"),
+            py::arg("param").none(true),
+            py::arg("fn"),
+            py::arg("grad"),
+            py::arg("fngrad").none(true),
+            py::arg("work").none(true));
 }
