@@ -20,6 +20,10 @@
 #define CLASS_RO_PROPERTY(NAME, TYPE) \
     TYPE get_##NAME() const noexcept { return obj->NAME; };
 
+#define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE) \
+    auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *p) {})); \
+    assert(!NAME.owndata())
+
 namespace py = pybind11;
 
 // {{{ cg_parameter wrapper
@@ -104,8 +108,6 @@ public:
     cg_stats_wrapper(): obj(new cg_stats) {}
     cg_stats *data() { return obj; };
 
-    int get_flag() const noexcept { return flag; };
-
     CLASS_RO_PROPERTY(f, double)
     CLASS_RO_PROPERTY(gnorm, double)
     CLASS_RO_PROPERTY(iter, INT)
@@ -114,7 +116,6 @@ public:
     CLASS_RO_PROPERTY(nfunc, INT)
     CLASS_RO_PROPERTY(ngrad, INT)
 
-    int flag;
     cg_stats *obj;
 };
 
@@ -122,48 +123,43 @@ public:
 
 // {{{ cg_descent wrapper
 
-typedef std::function<double(py::array_t<double>)> cg_fn_t;
-typedef std::function<void(py::array_t<double>,py::array_t<double>)> cg_grad_t;
-typedef std::function<double(py::array_t<double>,py::array_t<double>)> cg_valgrad_t;
+namespace cg {
 
-cg_fn_t *cg_fn;
-cg_grad_t *cg_grad;
-cg_valgrad_t *cg_valgrad;
+typedef py::array_t<double> array_t;
+typedef std::function<double(array_t)> fn_t;
+typedef std::function<void(array_t,array_t)> grad_t;
+typedef std::function<double(array_t,array_t)> fngrad_t_t;
 
+fn_t *fn;
+grad_t *grad;
+fngrad_t_t *fngrad_t;
 
 double fn_trampoline(double *_x, INT n)
 {
-    auto x = py::array(n, _x);
-    assert(!input.owndata());
-
-    return (*cg_fn)(x);
+    WRAP_RAW_POINTER(x, _x, n);
+    return (*fn)(x);
 }
 
 void grad_trampoline(double *_g, double *_x, INT n)
 {
-    auto g = py::array(n, _g);
-    assert(!g.owndata());
-    auto x = py::array(n, _x);
-    assert(!x.owndata());
-
-    (*cg_grad)(g, x);
+    WRAP_RAW_POINTER(g, _g, n);
+    WRAP_RAW_POINTER(x, _x, n);
+    (*grad)(g, x);
 }
 
-double valgrad_trampoline(double *_g, double *_x, INT n)
+double fngrad_t_trampoline(double *_g, double *_x, INT n)
 {
-    auto g = py::array(n, _g);
-    assert(!g.owndata());
-    auto x = py::array(n, _x);
-    assert(!x.owndata());
-
-    return (*cg_valgrad)(g, x);
+    WRAP_RAW_POINTER(g, _g, n);
+    WRAP_RAW_POINTER(x, _x, n);
+    return (*fngrad_t)(g, x);
 }
+};
 
 py::tuple cg_descent_wrapper(
         py::array_t<double> x,
-        cg_fn_t &value,
-        cg_grad_t &grad,
-        cg_valgrad_t &valgrad,
+        cg::fn_t &value,
+        cg::grad_t &grad,
+        cg::fngrad_t_t &fngrad_t,
         double grad_tol,
         cg_parameter_wrapper &param
         )
@@ -180,9 +176,9 @@ py::tuple cg_descent_wrapper(
     }
 
     // FIXME: figure out a nicer way to pass std::functions
-    cg_fn = &value;
-    cg_grad = &grad;
-    cg_valgrad = &valgrad;
+    cg::fn = &value;
+    cg::grad = &grad;
+    cg::fngrad_t = &fngrad_t;
 
     ret = cg_descent(
             ptr,
@@ -190,17 +186,17 @@ py::tuple cg_descent_wrapper(
             stats->data(),
             p,
             grad_tol,
-            fn_trampoline,
-            grad_trampoline,
-            valgrad_trampoline,
+            cg::fn_trampoline,
+            cg::grad_trampoline,
+            cg::fngrad_t_trampoline,
             NULL);
-    stats->flag = ret;
 
     return py::make_tuple(
             py::array(n, ptr),
             py::cast(
                 stats,
-                py::return_value_policy::take_ownership)
+                py::return_value_policy::take_ownership),
+            ret
             );
 }
 
@@ -283,7 +279,6 @@ PYBIND11_MODULE(_cg_descent, m)
     {
         typedef cg_stats_wrapper cl;
         py::class_<cl>(m, "cg_stats")
-            .DEF_RO_PROPERTY(flag)
             .DEF_RO_PROPERTY(f)
             .DEF_RO_PROPERTY(gnorm)
             .DEF_RO_PROPERTY(iter)
@@ -297,7 +292,7 @@ PYBIND11_MODULE(_cg_descent, m)
     m.def("cg_default", &cg_default_wrapper);
     m.def("cg_descent", &cg_descent_wrapper,
             py::arg("x"),
-            py::arg("value"), py::arg("grad"), py::arg("valgrad"),
+            py::arg("value"), py::arg("grad"), py::arg("fngrad_t"),
             py::arg("grad_tol") = 1.0e-8,
             py::arg("param") = cg_parameter_wrapper());
 }

@@ -18,10 +18,12 @@ def fngrad(g, x):
     return f
 
 
-n = 10
+n = 100
 x0 = np.ones(n, dtype=np.float64)
 t = np.sqrt(1 + np.arange(n))
 
-x, stats = cg.cg_descent(x0, fn, grad, fngrad)
+x, stats, flag = cg.cg_descent(x0, fn, grad, fngrad)
+print(flag)
 print(stats)
-print(x)
+for xi in x:
+    print(f"{xi:.16e}")

@@ -32,9 +32,9 @@ from _cg_descent import (
 
 
 def cg_stats_repr(self):
-    return (f"cg_stats<flag={self.flag}, f={self.f}, gnorm={self.gnorm}, "
+    return (f"cg_stats<f={self.f:.16e}, gnorm={self.gnorm:.16e}, "
             f"iter={self.iter}, IterSub={self.IterSub}, NumSum={self.NumSub}, "
-            f"nfunc={self.nfunc}, ngrad={self.nfunc}>")
+            f"nfunc={self.nfunc}, ngrad={self.ngrad}>")
 
 
 cg_stats.__repr__ = cg_stats_repr
