@@ -27,7 +27,6 @@ namespace py = pybind11;
 class cg_parameter_wrapper
 {
 public:
-    cg_parameter_wrapper(cg_parameter *param): obj(std::move(param)) {};
     cg_parameter_wrapper()
     {
         obj = new cg_parameter;
@@ -102,9 +101,10 @@ public:
 class cg_stats_wrapper
 {
 public:
-    cg_stats_wrapper(cg_stats *stats): obj(std::move(stats)) {}
     cg_stats_wrapper(): obj(new cg_stats) {}
     cg_stats *data() { return obj; };
+
+    int get_flag() const noexcept { return flag; };
 
     CLASS_RO_PROPERTY(f, double)
     CLASS_RO_PROPERTY(gnorm, double)
@@ -114,6 +114,7 @@ public:
     CLASS_RO_PROPERTY(nfunc, INT)
     CLASS_RO_PROPERTY(ngrad, INT)
 
+    int flag;
     cg_stats *obj;
 };
 
@@ -160,16 +161,16 @@ double valgrad_trampoline(double *_g, double *_x, INT n)
 
 py::tuple cg_descent_wrapper(
         py::array_t<double> x,
-        py::object UParm,
-        double grad_tol,
         cg_fn_t &value,
         cg_grad_t &grad,
-        cg_valgrad_t &valgrad
+        cg_valgrad_t &valgrad,
+        double grad_tol,
+        cg_parameter_wrapper &param
         )
 {
     int ret = 0;
     cg_stats_wrapper *stats = new cg_stats_wrapper;
-    cg_parameter *param = UParm.cast<cg_parameter_wrapper*>()->data();
+    cg_parameter *p = param.data();
 
     int n = x.shape(0);
     double *ptr = new double[n];
@@ -187,12 +188,13 @@ py::tuple cg_descent_wrapper(
             ptr,
             x.shape(0),
             stats->data(),
-            param,
+            p,
             grad_tol,
             fn_trampoline,
             grad_trampoline,
             valgrad_trampoline,
             NULL);
+    stats->flag = ret;
 
     return py::make_tuple(
             py::array(n, ptr),
@@ -281,6 +283,7 @@ PYBIND11_MODULE(_cg_descent, m)
     {
         typedef cg_stats_wrapper cl;
         py::class_<cl>(m, "cg_stats")
+            .DEF_RO_PROPERTY(flag)
             .DEF_RO_PROPERTY(f)
             .DEF_RO_PROPERTY(gnorm)
             .DEF_RO_PROPERTY(iter)
@@ -292,5 +295,9 @@ PYBIND11_MODULE(_cg_descent, m)
     }
 
     m.def("cg_default", &cg_default_wrapper);
-    m.def("cg_descent", &cg_descent_wrapper);
+    m.def("cg_descent", &cg_descent_wrapper,
+            py::arg("x"),
+            py::arg("value"), py::arg("grad"), py::arg("valgrad"),
+            py::arg("grad_tol") = 1.0e-8,
+            py::arg("param") = cg_parameter_wrapper());
 }

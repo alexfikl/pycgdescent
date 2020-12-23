@@ -25,6 +25,16 @@ except ImportError:
 __version__ = metadata.version("pycgdescent")
 
 from _cg_descent import (
+        cg_stats,
         cg_parameter,
         cg_default,
         cg_descent)
+
+
+def cg_stats_repr(self):
+    return (f"cg_stats<flag={self.flag}, f={self.f}, gnorm={self.gnorm}, "
+            f"iter={self.iter}, IterSub={self.IterSub}, NumSum={self.NumSub}, "
+            f"nfunc={self.nfunc}, ngrad={self.nfunc}>")
+
+
+cg_stats.__repr__ = cg_stats_repr

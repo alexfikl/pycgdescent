@@ -22,7 +22,6 @@ n = 10
 x0 = np.ones(n, dtype=np.float64)
 t = np.sqrt(1 + np.arange(n))
 
-param = cg.cg_parameter()
-x, stats = cg.cg_descent(x0, param, 1.0e-8, fn, grad, fngrad)
+x, stats = cg.cg_descent(x0, fn, grad, fngrad)
 print(stats)
 print(x)
