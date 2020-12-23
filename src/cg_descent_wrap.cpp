@@ -13,21 +13,16 @@
 #define DEF_PROPERTY(NAME) \
     def_property(#NAME, &cl::get_##NAME, &cl::set_##NAME)
 
-// FIXME: this probably does a copy
-#define TO_NUMPY_ARRAY(ptr, n, type) \
-    py::array_t<type>( \
-        { n }, { sizeof(type) * n }, ptr)
+#define CLASS_PROPERTY(NAME, TYPE) \
+    TYPE get_##NAME() const noexcept { return obj->NAME; }; \
+    void set_##NAME(TYPE v) { obj->NAME = v; };
+
+#define CLASS_RO_PROPERTY(NAME, TYPE) \
+    TYPE get_##NAME() const noexcept { return obj->NAME; };
 
 namespace py = pybind11;
 
 // {{{ cg_parameter wrapper
-
-#define CLASS_PROPERTY(NAME, TYPE) \
-    TYPE get_##NAME() const { return obj->NAME; }; \
-    void set_##NAME(TYPE v) { obj->NAME = v; };
-
-#define CLASS_RO_PROPERTY(NAME, TYPE) \
-    TYPE get_##NAME() const { return obj->NAME; };
 
 class cg_parameter_wrapper
 {
@@ -137,21 +132,29 @@ cg_valgrad_t *cg_valgrad;
 
 double fn_trampoline(double *_x, INT n)
 {
-    auto x = TO_NUMPY_ARRAY(_x, n, double);
+    auto x = py::array(n, _x);
+    assert(!input.owndata());
+
     return (*cg_fn)(x);
 }
 
 void grad_trampoline(double *_g, double *_x, INT n)
 {
-    auto g = TO_NUMPY_ARRAY(_g, n, double);
-    auto x = TO_NUMPY_ARRAY(_x, n, double);
+    auto g = py::array(n, _g);
+    assert(!g.owndata());
+    auto x = py::array(n, _x);
+    assert(!x.owndata());
+
     (*cg_grad)(g, x);
 }
 
 double valgrad_trampoline(double *_g, double *_x, INT n)
 {
-    auto g = TO_NUMPY_ARRAY(_g, n, double);
-    auto x = TO_NUMPY_ARRAY(_x, n, double);
+    auto g = py::array(n, _g);
+    assert(!g.owndata());
+    auto x = py::array(n, _x);
+    assert(!x.owndata());
+
     return (*cg_valgrad)(g, x);
 }
 
@@ -172,7 +175,7 @@ py::tuple cg_descent_wrapper(
     double *ptr = new double[n];
     auto xptr = x.unchecked();
     for (int i = 0; i < n; ++i) {
-        ptr[i] = xptr[i];
+        ptr[i] = xptr(i);
     }
 
     // FIXME: figure out a nicer way to pass std::functions
@@ -192,7 +195,7 @@ py::tuple cg_descent_wrapper(
             NULL);
 
     return py::make_tuple(
-            TO_NUMPY_ARRAY(ptr, x.shape(0), double),
+            py::array(n, ptr),
             py::cast(
                 stats,
                 py::return_value_policy::take_ownership)
