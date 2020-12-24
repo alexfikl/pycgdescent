@@ -70,7 +70,7 @@ def main(n=100):
 
     print("==== with rho 1.5 ====")
     with timer():
-        param.rho = 1.5;
+        param.rho = 1.5
         x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
@@ -87,7 +87,7 @@ def main(n=100):
     print()
     print("==== with rho 5.0 ====")
     with timer():
-        param.rho = 5.0;
+        param.rho = 5.0
         x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()

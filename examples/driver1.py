@@ -74,7 +74,7 @@ def main(n=100):
 
     print()
     print("status:  ", status)
-    print("message: ", _cg.STATUS_TO_MESSAGE[status]);
+    print("message: ", _cg.STATUS_TO_MESSAGE[status])
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)

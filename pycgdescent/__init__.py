@@ -29,7 +29,8 @@ except ImportError:
 
 __version__ = metadata.version("pycgdescent")
 
-# {{{
+
+# {{{ options
 
 def _getmembers(obj):
     import inspect
@@ -252,6 +253,10 @@ class OptimizeOptions(_cg.cg_parameter):
             "\t%s" % "\n\t".join(fmt % (k, v) for k, v in attrs),
             ])
 
+# }}}
+
+
+# {{{ result
 
 @dataclass(frozen=True)
 class OptimizeResult:
@@ -307,6 +312,10 @@ class OptimizeResult:
     nsubspaceit: int = field(repr=False)
     nsubspaces: int = field(repr=False)
 
+# }}}
+
+
+# {{{ minimize
 
 def minimize(fun, x0,
         jac=None, funjac=None,
@@ -375,3 +384,5 @@ def minimize(fun, x0,
             nsubspaceit=stats.IterSub,
             nsubspaces=stats.NumSub,
             )
+
+# }}}

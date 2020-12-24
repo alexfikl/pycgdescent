@@ -1,6 +1,6 @@
 import numpy as np
 
-from _cg_descent import (
+from _cg_descent import (   # noqa: F401
         cg_stats,
         cg_parameter,
         cg_default,
