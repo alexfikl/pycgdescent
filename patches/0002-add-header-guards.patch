@@ -1,0 +1,65 @@
+From 585f2b09334aadf677c829cafdbb13b965a8eb8b Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Thu, 24 Dec 2020 15:40:01 -0600
+Subject: [PATCH 2/6] add header guards
+
+---
+ cg_blas.h    | 5 +++++
+ cg_descent.h | 5 +++++
+ cg_user.h    | 5 +++++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/cg_blas.h b/cg_blas.h
+index b0a575d..62ff26e 100644
+--- a/cg_blas.h
++++ b/cg_blas.h
+@@ -1,3 +1,6 @@
++#ifndef _CG_BLAS_HEADER_H
++#define _CG_BLAS_HEADER_H
++
+ /* If the BLAS are not installed, then the following definitions
+    can be ignored. If the BLAS are available, then to use them,
+    comment out the the next statement (#define NOBLAS) and make
+@@ -79,3 +82,5 @@ void CG_DCOPY (BLAS_INT *n, double *DX, BLAS_INT *incx, double *DY,
+         BLAS_INT *incy) ;
+ 
+ BLAS_INT CG_IDAMAX (BLAS_INT *n, double *DX, BLAS_INT *incx) ;
++
++#endif
+diff --git a/cg_descent.h b/cg_descent.h
+index 8b1e7a6..f229ccf 100644
+--- a/cg_descent.h
++++ b/cg_descent.h
+@@ -1,3 +1,6 @@
++#ifndef _CG_DESCENT_HEADER_H
++#define _CG_DESCENT_HEADER_H
++
+ #include <math.h>
+ #include <limits.h>
+ #include <float.h>
+@@ -262,3 +265,5 @@ PRIVATE void cg_printParms
+ (
+     cg_parameter  *Parm
+ ) ;
++
++#endif
+diff --git a/cg_user.h b/cg_user.h
+index 0292d0a..c9dad92 100644
+--- a/cg_user.h
++++ b/cg_user.h
+@@ -1,3 +1,6 @@
++#ifndef _CG_USER_HEADER_H
++#define _CG_USER_HEADER_H
++
+ #include <limits.h>
+ #include <float.h>
+ #include <string.h>
+@@ -240,3 +243,5 @@ void cg_default /* set default parameter values */
+ #ifdef __cplusplus
+ }
+ #endif
++
++#endif
+-- 
+2.29.2
+

@@ -1,0 +1,36 @@
+From 8d9fa11b6915c318dc9260347020725b7b6d1269 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Thu, 24 Dec 2020 15:36:56 -0600
+Subject: [PATCH 1/6] add extern c
+
+---
+ cg_user.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/cg_user.h b/cg_user.h
+index 259433c..0292d0a 100644
+--- a/cg_user.h
++++ b/cg_user.h
+@@ -20,6 +20,11 @@
+ #define NULL 0
+ #endif
+ 
++#ifdef __cplusplus
++extern "C"
++{
++#endif
++
+ /*============================================================================
+    cg_parameter is a structure containing parameters used in cg_descent
+    cg_default assigns default values to these parameters */
+@@ -231,3 +236,7 @@ void cg_default /* set default parameter values */
+ (
+     cg_parameter   *Parm
+ ) ;
++
++#ifdef __cplusplus
++}
++#endif
+-- 
+2.29.2
+

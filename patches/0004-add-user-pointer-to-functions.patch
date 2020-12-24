@@ -1,0 +1,218 @@
+From 5077b0af5bd03ecbb63e79ff2b4d44fa5fdbdc14 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Thu, 24 Dec 2020 16:15:01 -0600
+Subject: [PATCH 4/6] add user pointer to functions
+
+---
+ cg_descent.c | 46 ++++++++++++++++++++++++----------------------
+ cg_descent.h |  7 ++++---
+ cg_user.h    | 15 ++++++++-------
+ 3 files changed, 36 insertions(+), 32 deletions(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index 5c84162..65f63f5 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -101,17 +101,18 @@ int cg_descent /*  return status of solution process:
+     double      grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
+                                            StopFac*initial |g|_infty) [default]
+                              StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
+-    cg_value_fn     value, /* f = value (x, n) */
+-    cg_grad_fn       grad, /* grad (g, x, n) */
+-    cg_valgrad_fn valgrad, /* f = valgrad (g, x, n),
++    cg_value_fn     value, /* f = value (x, n, User) */
++    cg_grad_fn       grad, /* grad (g, x, n, User) */
++    cg_valgrad_fn valgrad, /* f = valgrad (g, x, n, User),
+                           NULL = compute value & gradient using value & grad */
+-    double         *Work  /* NULL => let code allocate memory
++    double         *Work, /* NULL => let code allocate memory
+                              not NULL => use array Work for required memory
+                              The amount of memory needed depends on the value
+                              of the parameter memory in the Parm structure.
+                              memory > 0 => need (mem+6)*n + (3*mem+9)*mem + 5
+                                            where mem = MIN(memory, n)
+                              memory = 0 => need 4*n */
++    void           *User   /* user provided pointer passed to functions */
+ )
+ {
+     INT     i, iter, IterRestart, maxit, n5, nrestart, nrestartsub ;
+@@ -206,6 +207,7 @@ int cg_descent /*  return status of solution process:
+     Com.cg_value = value ;
+     Com.cg_grad = grad ;
+     Com.cg_valgrad = valgrad ;
++    Com.User = User ;
+     StopRule = Parm->StopRule ;
+     LBFGS = FALSE ;
+     UseMemory = FALSE ;/* do not use memory */
+@@ -2251,7 +2253,7 @@ PRIVATE int cg_evaluate
+         {
+             cg_step (xtemp, x, d, alpha, n) ;
+             /* provisional function value */
+-            Com->f = Com->cg_value (xtemp, n) ;
++            Com->f = Com->cg_value (xtemp, n, Com->User) ;
+             Com->nf++ ;
+ 
+             /* reduce stepsize if function value is nan */
+@@ -2268,7 +2270,7 @@ PRIVATE int cg_evaluate
+                         alpha *= Parm->nan_decay ;
+                     }
+                     cg_step (xtemp, x, d, alpha, n) ;
+-                    Com->f = Com->cg_value (xtemp, n) ;
++                    Com->f = Com->cg_value (xtemp, n, Com->User) ;
+                     Com->nf++ ;
+                     if ( (Com->f == Com->f) && (Com->f < INF) &&
+                          (Com->f > -INF) ) break ;
+@@ -2280,7 +2282,7 @@ PRIVATE int cg_evaluate
+         else if ( !strcmp (what, "g") ) /* compute gradient */
+         {
+             cg_step (xtemp, x, d, alpha, n) ;
+-            Com->cg_grad (gtemp, xtemp, n) ;
++            Com->cg_grad (gtemp, xtemp, n, Com->User) ;
+             Com->ng++ ;
+             Com->df = cg_dot (gtemp, d, n) ;
+             /* reduce stepsize if derivative is nan */
+@@ -2297,7 +2299,7 @@ PRIVATE int cg_evaluate
+                         alpha *= Parm->nan_decay ;
+                     }
+                     cg_step (xtemp, x, d, alpha, n) ;
+-                    Com->cg_grad (gtemp, xtemp, n) ;
++                    Com->cg_grad (gtemp, xtemp, n, Com->User) ;
+                     Com->ng++ ;
+                     Com->df = cg_dot (gtemp, d, n) ;
+                     if ( (Com->df == Com->df) && (Com->df < INF) &&
+@@ -2314,12 +2316,12 @@ PRIVATE int cg_evaluate
+             cg_step (xtemp, x, d, alpha, n) ;
+             if ( Com->cg_valgrad != NULL )
+             {
+-                Com->f = Com->cg_valgrad (gtemp, xtemp, n) ;
++                Com->f = Com->cg_valgrad (gtemp, xtemp, n, Com->User) ;
+             }
+             else
+             {
+-                Com->cg_grad (gtemp, xtemp, n) ;
+-                Com->f = Com->cg_value (xtemp, n) ;
++                Com->cg_grad (gtemp, xtemp, n, Com->User) ;
++                Com->f = Com->cg_value (xtemp, n, Com->User) ;
+             }
+             Com->df = cg_dot (gtemp, d, n) ;
+             Com->nf++ ;
+@@ -2342,12 +2344,12 @@ PRIVATE int cg_evaluate
+                     cg_step (xtemp, x, d, alpha, n) ;
+                     if ( Com->cg_valgrad != NULL )
+                     {
+-                        Com->f = Com->cg_valgrad (gtemp, xtemp, n) ;
++                        Com->f = Com->cg_valgrad (gtemp, xtemp, n, Com->User) ;
+                     }
+                     else
+                     {
+-                        Com->cg_grad (gtemp, xtemp, n) ;
+-                        Com->f = Com->cg_value (xtemp, n) ;
++                        Com->cg_grad (gtemp, xtemp, n, Com->User) ;
++                        Com->f = Com->cg_value (xtemp, n, Com->User) ;
+                     }
+                     Com->df = cg_dot (gtemp, d, n) ;
+                     Com->nf++ ;
+@@ -2374,12 +2376,12 @@ PRIVATE int cg_evaluate
+                 cg_copy (xtemp, x, n) ;
+                 if ( Com->cg_valgrad != NULL )
+                 {
+-                    Com->f = Com->cg_valgrad (Com->g, xtemp, n) ;
++                    Com->f = Com->cg_valgrad (Com->g, xtemp, n, Com->User) ;
+                 }
+                 else
+                 {
+-                    Com->cg_grad (Com->g, xtemp, n) ;
+-                    Com->f = Com->cg_value (xtemp, n) ;
++                    Com->cg_grad (Com->g, xtemp, n, Com->User) ;
++                    Com->f = Com->cg_value (xtemp, n, Com->User) ;
+                 }
+             }
+             else
+@@ -2387,12 +2389,12 @@ PRIVATE int cg_evaluate
+                 cg_step (xtemp, x, d, alpha, n) ;
+                 if ( Com->cg_valgrad != NULL )
+                 {
+-                    Com->f = Com->cg_valgrad (gtemp, xtemp, n) ;
++                    Com->f = Com->cg_valgrad (gtemp, xtemp, n, Com->User) ;
+                 }
+                 else
+                 {
+-                    Com->cg_grad (gtemp, xtemp, n) ;
+-                    Com->f = Com->cg_value (xtemp, n) ;
++                    Com->cg_grad (gtemp, xtemp, n, Com->User) ;
++                    Com->f = Com->cg_value (xtemp, n, Com->User) ;
+                 }
+                 Com->df = cg_dot (gtemp, d, n) ;
+             }
+@@ -2405,7 +2407,7 @@ PRIVATE int cg_evaluate
+         else if ( !strcmp (what, "f") ) /* compute function */
+         {
+             cg_step (xtemp, x, d, alpha, n) ;
+-            Com->f = Com->cg_value (xtemp, n) ;
++            Com->f = Com->cg_value (xtemp, n, Com->User) ;
+             Com->nf++ ;
+             if ( (Com->f != Com->f) || (Com->f == INF) || (Com->f ==-INF) )
+                 return (11) ;
+@@ -2413,7 +2415,7 @@ PRIVATE int cg_evaluate
+         else
+         {
+             cg_step (xtemp, x, d, alpha, n) ;
+-            Com->cg_grad (gtemp, xtemp, n) ;
++            Com->cg_grad (gtemp, xtemp, n, Com->User) ;
+             Com->df = cg_dot (gtemp, d, n) ;
+             Com->ng++ ;
+             if ( (Com->df != Com->df) || (Com->df == INF) || (Com->df ==-INF) )
+diff --git a/cg_descent.h b/cg_descent.h
+index 3193ad8..74ad439 100644
+--- a/cg_descent.h
++++ b/cg_descent.h
+@@ -50,9 +50,10 @@ typedef struct cg_com_struct /* common variables */
+     double          *d ; /* current search direction */
+     double          *g ; /* gradient at x */
+     double      *gtemp ; /* gradient at x + alpha*d */
+-    cg_value_fn     cg_value ; /* f = cg_value (x, n) */
+-    cg_grad_fn       cg_grad ; /* cg_grad (g, x, n) */
+-    cg_valgrad_fn cg_valgrad ; /* f = cg_valgrad (g,x,n)*/
++    cg_value_fn     cg_value ; /* f = cg_value (x, n, User) */
++    cg_grad_fn       cg_grad ; /* cg_grad (g, x, n, User) */
++    cg_valgrad_fn cg_valgrad ; /* f = cg_valgrad (g, x, n, User)*/
++    void         *User ; /* user provided pointer passed to functions */
+     cg_parameter *Parm ; /* user parameters */
+ } cg_com ;
+ 
+diff --git a/cg_user.h b/cg_user.h
+index 779a772..8d869bd 100644
+--- a/cg_user.h
++++ b/cg_user.h
+@@ -32,9 +32,9 @@ extern "C"
+  * function pointer types
+  */
+ 
+-typedef double (*cg_value_fn)(double*, INT);
+-typedef void (*cg_grad_fn)(double*, double*, INT);
+-typedef double (*cg_valgrad_fn)(double*, double*, INT);
++typedef double (*cg_value_fn)(double*, INT, void*);
++typedef void (*cg_grad_fn)(double*, double*, INT, void*);
++typedef double (*cg_valgrad_fn)(double*, double*, INT, void*);
+ 
+ /*============================================================================
+    cg_parameter is a structure containing parameters used in cg_descent
+@@ -237,10 +237,11 @@ int cg_descent /*  return:
+     double      grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
+                                            StopFac*initial |g|_infty) [default]
+                              StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
+-    cg_value_fn value,      /* f = value (x, n) */
+-    cg_grad_fn grad,        /* grad (g, x, n) */
+-    cg_valgrad_fn valgrad,  /* f = valgrad (g,x,n)*/
+-    double         *Work  /* either size 4n work array or NULL */
++    cg_value_fn value,      /* f = value (x, n, User) */
++    cg_grad_fn grad,        /* grad (g, x, n, User) */
++    cg_valgrad_fn valgrad,  /* f = valgrad (g, x, n, User)*/
++    double         *Work,   /* either size 4n work array or NULL */
++    void           *User    /* user provided pointer passed to functions */
+ ) ;
+ 
+ void cg_default /* set default parameter values */
+-- 
+2.29.2
+

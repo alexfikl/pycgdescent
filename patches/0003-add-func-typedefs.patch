@@ -1,0 +1,285 @@
+From e7b65f82e84ed1ab831faf088ea29082b0bcb0e9 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Thu, 24 Dec 2020 15:55:54 -0600
+Subject: [PATCH 3/6] add func typedefs
+
+---
+ cg_descent.c | 56 ++++++++++++++++++++++++++--------------------------
+ cg_descent.h | 13 +++++-------
+ cg_user.h    | 14 ++++++++++---
+ 3 files changed, 44 insertions(+), 39 deletions(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index 0d894c1..5c84162 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -101,9 +101,9 @@ int cg_descent /*  return status of solution process:
+     double      grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
+                                            StopFac*initial |g|_infty) [default]
+                              StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
+-    double      (*value) (double *, INT),  /* f = value (x, n) */
+-    void         (*grad) (double *, double *, INT), /* grad (g, x, n) */
+-    double    (*valgrad) (double *, double *, INT), /* f = valgrad (g, x, n),
++    cg_value_fn     value, /* f = value (x, n) */
++    cg_grad_fn       grad, /* grad (g, x, n) */
++    cg_valgrad_fn valgrad, /* f = valgrad (g, x, n),
+                           NULL = compute value & gradient using value & grad */
+     double         *Work  /* NULL => let code allocate memory
+                              not NULL => use array Work for required memory
+@@ -279,7 +279,7 @@ int cg_descent /*  return status of solution process:
+         if ( PrintLevel > 0 ) printf ("Function undefined at starting point\n");
+         goto Exit ;
+     }
+-        
++
+     Com.f0 = f + f ;
+     Com.SmallCost = fabs (f)*Parm->SmallCost ;
+     xnorm = cg_inf (x, n) ;
+@@ -591,7 +591,7 @@ int cg_descent /*  return status of solution process:
+                     {
+                         mlast = 0 ;  /* starting pointer in the memory */
+                         memk = 1 ;   /* dimension of current subspace */
+- 
++
+                         t = sqrt(dnorm2) ;
+                         zeta = alpha*t ;
+                         Rk [0] = zeta ;
+@@ -621,7 +621,7 @@ int cg_descent /*  return status of solution process:
+                         mpp = mlast*n ;
+                         spp = mlast*mem ;
+                         cg_scale (SkF+mpp, d, alpha, n) ;
+- 
++
+                         /* check if the alphas are far from 1 */
+                         if ((fabs(alpha-5.05)>4.95)||(fabs(alphaold-5.05)>4.95))
+                         {
+@@ -650,12 +650,12 @@ int cg_descent /*  return status of solution process:
+                             NegDiag = TRUE ;
+                         }
+                         else zeta = sqrt(t-t1);
+-   
++
+                         Rk [spp+mlast] = zeta ;
+                         t = - zeta/alpha ; /* t = cg_dot0 (Zk+mlast*n, g, n)*/
+                         Yk [spp-mem+mlast] = t ;
+                         gsub [mlast] = t ;
+-   
++
+                         /* multiply basis vectors by new gradient */
+                         cg_matvec (wsub, SkF, gtemp, mlast, n, 0) ;
+                         /* exploit dphi for last multiply */
+@@ -664,7 +664,7 @@ int cg_descent /*  return status of solution process:
+                         cg_trisolve (wsub, Rk, mem, memk, 0) ;
+                         /* subtract old gsub from new gsub = column of Yk */
+                         cg_Yk (Yk+spp, gsub, wsub, NULL, memk) ;
+-  
++
+                         SkYk [mlast] = alpha*(dphi-dphi0) ;
+                     }
+                 }
+@@ -698,7 +698,7 @@ int cg_descent /*  return status of solution process:
+                             Re [j] = t1*gsub [j] + t2*Re [j-mem] ;
+                         }
+                     }
+- 
++
+                     /* t = 2-norm squared of s_k */
+                     t = alpha*alpha*dnorm2 ;
+                     /* t1 = 2-norm squared of projection */
+@@ -709,7 +709,7 @@ int cg_descent /*  return status of solution process:
+                         NegDiag = TRUE ;
+                     }
+                     else zeta = sqrt(t-t1);
+- 
++
+                     /* dist from new search direction to prior subspace*/
+                     Re [mem] = zeta ;
+ 
+@@ -736,12 +736,12 @@ int cg_descent /*  return status of solution process:
+ 
+                     /* add new column to Yk, store new gsub */
+                     cg_Yk (Yk+spp, gsub, wsub, NULL, mem+1) ;
+- 
++
+                     /* store sk (stemp) at SkF+SkFstart */
+                     cg_copy (SkF+SkFstart*n, stemp, n) ;
+                     SkFstart++ ;
+                     if ( SkFstart == mem ) SkFstart = 0 ;
+- 
++
+                     mp = SkFstart ;
+                     for (k = 0; k < mem; k++)
+                     {
+@@ -751,7 +751,7 @@ int cg_descent /*  return status of solution process:
+                         t = sqrt(t1*t1 + t2*t2) ;
+                         t1 = t1/t ;
+                         t2 = t2/t ;
+- 
++
+                         /* update Rk */
+                         Rk [k*mem+k] = t ;
+                         for (j = (k+2); j <= mem; j++)
+@@ -898,12 +898,12 @@ int cg_descent /*  return status of solution process:
+                             gsub [k] = t1*t3 + t2*t4 ;
+                         }
+                     }
+- 
++
+                     /* update SkYk */
+                     for (k = 0; k < mlast; k++) SkYk [k] = SkYk [k+1] ;
+                     SkYk [mlast] = alpha*(dphi-dphi0) ;
+                 }
+- 
++
+                 /* calculate t = ||gsub|| / ||gtemp||  */
+                 gsubnorm2 = cg_dot0 (gsub, gsub, memk) ;
+                 gnorm2 = cg_dot (gtemp, gtemp, n) ;
+@@ -3678,19 +3678,19 @@ PRIVATE void cg_Yk
+             y [i] = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             i++ ;
+-    
++
+             y [i] = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             i++ ;
+-    
++
+             y [i] = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             i++ ;
+-    
++
+             y [i] = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             i++ ;
+-    
++
+             y [i] = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             i++ ;
+@@ -3711,22 +3711,22 @@ PRIVATE void cg_Yk
+             gold [i] = gnew [i] ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             s += t*t ;
+@@ -3751,25 +3751,25 @@ PRIVATE void cg_Yk
+             y [i] = t ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             y [i] = t ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             y [i] = t ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             y [i] = t ;
+             s += t*t ;
+             i++ ;
+-    
++
+             t = gnew [i] - gold [i] ;
+             gold [i] = gnew [i] ;
+             y [i] = t ;
+diff --git a/cg_descent.h b/cg_descent.h
+index f229ccf..3193ad8 100644
+--- a/cg_descent.h
++++ b/cg_descent.h
+@@ -1,13 +1,10 @@
+ #ifndef _CG_DESCENT_HEADER_H
+ #define _CG_DESCENT_HEADER_H
+ 
++#include "cg_user.h"
++
+ #include <math.h>
+-#include <limits.h>
+-#include <float.h>
+-#include <string.h>
+ #include <ctype.h>
+-#include <stdlib.h>
+-#include <stdio.h>
+ 
+ #define PRIVATE static
+ #define ZERO ((double) 0)
+@@ -53,9 +50,9 @@ typedef struct cg_com_struct /* common variables */
+     double          *d ; /* current search direction */
+     double          *g ; /* gradient at x */
+     double      *gtemp ; /* gradient at x + alpha*d */
+-    double   (*cg_value) (double *, INT) ; /* f = cg_value (x, n) */
+-    void      (*cg_grad) (double *, double *, INT) ; /* cg_grad (g, x, n) */
+-    double (*cg_valgrad) (double *, double *, INT) ; /* f = cg_valgrad (g,x,n)*/
++    cg_value_fn     cg_value ; /* f = cg_value (x, n) */
++    cg_grad_fn       cg_grad ; /* cg_grad (g, x, n) */
++    cg_valgrad_fn cg_valgrad ; /* f = cg_valgrad (g,x,n)*/
+     cg_parameter *Parm ; /* user parameters */
+ } cg_com ;
+ 
+diff --git a/cg_user.h b/cg_user.h
+index c9dad92..779a772 100644
+--- a/cg_user.h
++++ b/cg_user.h
+@@ -28,6 +28,14 @@ extern "C"
+ {
+ #endif
+ 
++/*============================================================================
++ * function pointer types
++ */
++
++typedef double (*cg_value_fn)(double*, INT);
++typedef void (*cg_grad_fn)(double*, double*, INT);
++typedef double (*cg_valgrad_fn)(double*, double*, INT);
++
+ /*============================================================================
+    cg_parameter is a structure containing parameters used in cg_descent
+    cg_default assigns default values to these parameters */
+@@ -229,9 +237,9 @@ int cg_descent /*  return:
+     double      grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
+                                            StopFac*initial |g|_infty) [default]
+                              StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
+-    double        (*value) (double *, INT),  /* f = value (x, n) */
+-    void           (*grad) (double *, double *, INT), /* grad (g, x, n) */
+-    double      (*valgrad) (double *, double *, INT), /* f = valgrad (g,x,n)*/
++    cg_value_fn value,      /* f = value (x, n) */
++    cg_grad_fn grad,        /* grad (g, x, n) */
++    cg_valgrad_fn valgrad,  /* f = valgrad (g,x,n)*/
+     double         *Work  /* either size 4n work array or NULL */
+ ) ;
+ 
+-- 
+2.29.2
+
