@@ -1,11 +1,15 @@
 Welcome to pycgdescent's documentation!
 =======================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+.. currentmodule:: pycgdescent
 
-   optimization
+.. autoclass:: OptimizeOptions
+    :no-show-inheritance:
+
+.. autoclass:: OptimizeResult
+    :no-show-inheritance:
+
+.. autofunction:: minimize
 
 Indices and tables
 ==================
