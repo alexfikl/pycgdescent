@@ -1,15 +1,13 @@
 Welcome to pycgdescent's documentation!
 =======================================
 
-.. currentmodule:: pycgdescent
+Example
+-------
 
-.. autoclass:: OptimizeOptions
-    :no-show-inheritance:
+Optimization
+------------
 
-.. autoclass:: OptimizeResult
-    :no-show-inheritance:
-
-.. autofunction:: minimize
+.. automodule:: pycgdescent
 
 Indices and tables
 ==================

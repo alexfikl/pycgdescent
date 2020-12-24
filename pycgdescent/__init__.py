@@ -17,10 +17,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 
 from dataclasses import dataclass, field
+from typing import Any, Callable, Optional, Tuple, Union
 
+import numpy        # required for sphinx typehints
 import numpy as np
 
 import pycgdescent._private as _cg
+
 
 try:
     # python >=3.8 only
@@ -29,6 +32,36 @@ except ImportError:
     import importlib_metadata as metadata
 
 __version__ = metadata.version("pycgdescent")
+
+__doc__ = """
+.. autofunction:: minimize
+
+.. autofunction:: min_work_size
+.. autofunction:: allocate_work_for
+
+.. class:: FunType
+
+    ``Callable[[numpy.ndarray], float]``. This callable takes the current
+    guess ``x`` and returns the function value.
+
+.. class:: GradType
+
+    ``Callable[[numpy.ndarray, numpy.ndarray], None]``. This callable takes
+    ``(g, x)`` as arguments. The array ``g`` needs to be updated in place
+    with the gradient at ``x``.
+
+.. class:: FunGradType
+
+    ``Callable[[numpy.ndarray, numpy.ndarray], float]``. This callable takes
+    ``(g, x)`` as arguments and returns the function value. The array ``g``
+    needs to be updated in place with the gradient at ``x``.
+
+.. autoclass:: OptimizeOptions
+    :no-show-inheritance:
+
+.. autoclass:: OptimizeResult
+    :no-show-inheritance:
+"""
 
 
 # {{{ options
@@ -39,6 +72,19 @@ def _getmembers(obj):
             m for m in obj.__dir__()
             if not m.startswith("__") and not inspect.ismethod(getattr(obj, m))
             ]
+
+
+def _stringify_dict(d):
+    width = len(max(d, key=len))
+    fmt = f"%{width}s : %s"
+
+    d = sorted({
+            k: repr(v) for k, v in d.items()
+            }.items())
+
+    return "\n".join([
+        "\t%s" % "\n\t".join(fmt % (k, v) for k, v in d),
+        ])
 
 
 class OptimizeOptions(_cg.cg_parameter):
@@ -243,16 +289,7 @@ class OptimizeOptions(_cg.cg_parameter):
 
     def pretty(self):
         attrs = {k: getattr(self, k) for k in _getmembers(self)}
-        width = len(max(attrs, key=len))
-        fmt = f"%{width}s : %s"
-
-        attrs = sorted({
-                k: repr(v) for k, v in attrs.items()
-                }.items())
-
-        return "\n".join([
-            "\t%s" % "\n\t".join(fmt % (k, v) for k, v in attrs),
-            ])
+        return _stringify_dict(attrs)
 
 # }}}
 
@@ -315,24 +352,85 @@ class OptimizeResult:
     nsubspaceit: int = field(repr=False)
     nsubspaces: int = field(repr=False)
 
+    def pretty(self):
+        return _stringify_dict(self.__dict__)
+
 # }}}
 
 
 # {{{ minimize
 
-def minimize(fun, x0,
-        jac=None, funjac=None,
-        tol=None,
-        options=None,
-        work=None,
-        args=()) -> OptimizeResult:
+FunType = Callable[[numpy.ndarray], float]
+GradType = Callable[[numpy.ndarray, numpy.ndarray], None]
+FunGradType = Callable[[numpy.ndarray, numpy.ndarray], float]
+
+
+def min_work_size(
+        options: 'OptimizeOptions',
+        n: int) -> int:
+    """
+    Get recommended size of a *work* array.
+
+    :param options:
+    :param n: input size.
+    """
+    m = min(options.memory, n)
+
+    if options.memory == 0:
+        # original CG_DESCENT without memory
+        return 4 * n
+
+    if options.LBFGS or options.memory >= n:
+        # LBFGS-based CG_DESCENT
+        return 2 * m * (n + 1) + 4 * n
+
+    # limited memory CG_DESCENT
+    return (m + 6) * n + (3 * m + 9) * m + 5
+
+
+def allocate_work_for(
+        options: 'OptimizeOptions',
+        n: int,
+        dtype: numpy.dtype = np.float64) -> numpy.ndarray:
+    """
+    Allocate a *work* array of a recommended size.
+
+    :param options:
+    :param n: input size.
+    """
+    return np.empty(min_work_size(options, n), dtype=dtype)
+
+
+def minimize(
+        fun: "FunType",
+        x0: numpy.ndarray, *,
+        jac: "GradType",
+        funjac: Optional["FunGradType"] = None,
+        tol: float = None,
+        options: Optional[Union[OptimizeOptions, dict]] = None,
+        work: Optional[numpy.ndarray] = None,
+        args: Tuple[Any, ...] = ()) -> OptimizeResult:
+    """
+    :param fun: a :class:`~collections.abc.Callable` that returns the
+        function value at ``x``.
+    :param x0: initial guess.
+    :param jac: a :class:`~collections.abc.Callable` that computes the
+        gradient of *fun* at ``x``.
+    :param funjac: a :class:`~collections.abc.Callable` that computes both
+        the function value and gradient at ``x``. This function can be used
+        to improve efficiency by evaluating common parts just once, but is not
+        required.
+    :param tol: tolerance used to check convergence. Exact meaning depends on
+        :attr:`OptimizeOptions.StopRule`.
+    :param options: options used by the algorithm.
+    :param work: additional work array (see :func:`allocate_work_for`).
+    :param args: additional arguments passed to the callables.
+    """
+
     # {{{ setup
 
     if args:
         raise ValueError("using 'args' is not supported")
-
-    if jac is None:
-        raise ValueError("algorithm requires gradient information")
 
     if tol is None:
         tol = 1.0e-8
@@ -349,15 +447,8 @@ def minimize(fun, x0,
             raise TypeError(f"unknown 'options' type: {type(options).__name__}")
 
     if work is not None:
-        n = x0.size
-
-        if param.memory == 0:
-            min_work_size = 4 * n
-        else:
-            m = min(param.memory, n)
-            min_work_size = (m + 6) * n + (4 * m + 9) * m + 5
-
-        if work.size < min_work_size:
+        min_work_size = _cg.min_work_size(param, x0.size)
+        if work.size >= min_work_size:
             raise ValueError(f"'work' must have size >= {min_work_size}")
 
     # }}}

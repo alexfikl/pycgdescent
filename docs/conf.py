@@ -37,8 +37,8 @@ except ImportError:
 source_suffix = ".rst"
 # name of the main (master) document
 master_doc = "index"
-# min sphinx version
-needs_sphinx = "2.0"
+# min sphinx version (needed for `autodoc_type_aliases`)
+needs_sphinx = "3.3"
 # files to ignore
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # highlighting
@@ -66,12 +66,22 @@ html_theme = "sphinx_rtd_theme"
 
 # {{{ extension settings
 
+autoclass_content = 'class'
 autodoc_member_order = "bysource"
 autodoc_default_options = {
     "show-inheritance": None,
 }
 
 autodoc_typehints = "description"
+autodoc_type_aliases = {
+    "FunType": "pycgdescent.FunType",
+    "GradType": "pycgdescent.GradType",
+    "FunGradType": "pycgdescent.FunGradType",
+}
+
+nitpick_ignore = [
+    ("py:class", "..")
+]
 
 # }}}
 
