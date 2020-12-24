@@ -367,7 +367,7 @@ FunGradType = Callable[[numpy.ndarray, numpy.ndarray], float]
 
 
 def min_work_size(
-        options: 'OptimizeOptions',
+        options: OptimizeOptions,
         n: int) -> int:
     """
     Get recommended size of a *work* array.
@@ -390,7 +390,7 @@ def min_work_size(
 
 
 def allocate_work_for(
-        options: 'OptimizeOptions',
+        options: OptimizeOptions,
         n: int,
         dtype: numpy.dtype = np.float64) -> numpy.ndarray:
     """
