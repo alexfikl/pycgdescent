@@ -74,7 +74,7 @@ class OptimizeOptions(_cg.cg_parameter):
         frequency with which the subspace condition is checked. It is checked
         at every ``SubCheck * memory`` iterations and, if not satisfied, then
         it is skipped for ``SubSkip * memory`` iterations and
-        :attr:`subspace_skip_iterations` is doubled. Whenver the subspace
+        :attr:`SubSkip` is doubled. Whenver the subspace
         condition is satisfied, :attr:`SubSkip` is returned
         to the original value.
 
@@ -95,7 +95,7 @@ class OptimizeOptions(_cg.cg_parameter):
         If the distance is ``<= eta2``, the subspace is always entered.
 
     .. attribute:: AWolfe
-    .. attriubte:: AWolfeFac
+    .. attribute:: AWolfeFac
 
         If :attr:`AWolfe` is *True*, then it is used with the factor
         :attr:`AWolfeFac` as :math:`|f_{k + 1} - f_k| < \omega C_k`.
@@ -291,13 +291,15 @@ class OptimizeResult:
 
         Number of function evaluations.
 
-    . attribute:: njev
+    .. attribute:: njev
 
         Number of gradient (Jacobian) evaluation.
 
     .. attribute:: nit
 
         Number of iterations performed by the optimizer.
+
+    .. automethod:: __init__
     """
 
     x: np.ndarray
