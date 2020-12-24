@@ -132,26 +132,26 @@ namespace cg {
 
 typedef py::array_t<double, py::array::c_style | py::array::forcecast> array;
 
-typedef std::function<double(array)> std_value_fn;
-typedef std::function<void(array,array)> std_grad_fn;
-typedef std::function<double(array,array)> std_valgrad_fn;
+typedef std::function<double(array)> value_fn;
+typedef std::function<void(array,array)> grad_fn;
+typedef std::function<double(array,array)> valgrad_fn;
 
 class FnWrapper
 {
 public:
     FnWrapper(
-            std_value_fn *value,
-            std_grad_fn *grad,
-            std_valgrad_fn *valgrad):
+            value_fn *value,
+            grad_fn *grad,
+            valgrad_fn *valgrad):
         m_value(value),
         m_grad(grad),
         m_valgrad(valgrad) {};
 
     ~FnWrapper() {};
 
-    std_value_fn *m_value;
-    std_grad_fn *m_grad;
-    std_valgrad_fn *m_valgrad;
+    value_fn *m_value;
+    grad_fn *m_grad;
+    valgrad_fn *m_valgrad;
 };
 
 };
@@ -186,9 +186,9 @@ py::tuple cg_descent_wrapper(
         cg::array x,
         double grad_tol,
         std::optional<cg_parameter_wrapper*> param,
-        cg::std_value_fn &value,
-        cg::std_grad_fn &grad,
-        std::optional<cg::std_valgrad_fn> valgrad,
+        cg::value_fn &value,
+        cg::grad_fn &grad,
+        std::optional<cg::valgrad_fn> valgrad,
         std::optional<cg::array> work
         )
 {
