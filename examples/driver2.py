@@ -9,6 +9,26 @@ The function and gradient are
         f(\mathbf{x}) = & \sum_{i = 0}^n e^{x_i} - \sqrt{i + 1} x_i, \\
         \nabla_i f(\mathbf{x}) = & e^{x_i} - \sqrt{i + 1}
         \end{aligned}
+
+The operation of the code is mostly controlled by the parameters
+in the ``cg_parameter`` structure.  In the following example,
+the parameter ``QuadStep`` is set to *False*.  When ``QuadStep`` is *True*,
+the trial step in each iteration is computed as the minimizer
+of a quadratic interpolant along the search direction. In
+performing the quad step, we hope to find a suitable line search
+point right away, completely by-passing the secant iteration.
+
+However, as the iterates approach a minimizer, the numerical accuracy of
+the minimizer of the quadratic interpolant becomes worse. When the relative
+change in the function values for two consecutive iterations reach
+``QuadCutOff``, then the code completely turns off the quad step. The user
+can turn off the quad step by setting ``QuadStep`` to *False*. By leaving
+``QuadStep`` *True*, but increasing ``QuadCutOff`` (default ``1.0e-12``), the
+code turns off the ``QuadStep`` sooner.
+
+Below, we run the code twice, first with the ``QuadStep`` turned off,
+then with the ``QuadStep`` turned on. Notice that the performance improves
+with the ``QuadStep`` is on. This behavior is typical.
 """
 
 import time
@@ -50,6 +70,7 @@ def main(n=100):
     t = np.sqrt(1 + np.arange(n))
 
     param = _cg.cg_parameter()
+    # param.PrintParms = 1
 
     # }}}
 
@@ -58,7 +79,7 @@ def main(n=100):
     print("==== with QuadStep OFF ====")
     with timer():
         param.QuadStep = 0;
-        x1, stats, flag = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
@@ -75,7 +96,7 @@ def main(n=100):
     print("==== with QuadStep ON ====")
     with timer():
         param.QuadStep = 1;
-        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)

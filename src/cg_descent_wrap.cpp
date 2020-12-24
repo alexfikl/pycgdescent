@@ -82,10 +82,11 @@ public:
     CLASS_PROPERTY(nan_rho, double)
     CLASS_PROPERTY(nan_decay, double)
 
+    CLASS_PROPERTY(rho, double)
+
     CLASS_RO_PROPERTY(delta, double)
     CLASS_RO_PROPERTY(sigma, double)
     CLASS_RO_PROPERTY(gamma, double)
-    CLASS_RO_PROPERTY(rho, double)
     CLASS_RO_PROPERTY(psi0, double)
     CLASS_RO_PROPERTY(psi_lo, double)
     CLASS_RO_PROPERTY(psi_hi, double)
@@ -268,12 +269,14 @@ PYBIND11_MODULE(_cg_descent, m)
             .DEF_PROPERTY(feps)
             .DEF_PROPERTY(nan_rho)
             .DEF_PROPERTY(nan_decay)
+            // NOTE: these are not recommended to play with, but are used
+            // in some of the low level examples, so they're readwrite
+            .DEF_PROPERTY(rho)
             // NOTE: these are not recommended to be play with, so keep them
             // read-only for now
             .DEF_RO_PROPERTY(delta)
             .DEF_RO_PROPERTY(sigma)
             .DEF_RO_PROPERTY(gamma)
-            .DEF_RO_PROPERTY(rho)
             .DEF_RO_PROPERTY(psi0)
             .DEF_RO_PROPERTY(psi_lo)
             .DEF_RO_PROPERTY(psi_hi)

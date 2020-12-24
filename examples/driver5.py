@@ -9,6 +9,17 @@ The function and gradient are
         f(\mathbf{x}) = & \sum_{i = 0}^n e^{x_i} - \sqrt{i + 1} x_i, \\
         \nabla_i f(\mathbf{x}) = & e^{x_i} - \sqrt{i + 1}
         \end{aligned}
+
+Although there is a rigorous theory justifying a Wolfe line search,
+the performance of the Approximate Wolfe line search is often superior.
+Nonetheless, the user can turn off the Approximate Wolfe line search
+by setting ``AWolfe`` to *False* and ``AWolfeFac`` to :math:`0`. Since
+``AWolfe`` is *False* by default, we only need to adjust ``AWolfeFac``. When
+the code detects that the Wolfe line search fails, then it will
+automatically attempt the approximate Wolfe line search.
+
+To see that the Wolfe line search failed, we also need to set the
+``PrintLevel`` to at least ``1``.
 """
 
 import time
@@ -49,32 +60,19 @@ def main(n=100):
     x0 = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
-    # param = _cg.cg_parameter()
+    param = _cg.cg_parameter()
+    param.AWolfe = 0
+    param.AWolfeFac = 0.0
+    # param.PrintLevel = 1
     # param.PrintParms = 1
 
     # }}}
 
-    # {{{ without fngrad
+    # {{{
 
-    print("==== without fngrad ====")
+    print("==== with tol 1.0e-8 ====")
     with timer():
-        x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, None, None)
-
-    # }}}
-
-    # {{{ with fngrad
-
-    print("==== with fngrad ====")
-    with timer():
-        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad, None)
-
-    # }}}
-
-    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15
-
-    print()
-    print("status:  ", status)
-    print("message: ", _cg.STATUS_TO_MESSAGE[status]);
+        x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
@@ -82,6 +80,24 @@ def main(n=100):
     print("cg iterations:            ", stats.iter)
     print("function evaluations:     ", stats.nfunc)
     print("gradient evaluations:     ", stats.ngrad)
+
+    # }}}
+
+    # {{{
+
+    print()
+    print("==== with tol 1.0e-6 ====")
+    with timer():
+        x, stats, _ = _cg.cg_descent(x0, 1.0e-6, param, fn, grad, fngrad, None)
+
+    print()
+    print("maximum norm for gradient: %+.16e" % stats.gnorm)
+    print("function value:            %+.16e" % stats.f)
+    print("cg iterations:            ", stats.iter)
+    print("function evaluations:     ", stats.nfunc)
+    print("gradient evaluations:     ", stats.ngrad)
+
+    # }}}
 
 
 if __name__ == "__main__":

@@ -9,6 +9,20 @@ The function and gradient are
         f(\mathbf{x}) = & \sum_{i = 0}^n e^{x_i} - \sqrt{i + 1} x_i, \\
         \nabla_i f(\mathbf{x}) = & e^{x_i} - \sqrt{i + 1}
         \end{aligned}
+
+In the line search for first iteration, there is very little information
+available for choosing a suitable step size. By default, the code employs
+very low order approximations to the function to estimate a suitable
+step size. In some cases, this initial step size can be problematic.
+
+For example, if the cost function contains a :math:`\log` function, the initial
+step might cause the code to try to compute the :math:`\log` of a negative number.
+If the cost function contains an exponential, then the initial step size
+might lead to an overflow. In either case, ``NaN``\ s are potentially generated.
+
+If the default step size is unsuitable, you can input the starting
+step size using the parameter ``step``. In the following example, the initial
+step size is set to 1.
 """
 
 import time
@@ -49,28 +63,16 @@ def main(n=100):
     x0 = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
-    # param = _cg.cg_parameter()
+    param = _cg.cg_parameter()
+    param.step = 1.0
     # param.PrintParms = 1
 
     # }}}
 
-    # {{{ without fngrad
+    # {{{ different step size
 
-    print("==== without fngrad ====")
     with timer():
-        x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, None, None)
-
-    # }}}
-
-    # {{{ with fngrad
-
-    print("==== with fngrad ====")
-    with timer():
-        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad, None)
-
-    # }}}
-
-    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15
+        x, stats, status = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("status:  ", status)
@@ -82,6 +84,8 @@ def main(n=100):
     print("cg iterations:            ", stats.iter)
     print("function evaluations:     ", stats.nfunc)
     print("gradient evaluations:     ", stats.ngrad)
+
+    # }}}
 
 
 if __name__ == "__main__":
