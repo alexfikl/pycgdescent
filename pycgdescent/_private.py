@@ -30,12 +30,13 @@ def min_work_size(param, n):
     if param.memory == 0:
         # original CG_DESCENT without memory
         return 4 * n
-    elif param.LBFGS or param.memory >= n:
+
+    if param.LBFGS or param.memory >= n:
         # LBFGS-based CG_DESCENT
         return 2 * m * (n + 1) + 4 * n
-    else:
-        # limited memory CG_DESCENT
-        return (m + 6) * n + (3 * m + 9) * m + 5
+
+    # limited memory CG_DESCENT
+    return (m + 6) * n + (3 * m + 9) * m + 5
 
 
 def allocate_work_for(param, n, dtype=np.float64):

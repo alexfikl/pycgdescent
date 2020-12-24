@@ -79,7 +79,7 @@ def main(n=100):
     print("==== with QuadStep OFF ====")
     with timer():
         param.QuadStep = 0
-        x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
@@ -96,7 +96,7 @@ def main(n=100):
     print("==== with QuadStep ON ====")
     with timer():
         param.QuadStep = 1
-        x, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
