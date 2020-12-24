@@ -29,6 +29,15 @@ except ImportError:
 
 __version__ = metadata.version("pycgdescent")
 
+# {{{
+
+def _getmembers(obj):
+    import inspect
+    return [
+            m for m in obj.__dir__()
+            if not m.startswith("__") and not inspect.ismethod(getattr(obj, m))
+            ]
+
 
 class OptimizeOptions(_cg.cg_parameter):
     r"""Optimization options for the ``CG_DESCENT`` algorithm. A description
@@ -227,10 +236,21 @@ class OptimizeOptions(_cg.cg_parameter):
         return type(self)(**changes)
 
     def __repr__(self):
-        return f"{type(self).__name__}<self.__dict__>"
+        attrs = {k: getattr(self, k) for k in _getmembers(self)}
+        return f"{type(self).__name__}<{attrs}>"
 
     def pretty(self):
-        pass
+        attrs = {k: getattr(self, k) for k in _getmembers(self)}
+        width = len(max(attrs, key=len))
+        fmt = f"%{width}s : %s"
+
+        attrs = sorted({
+                k: repr(v) for k, v in attrs.items()
+                }.items())
+
+        return "\n".join([
+            "\t%s" % "\n\t".join(fmt % (k, v) for k, v in attrs),
+            ])
 
 
 @dataclass(frozen=True)

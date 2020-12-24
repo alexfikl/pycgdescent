@@ -87,3 +87,5 @@ def main(n=100):
 if __name__ == "__main__":
     t = None
     main()
+
+# vim: fdm=marker
