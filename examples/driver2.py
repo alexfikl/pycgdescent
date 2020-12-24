@@ -49,29 +49,16 @@ def main(n=100):
     x0 = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
+    param = _cg.cg_parameter()
+
     # }}}
 
-    # {{{ without fngrad
+    # {{{
 
-    print("==== without fngrad ====")
+    print("==== with QuadStep OFF ====")
     with timer():
-        x1, stats, flag = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, None, None)
-
-    # }}}
-
-    # {{{ with fngrad
-
-    print("==== with fngrad ====")
-    with timer():
-        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad, None)
-
-    # }}}
-
-    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15
-
-    print()
-    print("status:  ", status)
-    print("message: ", _cg.STATUS_TO_MESSAGE[status]);
+        param.QuadStep = 0;
+        x1, stats, flag = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
@@ -79,6 +66,25 @@ def main(n=100):
     print("cg iterations:            ", stats.iter)
     print("function evaluations:     ", stats.nfunc)
     print("gradient evaluations:     ", stats.ngrad)
+
+    # }}}
+
+    # {{{
+
+    print()
+    print("==== with QuadStep ON ====")
+    with timer():
+        param.QuadStep = 1;
+        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+
+    print()
+    print("maximum norm for gradient: %+.16e" % stats.gnorm)
+    print("function value:            %+.16e" % stats.f)
+    print("cg iterations:            ", stats.iter)
+    print("function evaluations:     ", stats.nfunc)
+    print("gradient evaluations:     ", stats.ngrad)
+
+    # }}}
 
 
 if __name__ == "__main__":
