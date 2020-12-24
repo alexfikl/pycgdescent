@@ -1,0 +1,7 @@
+include src/*.cpp
+include src/*.h
+
+include doc/*.py
+include doc/*.rst
+include doc/requirements.txt
+include doc/Makefile
