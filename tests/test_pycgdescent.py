@@ -1,8 +1,8 @@
 import numpy as np
 import numpy.linalg as la
+import pycgdescent as cg
 
 import pytest
-import pycgdescent as cg
 
 
 def test_optimize_options():
@@ -38,7 +38,7 @@ def test_quadratic(tol=1.0e-8):
         g[...] = A @ x - b
 
     def funjac(g, x):
-        Ax = A @ x -b                           # noqa: N806
+        Ax = A @ x - b                          # noqa: N806
         g[...] = Ax
         return x.dot(g)
 
@@ -74,6 +74,7 @@ def test_quadratic(tol=1.0e-8):
 
 
 def test_rosenbrock(tol=1.0e-8):
+    # START_ROSENROCK_EXAMPLE
     # {{{ setup
 
     # https://en.wikipedia.org/wiki/Rosenbrock_function
@@ -83,7 +84,7 @@ def test_rosenbrock(tol=1.0e-8):
     x_exact = np.array([1.0, 1.0])
 
     def fun(x):
-        return a * (x[1] - x[0]**2)**2 + b * (x[0] - 1.0)**2;
+        return a * (x[1] - x[0]**2)**2 + b * (x[0] - 1.0)**2
 
     def jac(g, x):
         g[0] = -4.0 * a * x[0] * (x[1] - x[0]**2) + 2.0 * b * (x[0] - 1.0)
@@ -122,6 +123,7 @@ def test_rosenbrock(tol=1.0e-8):
     assert error < tol
 
     # }}}
+    # END_ROSENBROCK_EXAMPLE
 
 
 if __name__ == "__main__":

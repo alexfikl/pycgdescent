@@ -19,8 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from dataclasses import dataclass, field
 from typing import Any, Callable, Optional, Tuple, Union
 
-import numpy        # required for sphinx typehints
-import numpy as np
+# required for sphinx typehints
+import numpy
+import numpy as np          # pylint: disable=reimported
 
 import pycgdescent._private as _cg
 
@@ -447,9 +448,9 @@ def minimize(
             raise TypeError(f"unknown 'options' type: {type(options).__name__}")
 
     if work is not None:
-        min_work_size = _cg.min_work_size(param, x0.size)
-        if work.size >= min_work_size:
-            raise ValueError(f"'work' must have size >= {min_work_size}")
+        m = min_work_size(param, x0.size)
+        if work.size >= m:
+            raise ValueError(f"'work' must have size >= {m}")
 
     # }}}
 
