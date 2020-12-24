@@ -1,4 +1,4 @@
-name: pycgdescent
+name: CI
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   flake8:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -22,6 +23,7 @@ jobs:
         python -m flake8 pycgdescent examples tests
 
   pylint:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -36,6 +38,7 @@ jobs:
         python -m pylint pycgdescent examples/*.py tests/*.py
 
   pytest:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: pytest-${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
