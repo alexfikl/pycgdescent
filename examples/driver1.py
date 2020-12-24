@@ -1,3 +1,4 @@
+import time
 from contextlib import contextmanager
 
 import numpy as np
@@ -5,7 +6,6 @@ import pycgdescent._private as _cg
 
 @contextmanager
 def timer():
-    import time
     t_start = time.time()
     yield
     t_end = time.time()
@@ -32,14 +32,18 @@ n = 100
 x0 = np.ones(n, dtype=np.float64)
 t = np.sqrt(1 + np.arange(n))
 
-param = _cg.cg_parameter()
-work = _cg.allocate_work_for(param, x0.size)
-
 with timer():
-    x1, stats, flag = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, None, None)
+    x1, stats, flag = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, None, None)
 
 with timer():
     x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad, None)
 
-print("status: ", status)
-print("error:  ", np.linalg.norm(x1 - x2) / np.linalg.norm(x2))
+print("status:  ", status)
+print("error:   ", np.linalg.norm(x1 - x2) / np.linalg.norm(x2))
+
+print()
+print("maximum norm for gradient: %+.16e" % stats.gnorm)
+print("function value:            %+.16e" % stats.f)
+print("cg iterations:            ", stats.iter)
+print("function evaluations:     ", stats.nfunc)
+print("gradient evaluations:     ", stats.ngrad)
