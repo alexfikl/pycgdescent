@@ -1,3 +1,5 @@
+import numpy as np
+
 from _cg_descent import (
         cg_stats,
         cg_parameter,
@@ -20,3 +22,21 @@ STATUS_TO_MESSAGE = {
     11: "Function value NaN or Inf and cannot be repaired",
     12: "Invalid choice of 'memory' parameter",
 }
+
+
+def min_work_size(param, n):
+    m = min(param.memory, n)
+
+    if param.memory == 0:
+        # original CG_DESCENT without memory
+        return 4 * n
+    elif param.LBFGS or param.memory >= n:
+        # LBFGS-based CG_DESCENT
+        return 2 * m * (n + 1) + 4 * n
+    else:
+        # limited memory CG_DESCENT
+        return (m + 6) * n + (3 * m + 9) * m + 5
+
+
+def allocate_work_for(param, n, dtype=np.float64):
+    return np.empty(min_work_size(param, n), dtype=dtype)

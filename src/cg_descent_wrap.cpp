@@ -3,7 +3,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 
+#include <optional>
 #include <functional>
 #include <iostream>
 
@@ -31,12 +33,12 @@ namespace py = pybind11;
 class cg_parameter_wrapper
 {
 public:
-    cg_parameter_wrapper(cg_parameter *param): obj(param) {};
     cg_parameter_wrapper()
     {
         obj = new cg_parameter;
         cg_default(obj);
     }
+    ~cg_parameter_wrapper() { delete obj; };
     cg_parameter *data() { return obj; };
 
     CLASS_PROPERTY(PrintFinal, int)
@@ -106,7 +108,8 @@ public:
 class cg_stats_wrapper
 {
 public:
-    cg_stats_wrapper(): obj(new cg_stats) {}
+    cg_stats_wrapper(): obj(new cg_stats) {};
+    ~cg_stats_wrapper() { delete obj; };
     cg_stats *data() { return obj; };
 
     CLASS_RO_PROPERTY(f, double)
@@ -126,14 +129,15 @@ public:
 
 namespace cg {
 
-typedef py::array_t<double> array_t;
+typedef py::array_t<double, py::array::c_style | py::array::forcecast> array_t;
+
 typedef std::function<double(array_t)> fn_t;
 typedef std::function<void(array_t,array_t)> grad_t;
-typedef std::function<double(array_t,array_t)> fngrad_t_t;
+typedef std::function<double(array_t,array_t)> fngrad_t;
 
 fn_t *fn;
 grad_t *grad;
-fngrad_t_t *fngrad_t;
+fngrad_t *fngrad;
 
 double fn_trampoline(double *_x, INT n)
 {
@@ -152,23 +156,28 @@ double fngrad_trampoline(double *_g, double *_x, INT n)
 {
     WRAP_RAW_POINTER(g, _g, n);
     WRAP_RAW_POINTER(x, _x, n);
-    return (*fngrad_t)(g, x);
+    return (*fngrad)(g, x);
 }
+
 };
 
+
 py::tuple cg_descent_wrapper(
-        py::array_t<double> x,
+        cg::array_t x,
         double grad_tol,
-        cg_parameter_wrapper *param,
+        std::optional<cg_parameter_wrapper*> param,
         cg::fn_t &fn,
         cg::grad_t &grad,
-        cg::fngrad_t *fngrad,
-        py::array_t<double> *work,
+        std::optional<cg::fngrad_t> fngrad,
+        std::optional<cg::array_t> work
         )
 {
-    int ret = 0;
+    int status = 0;
     cg_stats_wrapper *stats = new cg_stats_wrapper;
-    cg_parameter *p = param == nullptr ? nullptr : param->data();
+    cg_parameter *p = param.has_value() ? param.value()->data() : nullptr;
+    double *workptr = (work.has_value() ?
+            static_cast<double*>(work.value().request().ptr) :
+            nullptr);
 
     int n = x.shape(0);
     double *ptr = new double[n];
@@ -180,9 +189,8 @@ py::tuple cg_descent_wrapper(
     // FIXME: figure out a nicer way to pass std::functions
     cg::fn = &fn;
     cg::grad = &grad;
-    cg::fngrad = fngrad;
-
-    auto *fngrad_trampoline = fngrad == nullptr ? nullptr : cg::fngrad_trampoline;
+    cg::fngrad = fngrad.has_value() ? &fngrad.value() : nullptr;
+    auto *fngrad_trampoline = fngrad.has_value() ? cg::fngrad_trampoline : nullptr;
 
     status = cg_descent(
             ptr,
@@ -193,7 +201,7 @@ py::tuple cg_descent_wrapper(
             cg::fn_trampoline,
             cg::grad_trampoline,
             fngrad_trampoline,
-            work);
+            workptr);
 
     return py::make_tuple(
             py::array(n, ptr),
@@ -221,11 +229,6 @@ PYBIND11_MODULE(_cg_descent, m)
         typedef cg_parameter_wrapper cl;
         py::class_<cl>(m, "cg_parameter")
             .def(py::init())
-            .def("__deepcopy__", [](const cl &self, py::object) {
-                cg_parameter *other = new cg_parameter;
-                memcpy(oher, self.data(), sizeof(cg_parameter));
-                return cg_parameter_wrapper(other);
-            })
             .DEF_PROPERTY(PrintFinal)
             .DEF_PROPERTY(PrintLevel)
             .DEF_PROPERTY(PrintParms)
@@ -300,11 +303,11 @@ PYBIND11_MODULE(_cg_descent, m)
 
     m.def("cg_default", &cg_default_wrapper);
     m.def("cg_descent", &cg_descent_wrapper,
-            py::arg("x"),
-            py::arg("grad_tol"),
+            py::arg("x").none(false),
+            py::arg("grad_tol").none(false),
             py::arg("param").none(true),
-            py::arg("fn"),
-            py::arg("grad"),
+            py::arg("fn").none(false),
+            py::arg("grad").none(false),
             py::arg("fngrad").none(true),
             py::arg("work").none(true));
 }

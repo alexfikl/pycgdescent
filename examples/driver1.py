@@ -1,5 +1,15 @@
+from contextlib import contextmanager
+
 import numpy as np
-import pycgdescent as cg
+import pycgdescent._private as _cg
+
+@contextmanager
+def timer():
+    import time
+    t_start = time.time()
+    yield
+    t_end = time.time()
+    print("elapsed: ", t_end - t_start)
 
 
 def fn(x):
@@ -22,8 +32,14 @@ n = 100
 x0 = np.ones(n, dtype=np.float64)
 t = np.sqrt(1 + np.arange(n))
 
-x, stats, flag = cg.cg_descent(x0, fn, grad, fngrad)
-print(flag)
-print(stats)
-for xi in x:
-    print(f"{xi:.16e}")
+param = _cg.cg_parameter()
+work = _cg.allocate_work_for(param, x0.size)
+
+with timer():
+    x1, stats, flag = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, None, None)
+
+with timer():
+    x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad, None)
+
+print("status: ", status)
+print("error:  ", np.linalg.norm(x1 - x2) / np.linalg.norm(x2))

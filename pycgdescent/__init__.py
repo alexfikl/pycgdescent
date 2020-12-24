@@ -233,7 +233,7 @@ class OptimizeOptions(_cg.cg_parameter):
         pass
 
 
-@dataclass(frozen=True):
+@dataclass(frozen=True)
 class OptimizeResult:
     """Based on :class:`scipy.optimize.OptimizeResult`.
 
@@ -294,8 +294,6 @@ def minimize(fun, x0,
         options=None,
         work=None,
         args=()) -> OptimizeResult:
-    import pycgdescent._private as _cg
-
     # {{{ setup
 
     if args:

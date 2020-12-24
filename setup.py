@@ -10,7 +10,9 @@ sources = [
 
 setup(
         ext_modules=[
-            Pybind11Extension("_cg_descent", sources),
+            Pybind11Extension("_cg_descent", sources,
+                # NOTE: to enable use of std::optional
+                extra_compile_args=["-std=c++17"]),
             ],
         cmd_class={"build_ext": build_ext},
         )
