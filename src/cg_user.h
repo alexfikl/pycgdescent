@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _CG_USER_HEADER_H
+#define _CG_USER_HEADER_H
 
 #include <limits.h>
 #include <float.h>
@@ -26,6 +27,14 @@
 extern "C"
 {
 #endif
+
+/*============================================================================
+ * function pointer types
+ */
+
+typedef double (*cg_value_fn)(double*, INT, void*);
+typedef void (*cg_grad_fn)(double*, double*, INT, void*);
+typedef double (*cg_valgrad_fn)(double*, double*, INT, void*);
 
 /*============================================================================
    cg_parameter is a structure containing parameters used in cg_descent
@@ -228,10 +237,11 @@ int cg_descent /*  return:
     double      grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
                                            StopFac*initial |g|_infty) [default]
                              StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
-    double        (*value) (double *, INT),  /* f = value (x, n) */
-    void           (*grad) (double *, double *, INT), /* grad (g, x, n) */
-    double      (*valgrad) (double *, double *, INT), /* f = valgrad (g,x,n)*/
-    double         *Work  /* either size 4n work array or NULL */
+    cg_value_fn value,      /* f = value (x, n, User) */
+    cg_grad_fn grad,        /* grad (g, x, n, User) */
+    cg_valgrad_fn valgrad,  /* f = valgrad (g, x, n, User)*/
+    double         *Work,   /* either size 4n work array or NULL */
+    void           *User    /* user provided pointer passed to functions */
 ) ;
 
 void cg_default /* set default parameter values */
@@ -241,4 +251,6 @@ void cg_default /* set default parameter values */
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

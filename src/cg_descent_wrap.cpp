@@ -130,47 +130,66 @@ public:
 
 namespace cg {
 
-typedef py::array_t<double, py::array::c_style | py::array::forcecast> array_t;
+typedef py::array_t<double, py::array::c_style | py::array::forcecast> array;
 
-typedef std::function<double(array_t)> fn_t;
-typedef std::function<void(array_t,array_t)> grad_t;
-typedef std::function<double(array_t,array_t)> fngrad_t;
+typedef std::function<double(array)> std_value_fn;
+typedef std::function<void(array,array)> std_grad_fn;
+typedef std::function<double(array,array)> std_valgrad_fn;
 
-fn_t *fn;
-grad_t *grad;
-fngrad_t *fngrad;
-
-double fn_trampoline(double *_x, INT n)
+class FnWrapper
 {
-    WRAP_RAW_POINTER(x, _x, n);
-    return (*fn)(x);
-}
+public:
+    FnWrapper(
+            std_value_fn *value,
+            std_grad_fn *grad,
+            std_valgrad_fn *valgrad):
+        m_value(value),
+        m_grad(grad),
+        m_valgrad(valgrad) {};
 
-void grad_trampoline(double *_g, double *_x, INT n)
-{
-    WRAP_RAW_POINTER(g, _g, n);
-    WRAP_RAW_POINTER(x, _x, n);
-    (*grad)(g, x);
-}
+    ~FnWrapper() {};
 
-double fngrad_trampoline(double *_g, double *_x, INT n)
-{
-    WRAP_RAW_POINTER(g, _g, n);
-    WRAP_RAW_POINTER(x, _x, n);
-    return (*fngrad)(g, x);
-}
+    std_value_fn *m_value;
+    std_grad_fn *m_grad;
+    std_valgrad_fn *m_valgrad;
+};
 
 };
 
+double user_value(double *_x, INT n, void *User)
+{
+    cg::FnWrapper *w = static_cast<cg::FnWrapper*>(User);
+    WRAP_RAW_POINTER(x, _x, n);
+
+    return (*w->m_value)(x);
+}
+
+void user_grad(double *_g, double *_x, INT n, void *User)
+{
+    cg::FnWrapper *w = static_cast<cg::FnWrapper*>(User);
+    WRAP_RAW_POINTER(g, _g, n);
+    WRAP_RAW_POINTER(x, _x, n);
+
+    (*w->m_grad)(g, x);
+}
+
+double user_valgrad(double *_g, double *_x, INT n, void *User)
+{
+    cg::FnWrapper *w = static_cast<cg::FnWrapper*>(User);
+    WRAP_RAW_POINTER(g, _g, n);
+    WRAP_RAW_POINTER(x, _x, n);
+
+    return (*w->m_valgrad)(g, x);
+}
 
 py::tuple cg_descent_wrapper(
-        cg::array_t x,
+        cg::array x,
         double grad_tol,
         std::optional<cg_parameter_wrapper*> param,
-        cg::fn_t &fn,
-        cg::grad_t &grad,
-        std::optional<cg::fngrad_t> fngrad,
-        std::optional<cg::array_t> work
+        cg::std_value_fn &value,
+        cg::std_grad_fn &grad,
+        std::optional<cg::std_valgrad_fn> valgrad,
+        std::optional<cg::array> work
         )
 {
     int status = 0;
@@ -187,11 +206,9 @@ py::tuple cg_descent_wrapper(
         ptr[i] = xptr(i);
     }
 
-    // FIXME: figure out a nicer way to pass std::functions
-    cg::fn = &fn;
-    cg::grad = &grad;
-    cg::fngrad = fngrad.has_value() ? &fngrad.value() : nullptr;
-    auto *fngrad_trampoline = fngrad.has_value() ? cg::fngrad_trampoline : nullptr;
+    cg::FnWrapper w(&value, &grad,
+            valgrad.has_value() ? &valgrad.value() : nullptr);
+    auto *user_valgrad_p = valgrad.has_value() ? user_valgrad : nullptr;
 
     status = cg_descent(
             ptr,
@@ -199,10 +216,10 @@ py::tuple cg_descent_wrapper(
             stats->data(),
             p,
             grad_tol,
-            cg::fn_trampoline,
-            cg::grad_trampoline,
-            fngrad_trampoline,
-            workptr);
+            user_value,
+            user_grad,
+            user_valgrad_p,
+            workptr, &w);
 
     return py::make_tuple(
             py::array(n, ptr),
@@ -309,8 +326,8 @@ PYBIND11_MODULE(_cg_descent, m)
             py::arg("x").none(false),
             py::arg("grad_tol").none(false),
             py::arg("param").none(true),
-            py::arg("fn").none(false),
+            py::arg("value").none(false),
             py::arg("grad").none(false),
-            py::arg("fngrad").none(true),
+            py::arg("valgrad").none(true),
             py::arg("work").none(true));
 }

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+# {{{ description
+
 pkgname='CG_DESCENT-C'
 pkgver='6.8'
 archive="${pkgname}-${pkgver}.tar.gz"
@@ -10,7 +12,9 @@ basedir=$(pwd)
 builddir="${basedir}/_build"
 patchdir="${basedir}/patches"
 
-# {{ get original sources
+# }}}
+
+# {{{ get original sources
 
 mkdir -p "${builddir}"
 pushd "${builddir}"
