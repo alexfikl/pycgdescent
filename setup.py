@@ -10,9 +10,12 @@ sources = [
 
 setup(
         ext_modules=[
-            Pybind11Extension("_cg_descent", sources,
+            Pybind11Extension("_cg_descent",
+                sources=sources,
                 # NOTE: to enable use of std::optional
-                extra_compile_args=["-std=c++17"]),
+                cxx_std=17,
+                # FIXME: more robust way to find blas
+                extra_link_args=["-lm", "-lblas", "-lpthread"]),
             ],
         cmd_class={"build_ext": build_ext},
         )

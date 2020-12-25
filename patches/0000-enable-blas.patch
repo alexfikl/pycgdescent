@@ -1,0 +1,25 @@
+From ff4d127cc830de7218cf4f3aa3d69ffb336b0185 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Fri, 25 Dec 2020 15:50:01 -0600
+Subject: [PATCH] enable blas
+
+---
+ cg_blas.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cg_blas.h b/cg_blas.h
+index 62ff26e..610622a 100644
+--- a/cg_blas.h
++++ b/cg_blas.h
+@@ -13,7 +13,7 @@
+    START parameters should be specified to determine when to start
+    using the BLAS. */
+ 
+-#define NOBLAS
++// #define NOBLAS
+ 
+ /* if BLAS are used, specify the integer precision */
+ #define BLAS_INT long int
+-- 
+2.29.2
+
