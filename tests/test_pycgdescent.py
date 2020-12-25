@@ -74,7 +74,6 @@ def test_quadratic(tol=1.0e-8):
 
 
 def test_rosenbrock(tol=1.0e-8):
-    # START_ROSENROCK_EXAMPLE
     # {{{ setup
 
     # https://en.wikipedia.org/wiki/Rosenbrock_function
@@ -90,10 +89,6 @@ def test_rosenbrock(tol=1.0e-8):
         g[0] = -4.0 * a * x[0] * (x[1] - x[0]**2) + 2.0 * b * (x[0] - 1.0)
         g[1] = 2.0 * a * (x[1] - x[0]**2)
 
-    def funjac(g, x):
-        jac(g, x)
-        return fun(x)
-
     # }}}
 
     # {{{ optimize
@@ -103,7 +98,6 @@ def test_rosenbrock(tol=1.0e-8):
             fun=fun,
             x0=x0,
             jac=jac,
-            funjac=funjac,
             tol=tol,
             options=options,
             )
@@ -123,7 +117,6 @@ def test_rosenbrock(tol=1.0e-8):
     assert error < tol
 
     # }}}
-    # END_ROSENBROCK_EXAMPLE
 
 
 if __name__ == "__main__":

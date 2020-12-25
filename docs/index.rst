@@ -13,36 +13,34 @@ is provided below. The function is given by
     f(x, y) = a (y - x^2)^2 + b (x - 1)^2,
 
 which has an optimum at :math:`[1, 1]` for :math:`a > 0` and :math:`b > 0`.
-We start by loading the required libraries
+The problem is setup with default parameters in the following example.
 
-.. code-block:: python
-
-    import numpy as np
-    import numpy.linalg as la
-    import pycgdescent as cg
-
-Then we set up the problem with default options.
-
-.. literalinclude:: ../tests/test_pycgdescent.py
+.. literalinclude:: ../examples/high-level-api.py
    :start-after: START_ROSENROCK_EXAMPLE
    :end-before: END_ROSENBROCK_EXAMPLE
    :language: python
    :linenos:
-   :dedent: 4
 
 The outout of ``r.pretty()`` shows that we have found the exact solution::
 
-                fun : 3.4584372059703856e-25
-                jac : 2.3353763367596195e-11
+                fun : 6.019745113421725e-23
+                jac : 3.0587488097952063e-10
             message : 'Convergence tolerance satisfied'
-               nfev : 81
-                nit : 34
-               njev : 49
+               nfev : 63
+                nit : 28
+               njev : 35
         nsubspaceit : 0
          nsubspaces : 0
              status : 0
             success : True
                   x : array([1., 1.])
+
+The path of the optimization can be seen in the following figure.
+
+.. image:: rosenbrock.png
+    :width: 75%
+    :align: center
+    :alt: Rosenbrock function optimization
 
 Reference
 ---------

@@ -146,9 +146,9 @@ public:
     ~cg_iter_stats_wrapper() { };
 
     CLASS_RO_PROPERTY(iter, INT)
-    CLASS_RO_PROPERTY(f, double)
-    CLASS_RO_ARRAY_PROPERTY(x, double)
     CLASS_RO_PROPERTY(alpha, double)
+    CLASS_RO_ARRAY_PROPERTY(x, double)
+    CLASS_RO_PROPERTY(f, double)
     CLASS_RO_ARRAY_PROPERTY(g, double)
     CLASS_RO_ARRAY_PROPERTY(d, double)
 
