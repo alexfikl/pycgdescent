@@ -58,7 +58,8 @@ def main(n=100):
 
     print("==== without fngrad ====")
     with timer():
-        x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, None, None)
+        x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, None,
+                callback=None, work=None)
 
     # }}}
 
@@ -66,7 +67,8 @@ def main(n=100):
 
     print("==== with fngrad ====")
     with timer():
-        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad, None)
+        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None, fn, grad, fngrad,
+                callback=None, work=None)
 
     # }}}
 

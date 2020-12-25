@@ -35,10 +35,25 @@ except ImportError:
 __version__ = metadata.version("pycgdescent")
 
 __doc__ = """
+Functions
+^^^^^^^^^
+
 .. autofunction:: minimize
 
 .. autofunction:: min_work_size
 .. autofunction:: allocate_work_for
+
+.. autoclass:: OptimizeOptions
+    :no-show-inheritance:
+
+.. autoclass:: OptimizeResult
+    :no-show-inheritance:
+
+.. autoclass:: CallbackInfo
+    :no-show-inheritance:
+
+Type Aliases
+^^^^^^^^^^^^
 
 .. class:: FunType
 
@@ -57,11 +72,10 @@ __doc__ = """
     ``(g, x)`` as arguments and returns the function value. The array ``g``
     needs to be updated in place with the gradient at ``x``.
 
-.. autoclass:: OptimizeOptions
-    :no-show-inheritance:
+.. class:: CallbackType
 
-.. autoclass:: OptimizeResult
-    :no-show-inheritance:
+    ``Callable[[CallbackInfo], int]``. Setting the return value to `0` will
+    stop the iteration.
 """
 
 
@@ -295,6 +309,49 @@ class OptimizeOptions(_cg.cg_parameter):
 # }}}
 
 
+# {{{ info
+
+@dataclass(frozen=True)
+class CallbackInfo:
+    """
+    .. attribute:: it
+
+        Current iteration.
+
+    .. attribute:: alpha
+
+        Step size.
+
+    .. attribute:: x
+    .. attribute:: f
+    .. attribute:: g
+    .. attribute:: d
+
+        Descent direction at the current iteration. This will usually not
+        be the same as the gradient and can be used for debugging.
+    """
+
+    it: int
+    alpha: float
+    x: np.ndarray
+    f: float
+    g: np.ndarray
+    d: np.ndarray
+
+    @classmethod
+    def from_stats(cls, stats):
+        return cls(
+                it=stats.iter,
+                alpha=stats.alpha,
+                x=stats.x,
+                f=stats.f,
+                g=stats.g,
+                d=stats.d,
+                )
+
+# }}}
+
+
 # {{{ result
 
 @dataclass(frozen=True)
@@ -364,6 +421,7 @@ class OptimizeResult:
 FunType = Callable[[numpy.ndarray], float]
 GradType = Callable[[numpy.ndarray, numpy.ndarray], None]
 FunGradType = Callable[[numpy.ndarray, numpy.ndarray], float]
+CallbackType = Callable[[CallbackInfo], int]
 
 
 def min_work_size(
@@ -409,6 +467,7 @@ def minimize(
         funjac: Optional["FunGradType"] = None,
         tol: float = None,
         options: Optional[Union[OptimizeOptions, dict]] = None,
+        callback: Optional["CallbackType"] = None,
         work: Optional[numpy.ndarray] = None,
         args: Tuple[Any, ...] = ()) -> OptimizeResult:
     """
@@ -424,6 +483,8 @@ def minimize(
     :param tol: tolerance used to check convergence. Exact meaning depends on
         :attr:`OptimizeOptions.StopRule`.
     :param options: options used by the algorithm.
+    :param callback: a :class:`~collections.abc.Callable` called at the end
+        of each (successful) iteration.
     :param work: additional work array (see :func:`allocate_work_for`).
     :param args: additional arguments passed to the callables.
     """
@@ -452,6 +513,12 @@ def minimize(
         if work.size >= m:
             raise ValueError(f"'work' must have size >= {m}")
 
+    if callback is None:
+        wrapped_callback = None
+    else:
+        def wrapped_callback(s):
+            return callback(CallbackInfo.from_stats(s))
+
     # }}}
 
     # {{{ optimize
@@ -461,6 +528,7 @@ def minimize(
             tol,
             param,
             fun, jac, funjac,
+            wrapped_callback,
             work)
 
     # }}}

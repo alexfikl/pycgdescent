@@ -1,0 +1,164 @@
+From b612d107d357bf8fb99d0174ad824889073be9e2 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Fri, 25 Dec 2020 11:20:02 -0600
+Subject: [PATCH 7/8] add iteration callback
+
+---
+ cg_descent.c | 30 ++++++++++++++++++++++++++++--
+ cg_user.h    | 49 +++++++++++++++++++++++++++++++------------------
+ 2 files changed, 59 insertions(+), 20 deletions(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index 65f63f5..ba9a4bc 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -78,6 +78,16 @@ double one [1], zero [1] ;
+ BLAS_INT blas_one [1] ;
+ /* end external variables */
+ 
++#define UPDATE_STATS_AND_CALLBACK()     \
++    IterStats.iter = iter;              \
++    IterStats.alpha = alpha;            \
++    IterStats.x = x;                    \
++    IterStats.f = f;                    \
++    IterStats.g = g;                    \
++    IterStats.d = d;                    \
++    if (callback(&IterStats, User) == 0) { status = 13; goto Exit; }
++
++
+ int cg_descent /*  return status of solution process:
+                        0 (convergence tolerance satisfied)
+                        1 (change in func <= feps*|f|)
+@@ -92,7 +102,8 @@ int cg_descent /*  return status of solution process:
+                           2n + Parm->nslow iterations)
+                       10 (out of memory)
+                       11 (function nan or +-INF and could not be repaired)
+-                      12 (invalid choice for memory parameter) */
++                      12 (invalid choice for memory parameter)
++                      13 (iteration stopped by user callback) */
+ (
+     double            *x, /* input: starting guess, output: the solution */
+     INT                n, /* problem dimension */
+@@ -104,7 +115,9 @@ int cg_descent /*  return status of solution process:
+     cg_value_fn     value, /* f = value (x, n, User) */
+     cg_grad_fn       grad, /* grad (g, x, n, User) */
+     cg_valgrad_fn valgrad, /* f = valgrad (g, x, n, User),
+-                          NULL = compute value & gradient using value & grad */
++                              NULL = compute value & gradient using value & grad */
++    cg_callback_fn callback,/* user provided function called at the end of a
++                               (successful) iteration */
+     double         *Work, /* NULL => let code allocate memory
+                              not NULL => use array Work for required memory
+                              The amount of memory needed depends on the value
+@@ -135,6 +148,9 @@ int cg_descent /*  return status of solution process:
+            *Rk, *Re, *Sk, *SkF, *stemp, *Yk, *SkYk,
+            *dsub, *gsub, *gsubtemp, *gkeep, *tau, *vsub, *wsub ;
+ 
++    cg_iter_stats IterStats;
++    IterStats.n = n;
++
+     cg_parameter *Parm, ParmStruc ;
+     cg_com Com ;
+ 
+@@ -330,6 +346,11 @@ int cg_descent /*  return status of solution process:
+ 
+     Com.df0 = -2.0*fabs(f)/alpha ;
+ 
++    if (callback != NULL)
++    {
++        UPDATE_STATS_AND_CALLBACK();
++    }
++
+     Restart = FALSE ;    /* do not restart the algorithm */
+     IterRestart = 0 ;    /* counts number of iterations since last restart */
+     IterSub = 0 ;        /* counts number of iterations in subspace */
+@@ -1481,6 +1502,11 @@ int cg_descent /*  return status of solution process:
+            status = 5 ;
+            goto Exit ;
+         }
++
++        if (callback != NULL)
++        {
++            UPDATE_STATS_AND_CALLBACK();
++        }
+     }
+     status = 2 ;
+ Exit:
+diff --git a/cg_user.h b/cg_user.h
+index 8d869bd..07f25ba 100644
+--- a/cg_user.h
++++ b/cg_user.h
+@@ -28,13 +28,6 @@ extern "C"
+ {
+ #endif
+ 
+-/*============================================================================
+- * function pointer types
+- */
+-
+-typedef double (*cg_value_fn)(double*, INT, void*);
+-typedef void (*cg_grad_fn)(double*, double*, INT, void*);
+-typedef double (*cg_valgrad_fn)(double*, double*, INT, void*);
+ 
+ /*============================================================================
+    cg_parameter is a structure containing parameters used in cg_descent
+@@ -213,6 +206,24 @@ typedef struct cg_stats_struct /* statistics returned to user */
+     INT              ngrad ; /* number of gradient evaluations */
+ } cg_stats ;
+ 
++typedef struct cg_iter_stats_struct
++{
++    INT               iter ; /* iteration */
++    INT                  n ; /* input size */
++    double           alpha ; /* stepsize at current iteration */
++    double              *x ; /* solution at current iteration */
++    double               f ; /* function value at current iteration */
++    double              *g ; /* gradient at current iteration */
++    double              *d ; /* descent direction at current iteration */
++} cg_iter_stats;
++
++/* function pointer types */
++
++typedef double (*cg_value_fn)(double*, INT, void*);
++typedef void (*cg_grad_fn)(double*, double*, INT, void*);
++typedef double (*cg_valgrad_fn)(double*, double*, INT, void*);
++typedef int (*cg_callback_fn)(cg_iter_stats*, void*);
++
+ /* prototypes */
+ 
+ int cg_descent /*  return:
+@@ -230,18 +241,20 @@ int cg_descent /*  return:
+                        9 (debugger is on and the function value increases)
+                       10 (out of memory) */
+ (
+-    double            *x, /* input: starting guess, output: the solution */
+-    INT                n, /* problem dimension */
+-    cg_stats      *Stats, /* structure with statistics (see cg_descent.h) */
+-    cg_parameter  *UParm, /* user parameters, NULL = use default parameters */
+-    double      grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
++    double               *x, /* input: starting guess, output: the solution */
++    INT                   n, /* problem dimension */
++    cg_stats         *Stats, /* structure with statistics (see cg_descent.h) */
++    cg_parameter     *UParm, /* user parameters, NULL = use default parameters */
++    double         grad_tol, /* StopRule = 1: |g|_infty <= max (grad_tol,
+                                            StopFac*initial |g|_infty) [default]
+-                             StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
+-    cg_value_fn value,      /* f = value (x, n, User) */
+-    cg_grad_fn grad,        /* grad (g, x, n, User) */
+-    cg_valgrad_fn valgrad,  /* f = valgrad (g, x, n, User)*/
+-    double         *Work,   /* either size 4n work array or NULL */
+-    void           *User    /* user provided pointer passed to functions */
++                                StopRule = 0: |g|_infty <= grad_tol(1+|f|) */
++    cg_value_fn       value, /* f = value (x, n, User) */
++    cg_grad_fn         grad, /* grad (g, x, n, User) */
++    cg_valgrad_fn   valgrad, /* f = valgrad (g, x, n, User) */
++    cg_callback_fn callback, /* user provided function called at the end of
++                                a (successful) iteration */
++    double            *Work, /* either size 4n work array or NULL */
++    void              *User  /* user provided pointer passed to functions */
+ ) ;
+ 
+ void cg_default /* set default parameter values */
+-- 
+2.29.2
+

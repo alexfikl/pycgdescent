@@ -38,6 +38,7 @@ declare -a patches=(
     '0002-add-header-guards.patch'
     '0003-add-func-typedefs.patch'
     '0004-add-user-pointer-to-functions.patch'
+    '0005-add-iteration-callback.patch'
 )
 
 pushd "${pkgname}-${pkgver}"

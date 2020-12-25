@@ -9,6 +9,14 @@
 #include <functional>
 #include <iostream>
 
+namespace py = pybind11;
+
+// {{{ macros
+
+#define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE) \
+    auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *p) {})); \
+    assert(!NAME.owndata())
+
 #define DEF_RO_PROPERTY(NAME) \
     def_property_readonly(#NAME, &cl::get_##NAME)
 
@@ -22,11 +30,13 @@
 #define CLASS_RO_PROPERTY(NAME, TYPE) \
     TYPE get_##NAME() const noexcept { return obj->NAME; };
 
-#define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE) \
-    auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *p) {})); \
-    assert(!NAME.owndata())
+#define CLASS_RO_ARRAY_PROPERTY(NAME, TYPE) \
+    py::array get_##NAME() const { \
+        WRAP_RAW_POINTER(NAME, obj->NAME, obj->n); \
+        return NAME; \
+    };
 
-namespace py = pybind11;
+// }}}
 
 // {{{ cg_parameter wrapper
 
@@ -126,6 +136,27 @@ public:
 
 // }}}
 
+// {{{ cg_iter_stats_wrapper
+
+class cg_iter_stats_wrapper
+{
+public:
+    cg_iter_stats_wrapper(cg_iter_stats *stats): obj(stats) {};
+    cg_iter_stats_wrapper(): obj(nullptr) {};
+    ~cg_iter_stats_wrapper() { };
+
+    CLASS_RO_PROPERTY(iter, INT)
+    CLASS_RO_PROPERTY(f, double)
+    CLASS_RO_ARRAY_PROPERTY(x, double)
+    CLASS_RO_PROPERTY(alpha, double)
+    CLASS_RO_ARRAY_PROPERTY(g, double)
+    CLASS_RO_ARRAY_PROPERTY(d, double)
+
+    cg_iter_stats *obj;
+};
+
+// }}}}
+
 // {{{ cg_descent wrapper
 
 namespace cg {
@@ -135,6 +166,7 @@ typedef py::array_t<double, py::array::c_style | py::array::forcecast> array;
 typedef std::function<double(array)> value_fn;
 typedef std::function<void(array,array)> grad_fn;
 typedef std::function<double(array,array)> valgrad_fn;
+typedef std::function<int(cg_iter_stats_wrapper&)> callback_fn;
 
 class FnWrapper
 {
@@ -142,16 +174,19 @@ public:
     FnWrapper(
             value_fn *value,
             grad_fn *grad,
-            valgrad_fn *valgrad):
+            valgrad_fn *valgrad,
+            callback_fn *callback):
         m_value(value),
         m_grad(grad),
-        m_valgrad(valgrad) {};
+        m_valgrad(valgrad),
+        m_callback(callback) {};
 
     ~FnWrapper() {};
 
     value_fn *m_value;
     grad_fn *m_grad;
     valgrad_fn *m_valgrad;
+    callback_fn *m_callback;
 };
 
 };
@@ -182,6 +217,14 @@ double user_valgrad(double *_g, double *_x, INT n, void *User)
     return (*w->m_valgrad)(g, x);
 }
 
+int user_callback(cg_iter_stats *IterStats, void *User)
+{
+    cg::FnWrapper *w = static_cast<cg::FnWrapper*>(User);
+    cg_iter_stats_wrapper wi(IterStats);
+
+    return (*w->m_callback)(wi);
+}
+
 py::tuple cg_descent_wrapper(
         cg::array x,
         double grad_tol,
@@ -189,6 +232,7 @@ py::tuple cg_descent_wrapper(
         cg::value_fn &value,
         cg::grad_fn &grad,
         std::optional<cg::valgrad_fn> valgrad,
+        std::optional<cg::callback_fn> callback,
         std::optional<cg::array> work
         )
 {
@@ -207,8 +251,10 @@ py::tuple cg_descent_wrapper(
     }
 
     cg::FnWrapper w(&value, &grad,
-            valgrad.has_value() ? &valgrad.value() : nullptr);
+            valgrad.has_value() ? &valgrad.value() : nullptr,
+            callback.has_value() ? &callback.value() : nullptr);
     auto *user_valgrad_p = valgrad.has_value() ? user_valgrad : nullptr;
+    auto *user_callback_p = callback.has_value() ? user_callback : nullptr;
 
     status = cg_descent(
             ptr,
@@ -219,6 +265,7 @@ py::tuple cg_descent_wrapper(
             user_value,
             user_grad,
             user_valgrad_p,
+            user_callback_p,
             workptr, &w);
 
     return py::make_tuple(
@@ -321,6 +368,18 @@ PYBIND11_MODULE(_cg_descent, m)
         ;
     }
 
+    {
+        typedef cg_iter_stats_wrapper cl;
+        py::class_<cl>(m, "cg_iter_stats")
+            .DEF_RO_PROPERTY(iter)
+            .DEF_RO_PROPERTY(alpha)
+            .DEF_RO_PROPERTY(x)
+            .DEF_RO_PROPERTY(f)
+            .DEF_RO_PROPERTY(g)
+            .DEF_RO_PROPERTY(d)
+        ;
+    }
+
     m.def("cg_default", &cg_default_wrapper);
     m.def("cg_descent", &cg_descent_wrapper,
             py::arg("x").none(false),
@@ -329,5 +388,6 @@ PYBIND11_MODULE(_cg_descent, m)
             py::arg("value").none(false),
             py::arg("grad").none(false),
             py::arg("valgrad").none(true),
+            py::arg("callback").none(true),
             py::arg("work").none(true));
 }

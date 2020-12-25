@@ -1,6 +1,8 @@
 from _cg_descent import (   # noqa: F401
         cg_stats,
+        cg_iter_stats,
         cg_parameter,
+
         cg_default,
         cg_descent)
 
@@ -19,4 +21,5 @@ STATUS_TO_MESSAGE = {
     10: "Out of memory",
     11: "Function value NaN or Inf and cannot be repaired",
     12: "Invalid choice of 'memory' parameter",
+    13: "Stopped by user callback",
 }
