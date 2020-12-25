@@ -10,6 +10,12 @@ pycgdescent
 ===========
 
 Python wrapper for `CG_DESCENT <https://users.clas.ufl.edu/hager/papers/Software/>`__.
+A previous wrapper can be found `here <https://github.com/martiniani-lab/PyCG_DESCENT>`__.
+Some differences:
+
+* This one only depends on `pybind11 <https://github.com/pybind/pybind11>`__.
+* Tries to emulate the interface from `scipy <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html>`
+  (still needs work).
 
 Interesting links:
 
