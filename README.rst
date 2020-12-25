@@ -10,3 +10,8 @@ pycgdescent
 ===========
 
 Python wrapper for `CG_DESCENT <https://users.clas.ufl.edu/hager/papers/Software/>`__.
+
+Interesting links:
+
+* `Documentation <https://pycgdescent.readthedocs.io/en/latest/>`__.
+* `Code <https://github.com/alexfikl/pycgdescent>`__.
