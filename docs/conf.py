@@ -28,7 +28,7 @@ extensions = [
 ]
 
 try:
-    import sphinxcontrib.spelling
+    import sphinxcontrib.spelling       # noqa: F401
     extensions.append("sphinxcontrib.spelling")
 except ImportError:
     pass
@@ -66,7 +66,7 @@ html_theme = "sphinx_rtd_theme"
 
 # {{{ extension settings
 
-autoclass_content = 'class'
+autoclass_content = "class"
 autodoc_member_order = "bysource"
 autodoc_default_options = {
     "show-inheritance": None,
