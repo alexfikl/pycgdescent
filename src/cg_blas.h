@@ -13,7 +13,7 @@
    START parameters should be specified to determine when to start
    using the BLAS. */
 
-// #define NOBLAS
+#define NOBLAS
 
 /* if BLAS are used, specify the integer precision */
 #define BLAS_INT long int

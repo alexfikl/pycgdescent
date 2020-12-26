@@ -34,7 +34,6 @@ tar xvf "${archive}"
 # {{{ apply patches
 
 declare -a patches=(
-    '0000-enable-blas.patch'
     '0001-add-extern-c.patch'
     '0002-add-header-guards.patch'
     '0003-add-func-typedefs.patch'
