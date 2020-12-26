@@ -40,7 +40,7 @@ jobs:
 
   examples:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    name: pytest-${{ matrix.python-version }}
+    name: examples-${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
