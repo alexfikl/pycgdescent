@@ -1,10 +1,21 @@
+import os
 import sys
-from setuptools import setup
 
+from setuptools import setup
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
-# TODO: add support for conditionally using blas; currently does not build on
-# readthedocs with it on
+# {{{ enable blas
+
+CG_DISABLE_BLAS = bool(int(os.environ.get("CG_DISABLE_BLAS", 0)))
+if CG_DISABLE_BLAS:
+    extra_link_args = []
+    defines = [("CG_DISABLE_BLAS", None)]
+else:
+    # FIXME: better way to find / choose blas library?
+    extra_link_args = ["-blas", "-lpthread"]
+    defines = []
+
+# }}}
 
 sources = [
         "src/cg_descent.c",
@@ -18,7 +29,9 @@ setup(
                 sources=sources,
                 # NOTE: to enable use of std::optional
                 cxx_std=17,
+                extra_link_args=extra_link_args,
+                define_macros=defines,
                 )
             ],
-        cmd_class={"build_ext": build_ext},
+        cmdclass={"build_ext": build_ext},
         )
