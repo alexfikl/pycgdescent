@@ -1,4 +1,4 @@
-from _cg_descent import (   # noqa: F401
+from pycgdescent._cg_descent import (   # noqa: F401
         cg_stats,
         cg_iter_stats,
         cg_parameter,

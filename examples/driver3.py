@@ -72,7 +72,8 @@ def main(n=100):
     # {{{ different step size
 
     with timer():
-        _, stats, status = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        _, stats, status = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad,
+                callback=None, work=None)
 
     print()
     print("status:  ", status)

@@ -71,7 +71,8 @@ def main(n=100):
     print("==== with rho 1.5 ====")
     with timer():
         param.rho = 1.5
-        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad,
+                callback=None, work=None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
@@ -88,7 +89,8 @@ def main(n=100):
     print("==== with rho 5.0 ====")
     with timer():
         param.rho = 5.0
-        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad, None)
+        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad,
+                callback=None, work=None)
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)
