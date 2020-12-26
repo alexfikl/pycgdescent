@@ -11,7 +11,7 @@ if CG_DISABLE_BLAS:
     defines = [("CG_DISABLE_BLAS", None)]
 else:
     # FIXME: better way to find / choose blas library?
-    extra_link_args = ["-blas", "-lpthread"]
+    extra_link_args = ["-lblas", "-lpthread"]
     defines = []
 
 # }}}
