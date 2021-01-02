@@ -113,6 +113,9 @@ class OptimizeOptions(_cg.cg_parameter):
         ACM Transactions on Mathematical Software, Vol. 32, pp. 113--137, 2006,
         `DOI <http://dx.doi.org/10.1145/1132973.1132979>`__.
 
+    .. automethod:: replace
+    .. automethod:: pretty
+
     The attribute names here follow those of the original ``CG_DESCENT`` code.
 
     .. attribute:: PrintLevel
@@ -122,7 +125,7 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: LBFGS
 
         Boolean flag to handle use of LBFGS. If *False*, LBFGS is only used
-        when the :attr:`memory` is larger than the input size.
+        when the :attr:`memory` is larger than the input size :math:`n`.
 
     .. attribute:: memory
 
@@ -131,13 +134,12 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: SubCheck
     .. attribute:: SubSkip
 
-        Together with :attr:`SubCheck`, it controls the
-        frequency with which the subspace condition is checked. It is checked
-        at every ``SubCheck * memory`` iterations and, if not satisfied, then
-        it is skipped for ``SubSkip * memory`` iterations and
-        :attr:`SubSkip` is doubled. Whenver the subspace
-        condition is satisfied, :attr:`SubSkip` is returned
-        to the original value.
+        Together with :attr:`SubCheck`, it controls the frequency with which
+        the subspace condition is checked. It is checked at every
+        ``SubCheck * memory`` iterations and, if not satisfied, then
+        it is skipped for ``SubSkip * memory`` iterations and :attr:`SubSkip`
+        is doubled. Whenver the subspace condition is satisfied, :attr:`SubSkip`
+        is returned to the original value.
 
     .. attribute:: eta0
 
@@ -158,8 +160,10 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: AWolfe
     .. attribute:: AWolfeFac
 
-        If :attr:`AWolfe` is *True*, then it is used with the factor
-        :attr:`AWolfeFac` as :math:`|f_{k + 1} - f_k| < \omega C_k`.
+        If :attr:`AWolfe` is *True*, then the approximate Wolfe condition is
+        used when :math:`|f_{k + 1} - f_k| < \omega C_k`, for
+        :math:`\omega` = :attr:`AWolfeFac`. See discussion surrounding
+        Equation 25 in [HagerZhang2006]_.
 
     .. attribute:: Qdecay
 
@@ -169,12 +173,23 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: nslow
 
         Maximum number of "slow" iterations without strict improvement in
-        either function value or gradient.
+        either function values or gradient.
 
     .. attribute:: StopRule
 
-        If :math:`1`, a gradient-based stopping condition is used. If :math:`0`,
-        a function value-based stopping condition is used.
+        If *True*, a gradient-based stopping condition is used. Otherwise,
+        a function value-based stopping condition is used. They are
+
+        .. math::
+
+            \begin{aligned}
+            \|\mathbf{g}_k\|_\infty \le &
+                \max (\epsilon_g, \delta \|\mathbf{g}_0\|_\infty), \\
+            \|\mathbf{g}_k\|_\infty \le & \epsilon_g (1 + |f_k|),
+            \end{aligned}
+
+        where :math:`\epsilon_g` is the tolerance in :func:`minimize` and
+        :math:`\delta` = :attr:`StopFac`.
 
     .. attribute:: StopFac
 
@@ -182,8 +197,9 @@ class OptimizeOptions(_cg.cg_parameter):
 
     .. attribute:: PertRule
 
-        Estimate error in function values. If :math:`0`, use just :attr:`eps`
-        and if :math:`1` use :math:`\epsilon C_k`.
+        Estimate error in function values. If *False*, use just :attr:`eps`,
+        otherwise use :math:`\epsilon C_k`, where :math:`C_k` is defined in
+        Equation 26 in [HagerZhang2006]_.
 
     .. attribute:: eps
 
@@ -197,13 +213,20 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: QuadStep
 
         If *False*, do not use a quadratic interpolation step in the line
-        search. If *True*, attempt a step based on :attr:`QuadCutoff`.
+        search. If *True*, attempt a step based on
+        :math:`\epsilon = ` :attr:`QuadCutOff` when
 
-    .. attribute:: QuadCutoff
+        .. math::
+
+            \frac{|f_{k + 1} - f_k|}{|f_k|} > \epsilon.
+
+    .. attribute:: QuadCutOff
+
+        Factor used when :attr:`QuadStep` is *True*.
 
     .. attribute:: QuadSafe
 
-        Maximum factor by which a quad step can reduce the step size.
+        Maximum factor by which a quadratic step can reduce the step size.
 
     .. attribute:: UseCubic
 
@@ -211,15 +234,18 @@ class OptimizeOptions(_cg.cg_parameter):
 
     .. attribute:: CubicCutOff
 
+        Factor used in the cubic step same as :attr:`QuadCutOff`.
+
     .. attribute:: SmallCost
 
-        Tolerance for which the quadratic interpolation step can be skipped.
+        Tolerance for which the quadratic interpolation step can be skipped,
+        checks :math:`|f_k| < \epsilon |f_0|`.
 
     .. attribute:: debug
 
-        Boolean flag to control additional checks on the function values.
-        If *True*, checks that :math:`f_{k + 1} - f_k \le d C_k`, where
-        :math:`d = ` :attr:`debugtol`.
+        Flag to control checks for decreasing function values.
+        If *True*, checks that :math:`f_{k + 1} - f_k \le \delta C_k`, where
+        :math:`\delta` = :attr:`debugtol`.
 
     .. attribute:: debugtol
 
@@ -273,14 +299,74 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: nan_rho
 
         Growth factor :attr:`RhoGrow` is reset to this value after
-        encountering ``nan``\ s.
+        encountering ``nan``.
 
     .. attribute:: nan_decay
 
         Decay factor :attr:`Qdecay` is reset to this value after
-        encountering ``nan``\ s.
+        encountering ``nan``.
 
-    .. automethod:: replace
+    .. attribute:: rho
+
+        Growth factor in search for initial bracket interval.
+
+    Read-only parameters (for now)
+
+    .. attribute:: delta
+
+        Parameter for the Wolfe line search in :math:`[0, 0.5]`.
+
+    .. attribute:: sigma
+
+        Parameter for the Wolfe line search in :math:`[\delta, 1]`, where
+        :math:`\delta` = :attr:`delta`.
+
+    .. attribute:: gamma
+
+        Decay factor for bracket interval width in line search in :math:`(0, 1)`.
+
+    .. attribute:: psi0
+
+        Factor used in starting guess for the line search.
+
+    .. attribute:: psi_lo
+    .. attribute:: psi_hi
+    .. attribute:: psi2
+
+        In a quadratic step, the bracket interval is given by
+        :math:`[\psi_{lo}, \psi_{hi}] \times \psi_2 \times \alpha_{k - 1}`, where
+        :math:`\alpha_{k - 1}` is the previous step size.
+
+    .. attribute:: psi1
+
+        If the function is approximately quadratic, this is used to estimate
+        the initial step size by :math:`\psi_1 \psi_2 \alpha_{k - 1}`.
+
+    .. attribute:: AdaptiveBeta
+
+        If *True*, :math:`\theta` is chosen adaptively.
+
+    .. attribute:: BetaLower
+
+        Lower bound for :math:`\beta`.
+
+    .. attribute:: theta
+
+        Describes the family of ``CG_DESCENT`` methods, as described in
+        [HagerZhang2006]_.
+
+    .. attribute:: qeps
+
+        Parameter used in cost error estimation for the quadratic restart
+        criterion.
+
+    .. attribute:: qrestart
+
+        Number of iterations the function is nealy quadratic before a restart.
+
+    .. attribute:: qrule
+
+        Tolerance used to determine if the cost can be treated as quadratic.
     """
 
     def __init__(self, **kwargs):
@@ -298,7 +384,8 @@ class OptimizeOptions(_cg.cg_parameter):
         """Creates a new instance of the same type as *self*, replacing the
         fields with values from *changes*.
         """
-        # FIXME: this would benefit from a deep copy
+        # FIXME: this should just do a deep copy object instead of keeping track
+        # of the changes in all instances :(
         kwargs = self._changes.copy()
         kwargs.update(changes)
 
@@ -309,6 +396,9 @@ class OptimizeOptions(_cg.cg_parameter):
         return f"{type(self).__name__}<{attrs}>"
 
     def pretty(self):
+        """
+        :returns: a string representation of the options in a table.
+        """
         attrs = {k: getattr(self, k) for k in _getmembers(self)}
         return _stringify_dict(attrs)
 
