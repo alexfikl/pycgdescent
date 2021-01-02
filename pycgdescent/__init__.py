@@ -105,13 +105,18 @@ def _stringify_dict(d):
 class OptimizeOptions(_cg.cg_parameter):
     r"""Optimization options for the ``CG_DESCENT`` algorithm. A description
     of some of the more technical parameters can be found in the paper
-    [HagerZhang2006]_.
+    [HagerZhang2006]_ and [HagerZhang2013]_.
 
     .. [HagerZhang2006] W. W. Hager, H. Zhang,
         *Algorithm 851: CG_DESCENT, a Conjugate Gradient Method With Guaranteed
         Descent*,
         ACM Transactions on Mathematical Software, Vol. 32, pp. 113--137, 2006,
         `DOI <http://dx.doi.org/10.1145/1132973.1132979>`__.
+
+    .. [HagerZhang2013] W. W. Hager, H. Zhang,
+        *The Limited Memory Conjugate Gradient Method*,
+        SIAM Journal on Optimization, Vol. 23, pp. 2150--2168, 2013,
+        `DOI <http://dx.doi.org/10.1137/120898097>`__.
 
     .. automethod:: replace
     .. automethod:: pretty
@@ -145,12 +150,14 @@ class OptimizeOptions(_cg.cg_parameter):
 
         Controls relative distance from current gradient to the subspace.
         If the distance is ``<= eta0`` and the subspace dimension is
-        :attr:`memory`, then the subspace is entered.
+        :attr:`memory`, then the subspace is entered. This is used as
+        :math:`\eta_0^2` in Equation 3.4 from [HagerZhang2013]_.
 
     .. attribute:: eta1
 
         Controls relative distance from current gradient to the subspace.
-        If the distance is ``>= eta1``, the subspace is exited.
+        If the distance is ``>= eta1``, the subspace is exited. This is used
+        as :math:`\eta_1^2` in Equation 3.4 in [HagerZhang2013]_.
 
     .. attribute:: eta2
 
