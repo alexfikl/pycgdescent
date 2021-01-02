@@ -6,12 +6,18 @@ import pytest
 
 
 def test_optimize_options():
+    """Test options are immutable."""
     options = cg.OptimizeOptions()
 
     with pytest.raises(AttributeError):
         options.PrintLevel = 2
 
-    options2 = options.replace(PrintLevel=2)
+    options = options.replace(PrintLevel=2)
+    assert options.PrintLevel == 2
+
+    options2 = options.replace(step=1.0)
+    print(options2.pretty())
+    assert (options2.step - 1.0) < 1.0e-15
     assert options2.PrintLevel == 2
 
     print(options)
@@ -22,6 +28,8 @@ def test_optimize_options():
 
 
 def test_quadratic(tol=1.0e-8):
+    """Test optimization of a quadratic function with default options."""
+
     # {{{ setup
 
     # https://en.wikipedia.org/wiki/Conjugate_gradient_method#Numerical_example
@@ -73,12 +81,15 @@ def test_quadratic(tol=1.0e-8):
     # }}}
 
 
-def test_rosenbrock(tol=1.0e-8):
+def test_rosenbrock(a=100.0, b=1.0, tol=1.0e-8):
+    """Test optimization of the Rosenbrock function with default options."""
+
+    if a < 0.0 or b < 0.0:
+        raise ValueError("'a' and 'b' must be positive")
+
     # {{{ setup
 
     # https://en.wikipedia.org/wiki/Rosenbrock_function
-    a = 100.0
-    b = 1.0
     x0 = np.array([-2.0, 1.0])
     x_exact = np.array([1.0, 1.0])
 

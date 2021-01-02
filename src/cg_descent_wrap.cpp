@@ -43,13 +43,17 @@ namespace py = pybind11;
 class cg_parameter_wrapper
 {
 public:
-    cg_parameter_wrapper()
+    cg_parameter_wrapper(cg_parameter *p): obj(p) { }
+    cg_parameter_wrapper(): obj(new cg_parameter) { cg_default(obj); }
+    cg_parameter_wrapper(const cg_parameter_wrapper &w)
     {
         obj = new cg_parameter;
-        cg_default(obj);
+        memcpy(obj, w.obj, sizeof(cg_parameter));
     }
+
     ~cg_parameter_wrapper() { delete obj; };
     cg_parameter *data() { return obj; };
+
 
     CLASS_PROPERTY(PrintFinal, int)
     CLASS_PROPERTY(PrintLevel, int)

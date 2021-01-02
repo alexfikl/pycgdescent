@@ -287,7 +287,9 @@ class OptimizeOptions(_cg.cg_parameter):
         super().__init__()
 
         for k, v in kwargs.items():
-            super().__setattr__(k, v)
+            object.__setattr__(self, k, v)
+
+        object.__setattr__(self, "_changes", kwargs)
 
     def __setattr__(self, k, v):
         raise AttributeError(f"cannot assign to '{k}'")
@@ -296,7 +298,11 @@ class OptimizeOptions(_cg.cg_parameter):
         """Creates a new instance of the same type as *self*, replacing the
         fields with values from *changes*.
         """
-        return type(self)(**changes)
+        # FIXME: this would benefit from a deep copy
+        kwargs = self._changes.copy()
+        kwargs.update(changes)
+
+        return type(self)(**kwargs)
 
     def __repr__(self):
         attrs = {k: getattr(self, k) for k in _getmembers(self)}
@@ -502,9 +508,7 @@ def minimize(
         if isinstance(options, dict):
             param = OptimizeOptions(**options)
         elif isinstance(options, OptimizeOptions):
-            # cg_descent seems to modify the values inside, so better safe
-            # than sorry and just make a deep copy of the whole thing
-            param = options.replace()
+            param = options
         else:
             raise TypeError(f"unknown 'options' type: {type(options).__name__}")
 
