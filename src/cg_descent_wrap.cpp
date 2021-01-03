@@ -54,7 +54,6 @@ public:
     ~cg_parameter_wrapper() { delete obj; };
     cg_parameter *data() { return obj; };
 
-
     CLASS_PROPERTY(PrintFinal, int)
     CLASS_PROPERTY(PrintLevel, int)
     CLASS_PROPERTY(PrintParms, int)
@@ -96,22 +95,21 @@ public:
     CLASS_PROPERTY(nan_rho, double)
     CLASS_PROPERTY(nan_decay, double)
 
+    CLASS_PROPERTY(delta, double)
+    CLASS_PROPERTY(sigma, double)
+    CLASS_PROPERTY(gamma, double)
     CLASS_PROPERTY(rho, double)
-
-    CLASS_RO_PROPERTY(delta, double)
-    CLASS_RO_PROPERTY(sigma, double)
-    CLASS_RO_PROPERTY(gamma, double)
-    CLASS_RO_PROPERTY(psi0, double)
-    CLASS_RO_PROPERTY(psi_lo, double)
-    CLASS_RO_PROPERTY(psi_hi, double)
-    CLASS_RO_PROPERTY(psi1, double)
-    CLASS_RO_PROPERTY(psi2, double)
-    CLASS_RO_PROPERTY(AdaptiveBeta, int)
-    CLASS_RO_PROPERTY(BetaLower, double)
-    CLASS_RO_PROPERTY(theta, double)
-    CLASS_RO_PROPERTY(qeps, double)
-    CLASS_RO_PROPERTY(qrule, double)
-    CLASS_RO_PROPERTY(qrestart, int)
+    CLASS_PROPERTY(psi0, double)
+    CLASS_PROPERTY(psi_lo, double)
+    CLASS_PROPERTY(psi_hi, double)
+    CLASS_PROPERTY(psi1, double)
+    CLASS_PROPERTY(psi2, double)
+    CLASS_PROPERTY(AdaptiveBeta, int)
+    CLASS_PROPERTY(BetaLower, double)
+    CLASS_PROPERTY(theta, double)
+    CLASS_PROPERTY(qeps, double)
+    CLASS_PROPERTY(qrule, double)
+    CLASS_PROPERTY(qrestart, int)
 
     cg_parameter *obj;
 };
@@ -337,25 +335,23 @@ PYBIND11_MODULE(_cg_descent, m)
             .DEF_PROPERTY(feps)
             .DEF_PROPERTY(nan_rho)
             .DEF_PROPERTY(nan_decay)
-            // NOTE: these are not recommended to play with, but are used
-            // in some of the low level examples, so they're readwrite
+            // NOTE: these are not recommended to be play with, but we're making
+            // them readwrite anyway for "power users"
             .DEF_PROPERTY(rho)
-            // NOTE: these are not recommended to be play with, so keep them
-            // read-only for now
-            .DEF_RO_PROPERTY(delta)
-            .DEF_RO_PROPERTY(sigma)
-            .DEF_RO_PROPERTY(gamma)
-            .DEF_RO_PROPERTY(psi0)
-            .DEF_RO_PROPERTY(psi_lo)
-            .DEF_RO_PROPERTY(psi_hi)
-            .DEF_RO_PROPERTY(psi1)
-            .DEF_RO_PROPERTY(psi2)
-            .DEF_RO_PROPERTY(AdaptiveBeta)
-            .DEF_RO_PROPERTY(BetaLower)
-            .DEF_RO_PROPERTY(theta)
-            .DEF_RO_PROPERTY(qeps)
-            .DEF_RO_PROPERTY(qrule)
-            .DEF_RO_PROPERTY(qrestart)
+            .DEF_PROPERTY(delta)
+            .DEF_PROPERTY(sigma)
+            .DEF_PROPERTY(gamma)
+            .DEF_PROPERTY(psi0)
+            .DEF_PROPERTY(psi_lo)
+            .DEF_PROPERTY(psi_hi)
+            .DEF_PROPERTY(psi1)
+            .DEF_PROPERTY(psi2)
+            .DEF_PROPERTY(AdaptiveBeta)
+            .DEF_PROPERTY(BetaLower)
+            .DEF_PROPERTY(theta)
+            .DEF_PROPERTY(qeps)
+            .DEF_PROPERTY(qrule)
+            .DEF_PROPERTY(qrestart)
         ;
     }
 

@@ -313,11 +313,9 @@ class OptimizeOptions(_cg.cg_parameter):
         Decay factor :attr:`Qdecay` is reset to this value after
         encountering ``nan``.
 
-    .. attribute:: rho
-
-        Growth factor in search for initial bracket interval.
-
-    Read-only parameters (for now)
+    The following parameters are meant mostly for internal use. They are
+    optimized or chosen specifically following results from [HagerZhang2013]_,
+    so should only be modified with knowledge.
 
     .. attribute:: delta
 
@@ -331,6 +329,10 @@ class OptimizeOptions(_cg.cg_parameter):
     .. attribute:: gamma
 
         Decay factor for bracket interval width in line search in :math:`(0, 1)`.
+
+    .. attribute:: rho
+
+        Growth factor in search for initial bracket interval.
 
     .. attribute:: psi0
 
