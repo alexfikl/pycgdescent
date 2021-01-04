@@ -1,15 +1,15 @@
-From c6baa2835219e7664df159f210daa53dbbf61188 Mon Sep 17 00:00:00 2001
+From e3afec8fddec892361c834177833cd0e37fca054 Mon Sep 17 00:00:00 2001
 From: Alexandru Fikl <alexfikl@gmail.com>
 Date: Mon, 4 Jan 2021 15:15:42 -0600
 Subject: [PATCH] add step size limit
 
 ---
- cg_descent.c | 10 ++++++++--
+ cg_descent.c | 32 +++++++++++++++++++++++++++++---
  cg_user.h    |  3 +++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ 2 files changed, 32 insertions(+), 3 deletions(-)
 
 diff --git a/cg_descent.c b/cg_descent.c
-index b76105d..c61d56b 100644
+index b76105d..21d43c4 100644
 --- a/cg_descent.c
 +++ b/cg_descent.c
 @@ -344,6 +344,7 @@ int cg_descent /*  return status of solution process:
@@ -20,25 +20,82 @@ index b76105d..c61d56b 100644
      Com.df0 = -2.0*fabs(f)/alpha ;
  
      if (callback != NULL)
-@@ -461,7 +462,7 @@ int cg_descent /*  return status of solution process:
-         Com.wolfe_hi = Parm->delta*dphi0 ;
-         Com.wolfe_lo = Parm->sigma*dphi0 ;
-         Com.awolfe_hi = delta2*dphi0 ;
--        Com.alpha = alpha ;
-+        Com.alpha = MIN(alpha, Parm->max_step) ;
- 
-         /* perform line search */
-         status = cg_line (&Com) ;
-@@ -480,7 +481,7 @@ int cg_descent /*  return status of solution process:
-             }
+@@ -371,7 +372,7 @@ int cg_descent /*  return status of solution process:
+         /* save old alpha to simplify formula computing subspace direction */
+         alphaold = alpha ;
+         Com.QuadOK = FALSE ;
+-        alpha = Parm->psi2*alpha ;
++        alpha = MIN (Parm->psi2*alpha, Parm->max_step) ;
+         if ( f != ZERO ) t = fabs ((f-Com.f0)/f) ;
+         else             t = ONE ;
+         Com.UseCubic = TRUE ;
+@@ -383,7 +384,7 @@ int cg_descent /*  return status of solution process:
+             {
+                 if ( QuadF )
+                 {
+-                    Com.alpha = Parm->psi1*alpha ;
++                    Com.alpha = MIN(Parm->psi1*alpha, Parm->max_step) ;
+                     status = cg_evaluate ("g", "y", &Com) ;
+                     if ( status ) goto Exit ;
+                     if ( Com.df > dphi0 )
+@@ -413,7 +414,7 @@ int cg_descent /*  return status of solution process:
+                 else
+                 {
+                     t = MAX (Parm->psi_lo, Com.df0/(dphi0*Parm->psi2)) ;
+-                    Com.alpha = MIN (t, Parm->psi_hi)*alpha ;
++                    Com.alpha = MIN (MIN (t, Parm->psi_hi)*alpha, Parm->max_step) ;
+                     status = cg_evaluate ("f", "y", &Com) ;
+                     if ( status ) goto Exit ;
+                     ftemp = Com.f ;
+@@ -428,6 +429,8 @@ int cg_descent /*  return status of solution process:
+                         Com.QuadOK = TRUE ;
+                     }
+                 }
++
++                alpha = MIN(alpha, Parm->max_step);
+                 if ( PrintLevel >= 1 )
+                 {
+                     if ( denom <= ZERO )
+@@ -1836,6 +1839,8 @@ PRIVATE int cg_line
+             if ( Com->neps > Parm->neps ) return (6) ;
          }
  
--        alpha = Com.alpha ;
-+        alpha = MIN(Com.alpha, Parm->max_step) ;
-         f = Com.f ;
-         dphi = Com.df ;
++        if (a > Parm->max_step) goto Line;
++
+         /* expansion phase */
+         ngrow++ ;
+         if ( ngrow > Parm->ntries ) return (3) ;
+@@ -1896,6 +1901,14 @@ PRIVATE int cg_line
  
-@@ -3920,6 +3921,9 @@ void cg_default
+     /* we now have fa <= fpert, da >= 0, db <= 0 */
+ Line:
++    if (a > Parm->max_step)
++    {
++        Com->alpha = Parm->max_step ;
++        status = cg_evaluate ("fg", "n", Com) ;
++        if ( status ) return (status) ;
++        return (0) ;
++    }
++
+     toggle = 0 ;
+     width = b - a ;
+     qb0 = FALSE ;
+@@ -1991,6 +2004,14 @@ Line:
+             Com->QuadOK = FALSE ;
+         }
+ 
++        if (alpha > Parm->max_step)
++        {
++            Com->alpha = Parm->max_step ;
++            status = cg_evaluate ("fg", "n", Com) ;
++            if ( status ) return (status) ;
++            return (0) ;
++        }
++
+         if ( (alpha <= a) || (alpha >= b) )
+         {
+             alpha = .5*(a+b) ;
+@@ -3920,6 +3941,9 @@ void cg_default
      /* if step is nonzero, it is the initial step of the initial line search */
      Parm->step = ZERO ;
  
@@ -48,7 +105,7 @@ index b76105d..c61d56b 100644
      /* abort cg after maxit iterations */
      Parm->maxit = INT_INF ;
  
-@@ -4075,6 +4079,8 @@ PRIVATE void cg_printParms
+@@ -4075,6 +4099,8 @@ PRIVATE void cg_printParms
               Parm->psi0) ;
      printf ("starting step in first iteration if nonzero ...... step: %e\n",
               Parm->step) ;

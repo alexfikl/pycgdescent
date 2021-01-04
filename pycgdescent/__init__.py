@@ -260,6 +260,11 @@ class OptimizeOptions(_cg.cg_parameter):
 
         Initial step used in the initial line search.
 
+    .. attribute:: max_step
+
+        Maximum step size used in the descent. This is a very crude choice,
+        as it mostly sidesteps the line search if large values are encountered.
+
     .. attribute:: maxit
 
         Maximum number of iterations.
