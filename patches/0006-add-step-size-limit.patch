@@ -1,0 +1,76 @@
+From c6baa2835219e7664df159f210daa53dbbf61188 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Mon, 4 Jan 2021 15:15:42 -0600
+Subject: [PATCH] add step size limit
+
+---
+ cg_descent.c | 10 ++++++++--
+ cg_user.h    |  3 +++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index b76105d..c61d56b 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -344,6 +344,7 @@ int cg_descent /*  return status of solution process:
+         else    alpha = Parm->psi0*xnorm/gnorm ;
+     }
+ 
++    alpha = MIN(alpha, Parm->max_step);
+     Com.df0 = -2.0*fabs(f)/alpha ;
+ 
+     if (callback != NULL)
+@@ -461,7 +462,7 @@ int cg_descent /*  return status of solution process:
+         Com.wolfe_hi = Parm->delta*dphi0 ;
+         Com.wolfe_lo = Parm->sigma*dphi0 ;
+         Com.awolfe_hi = delta2*dphi0 ;
+-        Com.alpha = alpha ;
++        Com.alpha = MIN(alpha, Parm->max_step) ;
+ 
+         /* perform line search */
+         status = cg_line (&Com) ;
+@@ -480,7 +481,7 @@ int cg_descent /*  return status of solution process:
+             }
+         }
+ 
+-        alpha = Com.alpha ;
++        alpha = MIN(Com.alpha, Parm->max_step) ;
+         f = Com.f ;
+         dphi = Com.df ;
+ 
+@@ -3920,6 +3921,9 @@ void cg_default
+     /* if step is nonzero, it is the initial step of the initial line search */
+     Parm->step = ZERO ;
+ 
++    /* if non-zero, it is a maximum allowed step size for all iterations */
++    Parm->max_step = INF ;
++
+     /* abort cg after maxit iterations */
+     Parm->maxit = INT_INF ;
+ 
+@@ -4075,6 +4079,8 @@ PRIVATE void cg_printParms
+              Parm->psi0) ;
+     printf ("starting step in first iteration if nonzero ...... step: %e\n",
+              Parm->step) ;
++    printf ("maximum step for all iterations .............. max_step: %e\n",
++             Parm->max_step) ;
+     printf ("lower bound factor in quad step ................ psi_lo: %e\n",
+              Parm->psi_lo) ;
+     printf ("upper bound factor in quad step ................ psi_hi: %e\n",
+diff --git a/cg_user.h b/cg_user.h
+index 07f25ba..5ac053b 100644
+--- a/cg_user.h
++++ b/cg_user.h
+@@ -129,6 +129,9 @@ typedef struct cg_parameter_struct /* user controlled parameters */
+     /* if step is nonzero, it is the initial step of the initial line search */
+     double step ;
+ 
++    /* if non-zero, it is a maximum allowed step size for all iterations */
++    double max_step ;
++
+     /* abort cg after maxit iterations */
+     INT maxit ;
+ 
+-- 
+2.30.0
+

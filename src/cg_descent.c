@@ -344,6 +344,7 @@ int cg_descent /*  return status of solution process:
         else    alpha = Parm->psi0*xnorm/gnorm ;
     }
 
+    alpha = MIN(alpha, Parm->max_step);
     Com.df0 = -2.0*fabs(f)/alpha ;
 
     if (callback != NULL)
@@ -461,7 +462,7 @@ int cg_descent /*  return status of solution process:
         Com.wolfe_hi = Parm->delta*dphi0 ;
         Com.wolfe_lo = Parm->sigma*dphi0 ;
         Com.awolfe_hi = delta2*dphi0 ;
-        Com.alpha = alpha ;
+        Com.alpha = MIN(alpha, Parm->max_step) ;
 
         /* perform line search */
         status = cg_line (&Com) ;
@@ -480,7 +481,7 @@ int cg_descent /*  return status of solution process:
             }
         }
 
-        alpha = Com.alpha ;
+        alpha = MIN(Com.alpha, Parm->max_step) ;
         f = Com.f ;
         dphi = Com.df ;
 
@@ -3919,6 +3920,9 @@ void cg_default
     /* if step is nonzero, it is the initial step of the initial line search */
     Parm->step = ZERO ;
 
+    /* if non-zero, it is a maximum allowed step size for all iterations */
+    Parm->max_step = INF ;
+
     /* abort cg after maxit iterations */
     Parm->maxit = INT_INF ;
 
@@ -4074,6 +4078,8 @@ PRIVATE void cg_printParms
              Parm->psi0) ;
     printf ("starting step in first iteration if nonzero ...... step: %e\n",
              Parm->step) ;
+    printf ("maximum step for all iterations .............. max_step: %e\n",
+             Parm->max_step) ;
     printf ("lower bound factor in quad step ................ psi_lo: %e\n",
              Parm->psi_lo) ;
     printf ("upper bound factor in quad step ................ psi_hi: %e\n",

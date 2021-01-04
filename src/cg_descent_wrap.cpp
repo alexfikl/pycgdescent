@@ -335,7 +335,7 @@ PYBIND11_MODULE(_cg_descent, m)
             .DEF_PROPERTY(feps)
             .DEF_PROPERTY(nan_rho)
             .DEF_PROPERTY(nan_decay)
-            // NOTE: these are not recommended to be play with, but we're making
+            // NOTE: these are not recommended to be played with, but we're making
             // them readwrite anyway for "power users"
             .DEF_PROPERTY(rho)
             .DEF_PROPERTY(delta)
