@@ -406,14 +406,14 @@ class OptimizeOptions(_cg.cg_parameter):
         return type(self)(**kwargs)
 
     def __repr__(self):
-        attrs = {k: getattr(self, k) for k in _getmembers(self)}
+        attrs = {k: getattr(self, k) for k in _getmembers(self) if k != "_changes"}
         return f"{type(self).__name__}<{attrs}>"
 
     def pretty(self):
         """
         :returns: a string representation of the options in a table.
         """
-        attrs = {k: getattr(self, k) for k in _getmembers(self)}
+        attrs = {k: getattr(self, k) for k in _getmembers(self) if k != "_changes"}
         return _stringify_dict(attrs)
 
 # }}}
