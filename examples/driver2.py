@@ -35,7 +35,7 @@ import time
 from contextlib import contextmanager
 
 import numpy as np
-import pycgdescent._private as _cg
+import pycgdescent._cg_descent as _cg
 
 
 @contextmanager

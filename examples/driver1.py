@@ -15,7 +15,7 @@ import time
 from contextlib import contextmanager
 
 import numpy as np
-import pycgdescent._private as _cg
+import pycgdescent._cg_descent as _cg
 
 
 @contextmanager
@@ -74,9 +74,10 @@ def main(n=100):
 
     assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15
 
+    from pycgdescent import STATUS_TO_MESSAGE
     print()
     print("status:  ", status)
-    print("message: ", _cg.STATUS_TO_MESSAGE[status])
+    print("message: ", STATUS_TO_MESSAGE[status])
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)

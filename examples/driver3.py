@@ -29,7 +29,7 @@ import time
 from contextlib import contextmanager
 
 import numpy as np
-import pycgdescent._private as _cg
+import pycgdescent._cg_descent as _cg
 
 
 @contextmanager
@@ -75,9 +75,10 @@ def main(n=100):
         _, stats, status = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad,
                 callback=None, work=None)
 
+    from pycgdescent import STATUS_TO_MESSAGE
     print()
     print("status:  ", status)
-    print("message: ", _cg.STATUS_TO_MESSAGE[status])
+    print("message: ", STATUS_TO_MESSAGE[status])
 
     print()
     print("maximum norm for gradient: %+.16e" % stats.gnorm)

@@ -17,22 +17,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-# required for sphinx typehints
-import numpy
-import numpy as np          # pylint: disable=reimported
+import numpy as np
 
-import pycgdescent._private as _cg
+import pycgdescent._cg_descent as _cg
 
 
 try:
     # python >=3.8 only
     from importlib import metadata
 except ImportError:
-    import importlib_metadata as metadata
+    # https://github.com/python/mypy/issues/1153
+    import importlib_metadata as metadata       # type: ignore
 
-__version__ = metadata.version("pycgdescent")
+__version__ = metadata.version("pycgdescent")   # type: ignore
 
 __doc__ = """
 Functions
@@ -81,7 +80,7 @@ Type Aliases
 
 # {{{ options
 
-def _getmembers(obj):
+def _getmembers(obj: object) -> List[str]:
     import inspect
     return [
             m for m in obj.__dir__()
@@ -89,16 +88,16 @@ def _getmembers(obj):
             ]
 
 
-def _stringify_dict(d):
+def _stringify_dict(d: Dict[str, Any]) -> str:
     width = len(max(d, key=len))
     fmt = f"%{width}s : %s"
 
-    d = sorted({
+    items = sorted({
             k: repr(v) for k, v in d.items()
             }.items())
 
     return "\n".join([
-        "\t%s" % "\n\t".join(fmt % (k, v) for k, v in d),
+        "\t%s" % "\n\t".join(fmt % (k, v) for k, v in items),
         ])
 
 
@@ -383,7 +382,9 @@ class OptimizeOptions(_cg.cg_parameter):
         Tolerance used to determine if the cost can be treated as quadratic.
     """
 
-    def __init__(self, **kwargs):
+    _changes: Dict[str, Any] = {}
+
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__()
 
         for k, v in kwargs.items():
@@ -391,10 +392,10 @@ class OptimizeOptions(_cg.cg_parameter):
 
         object.__setattr__(self, "_changes", kwargs)
 
-    def __setattr__(self, k, v):
+    def __setattr__(self, k: str, v: Any) -> None:
         raise AttributeError(f"cannot assign to '{k}'")
 
-    def replace(self, **changes):
+    def replace(self, **changes: Any) -> "OptimizeOptions":
         """Creates a new instance of the same type as *self*, replacing the
         fields with values from *changes*.
         """
@@ -405,11 +406,11 @@ class OptimizeOptions(_cg.cg_parameter):
 
         return type(self)(**kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         attrs = {k: getattr(self, k) for k in _getmembers(self) if k != "_changes"}
         return f"{type(self).__name__}<{attrs}>"
 
-    def pretty(self):
+    def pretty(self) -> str:
         """
         :returns: a string representation of the options in a table.
         """
@@ -448,16 +449,16 @@ class CallbackInfo:
     g: np.ndarray
     d: np.ndarray
 
-    @classmethod
-    def from_stats(cls, stats):
-        return cls(
-                it=stats.iter,
-                alpha=stats.alpha,
-                x=stats.x,
-                f=stats.f,
-                g=stats.g,
-                d=stats.d,
-                )
+
+def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
+    return CallbackInfo(
+            it=stats.iter,
+            alpha=stats.alpha,
+            x=stats.x,
+            f=stats.f,
+            g=stats.g,
+            d=stats.d,
+            )
 
 # }}}
 
@@ -520,17 +521,41 @@ class OptimizeResult:
     nsubspaceit: int = field(repr=False)
     nsubspaces: int = field(repr=False)
 
-    def pretty(self):
+    def pretty(self) -> str:
         return _stringify_dict(self.__dict__)
+
+# }}}
+
+
+# {{{ status messages
+
+# NOTE: these are similar to results with PrintFinal == True
+STATUS_TO_MESSAGE = {
+    0: "Convergence tolerance for gradient satisfied",
+    1: "Change in function value smaller than tolerance: lower 'feps'?",
+    2: "Maximum number of iterations limit exceeded",
+    3: "Slope is always negative in line search: error in provided functions?",
+    4: "Maximum number of line search iterations exceeded: increase 'tol'?",
+    5: "Search direction is not a descent direction",
+    6: ("Excessive updating of estimated error in function values: "
+        "increase 'neps'? increase 'tol'?"),
+    7: "Wolfe conditions are never satisfied: increase 'eps'?",
+    8: "Function values are not improving (with 'debug')",
+    9: "No cost or gradient improvement: increase 'nslow'?",
+    10: "Out of memory",
+    11: "Function value NaN or Inf and cannot be repaired",
+    12: "Invalid choice of 'memory' parameter",
+    13: "Stopped by user callback",
+}
 
 # }}}
 
 
 # {{{ minimize
 
-FunType = Callable[[numpy.ndarray], float]
-GradType = Callable[[numpy.ndarray, numpy.ndarray], None]
-FunGradType = Callable[[numpy.ndarray, numpy.ndarray], float]
+FunType = Callable[[np.ndarray], float]
+GradType = Callable[[np.ndarray, np.ndarray], None]
+FunGradType = Callable[[np.ndarray, np.ndarray], float]
 CallbackType = Callable[[CallbackInfo], int]
 
 
@@ -543,7 +568,7 @@ def min_work_size(
     :param options:
     :param n: input size.
     """
-    m = min(options.memory, n)
+    m = min(int(options.memory), n)
 
     if options.memory == 0:
         # original CG_DESCENT without memory
@@ -560,7 +585,7 @@ def min_work_size(
 def allocate_work_for(
         options: OptimizeOptions,
         n: int,
-        dtype: numpy.dtype = np.float64) -> numpy.ndarray:
+        dtype: Any = np.float64) -> np.ndarray:
     """
     Allocate a *work* array of a recommended size.
 
@@ -572,13 +597,13 @@ def allocate_work_for(
 
 def minimize(
         fun: "FunType",
-        x0: numpy.ndarray, *,
+        x0: np.ndarray, *,
         jac: "GradType",
         funjac: Optional["FunGradType"] = None,
-        tol: float = None,
-        options: Optional[Union[OptimizeOptions, dict]] = None,
+        tol: Optional[float] = None,
+        options: Optional[Union[OptimizeOptions, Dict[str, Any]]] = None,
         callback: Optional["CallbackType"] = None,
-        work: Optional[numpy.ndarray] = None,
+        work: Optional[np.ndarray] = None,
         args: Tuple[Any, ...] = ()) -> OptimizeResult:
     """
     :param fun: a :class:`~collections.abc.Callable` that returns the
@@ -607,7 +632,6 @@ def minimize(
     if tol is None:
         tol = 1.0e-8
 
-    param = None
     if options is not None:
         if isinstance(options, dict):
             param = OptimizeOptions(**options)
@@ -615,17 +639,19 @@ def minimize(
             param = options
         else:
             raise TypeError(f"unknown 'options' type: {type(options).__name__}")
+    else:
+        param = OptimizeOptions()
 
     if work is not None:
         m = min_work_size(param, x0.size)
         if work.size >= m:
             raise ValueError(f"'work' must have size >= {m}")
 
-    if callback is None:
-        wrapped_callback = None
-    else:
-        def wrapped_callback(s):
-            return callback(CallbackInfo.from_stats(s))
+    wrapped_callback: Optional[Callable[[Any], int]] = None
+    if callback is not None:
+        # pylint: disable=function-redefined
+        def wrapped_callback(s: _cg.cg_iter_stats) -> int:
+            return callback(_info_from_stats(s))    # type: ignore
 
     # }}}
 
@@ -645,7 +671,7 @@ def minimize(
             x=x,
             success=status == 0,
             status=status,
-            message=_cg.STATUS_TO_MESSAGE[status],
+            message=STATUS_TO_MESSAGE[status],
             fun=stats.f,
             jac=stats.gnorm,
             nfev=stats.nfunc,
