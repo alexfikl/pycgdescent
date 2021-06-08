@@ -21,41 +21,42 @@ The code has to do a number of expansions to reach a suitable
 interval bracketing the minimizer in the initial search direction.
 """
 
-import time
 from contextlib import contextmanager
+from functools import partial
+from typing import Iterator
 
 import numpy as np
 import pycgdescent._cg_descent as _cg
 
 
 @contextmanager
-def timer():
+def timer() -> Iterator[None]:
+    import time
     t_start = time.time()
     yield
     t_end = time.time()
     print("elapsed: ", t_end - t_start)
 
 
-def fn(x):
-    f = np.sum(np.exp(x) - t * x)
+def fn(x: np.ndarray, t: float = 1.0) -> float:
+    f: float = np.sum(np.exp(x) - t * x)
     return f
 
 
-def grad(g, x):
+def grad(g: np.ndarray, x: np.ndarray, t: float = 1.0) -> None:
     g[...] = np.exp(x) - t
 
 
-def fngrad(g, x):
-    y = np.exp(x)
-    f = np.sum(y - t * x)
+def fngrad(g: np.ndarray, x: np.ndarray, t: float = 1.0) -> float:
+    y: np.ndarray = np.exp(x)
+    f: float = np.sum(y - t * x)
     g[...] = y - t
     return f
 
 
-def main(n=100):
+def main(n: int = 100) -> None:
     # {{{ parameters
 
-    global t
     x0 = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
@@ -71,7 +72,8 @@ def main(n=100):
     print("==== with rho 1.5 ====")
     with timer():
         param.rho = 1.5
-        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad,
+        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
+                partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
 
     print()
@@ -89,7 +91,8 @@ def main(n=100):
     print("==== with rho 5.0 ====")
     with timer():
         param.rho = 5.0
-        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param, fn, grad, fngrad,
+        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
+                partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
 
     print()
@@ -103,7 +106,6 @@ def main(n=100):
 
 
 if __name__ == "__main__":
-    t = None
     main()
 
 # vim: fdm=marker

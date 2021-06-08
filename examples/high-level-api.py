@@ -5,6 +5,8 @@ Uses the classic Rosenbrock function as an example.
 """
 
 # START_ROSENROCK_EXAMPLE
+from typing import Any
+
 import numpy as np
 import numpy.linalg as la
 import pycgdescent as cg
@@ -21,7 +23,7 @@ class CallbackCache:
     f: List[float] = field(default_factory=list)
     g: List[float] = field(default_factory=list)
 
-    def __call__(self, info):
+    def __call__(self, info: cg.CallbackInfo) -> int:
         self.alpha.append(info.alpha)
         self.x.append(info.x.copy())
         self.f.append(info.f)
@@ -30,16 +32,21 @@ class CallbackCache:
         return 1
 
 
-def fun(x, a=100.0, b=1.0):
-    return a * (x[1] - x[0]**2)**2 + b * (x[0] - 1.0)**2
+def fun(x: np.ndarray, a: float = 100.0, b: float = 1.0) -> float:
+    x0: float = x[0]
+    x1: float = x[1]
+    return a * (x1 - x0**2)**2 + b * (x0 - 1.0)**2
 
 
-def jac(g, x, a=100.0, b=1.0):
+def jac(g: np.ndarray, x: np.ndarray, a: float = 100.0, b: float = 1.0) -> None:
     g[0] = -4.0 * a * x[0] * (x[1] - x[0]**2) + 2.0 * b * (x[0] - 1.0)
     g[1] = 2.0 * a * (x[1] - x[0]**2)
 
 
-def main(a=100.0, b=1.0, tol=1.0e-8, visualize=False):
+def main(
+        a: float = 100.0, b: float = 1.0,
+        tol: float = 1.0e-8,
+        visualize: bool = False) -> None:
     callback = CallbackCache()
     x0 = np.array([-3.5, -4.0])
 
@@ -59,7 +66,7 @@ def main(a=100.0, b=1.0, tol=1.0e-8, visualize=False):
 # END_ROSENBROCK_EXAMPLE
 
 
-def savefig(fig, suffix):
+def savefig(fig: Any, suffix: str) -> None:
     import os
     filename = os.path.join(os.path.dirname(__file__), f"rosenbrock_{suffix}")
 
@@ -69,7 +76,9 @@ def savefig(fig, suffix):
     fig.clf()
 
 
-def plot_rosenbrock_solution(r, cache, a=100.0, b=1.0):
+def plot_rosenbrock_solution(
+        r: cg.OptimizeResult, cache: CallbackCache,
+        a: float = 100.0, b: float = 1.0) -> None:
     x = np.array(cache.x).T
     alpha = np.array(cache.alpha)
     f = np.array(cache.f)

@@ -3,7 +3,7 @@ PYTHON?=python
 all: flake8 pylint mypy
 
 flake8:
-	$(PYTHON) -m flake8 pycgdescent examples tests docs
+	$(PYTHON) -m flake8 pycgdescent examples tests docs setup.py
 	@echo -e "\e[1;32mflake8 clean!\e[0m"
 
 pylint:
@@ -11,7 +11,7 @@ pylint:
 	@echo -e "\e[1;32mpylint clean!\e[0m"
 
 mypy:
-	$(PYTHON) -m mypy --strict pycgdescent
+	$(PYTHON) -m mypy --strict pycgdescent tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 
 tags:
