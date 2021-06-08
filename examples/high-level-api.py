@@ -5,15 +5,13 @@ Uses the classic Rosenbrock function as an example.
 """
 
 # START_ROSENROCK_EXAMPLE
-from typing import Any
+from dataclasses import dataclass, field
+from functools import partial
+from typing import Any, List
 
 import numpy as np
 import numpy.linalg as la
 import pycgdescent as cg
-
-from functools import partial
-from dataclasses import dataclass, field
-from typing import List
 
 
 @dataclass(frozen=True)
