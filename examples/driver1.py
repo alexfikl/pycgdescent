@@ -16,6 +16,7 @@ from functools import partial
 from typing import Iterator
 
 import numpy as np
+import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
 
@@ -28,17 +29,17 @@ def timer() -> Iterator[None]:
     print("elapsed: ", t_end - t_start)
 
 
-def fn(x: _cg.ArrayType, t: float = 1.0) -> float:
+def fn(x: cg.ArrayType, t: float = 1.0) -> float:
     f: float = np.sum(np.exp(x) - t * x)
     return f
 
 
-def grad(g: _cg.ArrayType, x: _cg.ArrayType, t: float = 1.0) -> None:
+def grad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> None:
     g[...] = np.exp(x) - t
 
 
-def fngrad(g: _cg.ArrayType, x: _cg.ArrayType, t: float = 1.0) -> float:
-    y: _cg.ArrayType = np.exp(x)
+def fngrad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> float:
+    y: cg.ArrayType = np.exp(x)
     f: float = np.sum(y - t * x)
     g[...] = y - t
     return f
@@ -74,6 +75,8 @@ def main(n: int = 100) -> None:
                 callback=None, work=None)
 
     # }}}
+
+    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15   # type: ignore
 
     from pycgdescent import STATUS_TO_MESSAGE
     print()
