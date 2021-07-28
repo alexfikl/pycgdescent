@@ -17,7 +17,7 @@ import pycgdescent as cg
 @dataclass(frozen=True)
 class CallbackCache:
     alpha: List[float] = field(default_factory=list)
-    x: List[np.ndarray] = field(default_factory=list)
+    x: List[cg.ArrayType] = field(default_factory=list)
     f: List[float] = field(default_factory=list)
     g: List[float] = field(default_factory=list)
 
@@ -25,18 +25,18 @@ class CallbackCache:
         self.alpha.append(info.alpha)
         self.x.append(info.x.copy())
         self.f.append(info.f)
-        self.g.append(la.norm(info.g, np.inf))
+        self.g.append(la.norm(info.g, np.inf))  # type: ignore[no-untyped-call]
 
         return 1
 
 
-def fun(x: np.ndarray, a: float = 100.0, b: float = 1.0) -> float:
+def fun(x: cg.ArrayType, a: float = 100.0, b: float = 1.0) -> float:
     x0: float = x[0]
     x1: float = x[1]
     return a * (x1 - x0**2)**2 + b * (x0 - 1.0)**2
 
 
-def jac(g: np.ndarray, x: np.ndarray, a: float = 100.0, b: float = 1.0) -> None:
+def jac(g: cg.ArrayType, x: cg.ArrayType, a: float = 100.0, b: float = 1.0) -> None:
     g[0] = -4.0 * a * x[0] * (x[1] - x[0]**2) + 2.0 * b * (x[0] - 1.0)
     g[1] = 2.0 * a * (x[1] - x[0]**2)
 
@@ -115,7 +115,7 @@ def plot_rosenbrock_solution(
     # {{{
 
     x1d = np.linspace(-4.0, 4.0, 128)
-    xy = np.stack(np.meshgrid(x1d, x1d))
+    xy = np.stack(np.meshgrid(x1d, x1d))    # type: ignore[no-untyped-call]
     z = fun(xy, a=a, b=b)
 
     ax = fig.gca()

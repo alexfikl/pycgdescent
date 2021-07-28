@@ -1,20 +1,25 @@
-from typing import Callable, Optional, Tuple
+from typing import Any, Callable, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np
+
+if TYPE_CHECKING:
+    ArrayType = np.ndarray[Any, np.dtype[np.float64]]
+else:
+    ArrayType = np.ndarray
 
 
 def cg_default(arg0: object) -> None: ...
 
 
 def cg_descent(
-        x: np.ndarray,
+        x: ArrayType,
         grad_tol: float,
         param: Optional["cg_parameter"],
-        value: Callable[[np.ndarray], float],
-        grad: Callable[[np.ndarray, np.ndarray], None],
-        valgrad: Optional[Callable[[np.ndarray, np.ndarray], float]],
+        value: Callable[[ArrayType], float],
+        grad: Callable[[ArrayType, ArrayType], None],
+        valgrad: Optional[Callable[[ArrayType, ArrayType], float]],
         callback: Optional[Callable[["cg_iter_stats"], int]],
-        work: Optional[np.ndarray]) -> Tuple[np.ndarray, "cg_stats", bool]: ...
+        work: Optional[ArrayType]) -> Tuple[ArrayType, "cg_stats", bool]: ...
 
 
 class cg_iter_stats:
@@ -24,19 +29,19 @@ class cg_iter_stats:
     def alpha(self) -> float: ...
 
     @property
-    def d(self) -> np.ndarray: ...
+    def d(self) -> ArrayType: ...
 
     @property
     def f(self) -> float: ...
 
     @property
-    def g(self) -> np.ndarray: ...
+    def g(self) -> ArrayType: ...
 
     @property
     def iter(self) -> int: ...
 
     @property
-    def x(self) -> np.ndarray: ...
+    def x(self) -> ArrayType: ...
 
 
 class cg_parameter:

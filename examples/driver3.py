@@ -42,17 +42,17 @@ def timer() -> Iterator[None]:
     print("elapsed: ", t_end - t_start)
 
 
-def fn(x: np.ndarray, t: float = 1.0) -> float:
+def fn(x: _cg.ArrayType, t: float = 1.0) -> float:
     f: float = np.sum(np.exp(x) - t * x)
     return f
 
 
-def grad(g: np.ndarray, x: np.ndarray, t: float = 1.0) -> None:
+def grad(g: _cg.ArrayType, x: _cg.ArrayType, t: float = 1.0) -> None:
     g[...] = np.exp(x) - t
 
 
-def fngrad(g: np.ndarray, x: np.ndarray, t: float = 1.0) -> float:
-    y: np.ndarray = np.exp(x)
+def fngrad(g: _cg.ArrayType, x: _cg.ArrayType, t: float = 1.0) -> float:
+    y: _cg.ArrayType = np.exp(x)
     f: float = np.sum(y - t * x)
     g[...] = y - t
     return f

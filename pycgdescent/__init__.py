@@ -17,7 +17,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import numpy as np
 
@@ -31,7 +31,12 @@ except ImportError:
     # https://github.com/python/mypy/issues/1153
     import importlib_metadata as metadata       # type: ignore
 
-__version__ = metadata.version("pycgdescent")   # type: ignore
+__version__ = metadata.version("pycgdescent")
+
+if TYPE_CHECKING:
+    ArrayType = np.ndarray[Any, np.dtype[np.float64]]
+else:
+    ArrayType = np.ndarray
 
 __doc__ = """
 Functions
@@ -444,10 +449,10 @@ class CallbackInfo:
 
     it: int
     alpha: float
-    x: np.ndarray
+    x: ArrayType
     f: float
-    g: np.ndarray
-    d: np.ndarray
+    g: ArrayType
+    d: ArrayType
 
 
 def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
@@ -508,7 +513,7 @@ class OptimizeResult:
     .. automethod:: __init__
     """
 
-    x: np.ndarray
+    x: ArrayType
     success: bool
     status: int
     message: str
@@ -553,9 +558,9 @@ STATUS_TO_MESSAGE = {
 
 # {{{ minimize
 
-FunType = Callable[[np.ndarray], float]
-GradType = Callable[[np.ndarray, np.ndarray], None]
-FunGradType = Callable[[np.ndarray, np.ndarray], float]
+FunType = Callable[[ArrayType], float]
+GradType = Callable[[ArrayType, ArrayType], None]
+FunGradType = Callable[[ArrayType, ArrayType], float]
 CallbackType = Callable[[CallbackInfo], int]
 
 
@@ -585,7 +590,7 @@ def min_work_size(
 def allocate_work_for(
         options: OptimizeOptions,
         n: int,
-        dtype: Any = np.float64) -> np.ndarray:
+        dtype: Any = np.float64) -> ArrayType:
     """
     Allocate a *work* array of a recommended size.
 
@@ -597,13 +602,13 @@ def allocate_work_for(
 
 def minimize(
         fun: "FunType",
-        x0: np.ndarray, *,
+        x0: ArrayType, *,
         jac: "GradType",
         funjac: Optional["FunGradType"] = None,
         tol: Optional[float] = None,
         options: Optional[Union[OptimizeOptions, Dict[str, Any]]] = None,
         callback: Optional["CallbackType"] = None,
-        work: Optional[np.ndarray] = None,
+        work: Optional[ArrayType] = None,
         args: Tuple[Any, ...] = ()) -> OptimizeResult:
     """
     :param fun: a :class:`~collections.abc.Callable` that returns the
