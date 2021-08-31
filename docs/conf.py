@@ -11,7 +11,7 @@ except ImportError:
 m = metadata.metadata("pycgdescent")
 project = m["Name"]
 author = m["Author"]
-copyright = "2020 {}".format(author)
+copyright = f"2020 {author}"
 version = m["Version"]
 release = version
 
