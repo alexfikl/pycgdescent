@@ -76,7 +76,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -e .[dev]
         for ex in $(find examples -name "*.py"); do
-          echo "\x1b[1;32m===> \x1b[97mRunning ${ex}\x1b[0m"
+          echo -e "\x1b[1;32m===> \x1b[97mRunning ${ex}\x1b[0m"
           python "${ex}"
         done
 
