@@ -60,6 +60,8 @@ def main(n: int = 100) -> None:
 
     # {{{ with fngrad
 
+    x0 = np.ones(n, dtype=np.float64)
+
     logger.info("==== with fngrad ====")
     with cg.timer():
         x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
@@ -67,8 +69,6 @@ def main(n: int = 100) -> None:
                 callback=None, work=None)
 
     # }}}
-
-    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15   # type: ignore
 
     from pycgdescent import STATUS_TO_MESSAGE
     logger.info("\n")
@@ -81,6 +81,8 @@ def main(n: int = 100) -> None:
     logger.info("cg iterations:             %d", stats.iter)
     logger.info("function evaluations:      %d", stats.nfunc)
     logger.info("gradient evaluations:      %d", stats.ngrad)
+
+    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15   # type: ignore
 
 
 if __name__ == "__main__":

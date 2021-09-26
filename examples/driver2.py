@@ -88,6 +88,8 @@ def main(n: int = 100) -> None:
 
     # {{{
 
+    x0 = np.ones(n, dtype=np.float64)
+
     logger.info("\n")
     logger.info("==== with QuadStep ON ====")
     with cg.timer():

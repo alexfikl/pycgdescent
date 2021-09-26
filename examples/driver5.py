@@ -81,6 +81,8 @@ def main(n: int = 100) -> None:
 
     # {{{
 
+    x0 = np.ones(n, dtype=np.float64)
+
     logger.info("\n")
     logger.info("==== with tol 1.0e-6 ====")
     with cg.timer():
