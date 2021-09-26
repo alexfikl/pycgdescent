@@ -23,7 +23,7 @@ echo -e "\033[1;32mbuilddir: $(pwd)\033[0m"
 
 if [ ! -f "${builddir}/${archive}" ]; then
     echo -e "\033[1;32mDownloading...\033[0m"
-    wget -q -N "${url}"
+    curl -L -O "${url}"
 fi
 
 echo -e "\033[1;32mExtracting '${archive}'...\033[0m"
@@ -41,6 +41,7 @@ declare -a patches=(
     '0004-add-user-pointer-to-functions.patch'
     '0005-add-iteration-callback.patch'
     '0006-add-step-size-limit.patch'
+    '0007-cg_evaluate-initialize-df.patch'
 )
 
 pushd "${pkgname}-${pkgver}"

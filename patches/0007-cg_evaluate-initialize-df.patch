@@ -1,0 +1,26 @@
+From d1f8033d6e78e3f37c193aaf84a29ec9e2c7fd0d Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Sun, 26 Sep 2021 14:57:07 -0500
+Subject: [PATCH] cg_evaluate: initialize df
+
+---
+ cg_descent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index 21d43c4..7c14b87 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -2444,8 +2444,8 @@ PRIVATE int cg_evaluate
+                     Com->cg_grad (gtemp, xtemp, n, Com->User) ;
+                     Com->f = Com->cg_value (xtemp, n, Com->User) ;
+                 }
+-                Com->df = cg_dot (gtemp, d, n) ;
+             }
++            Com->df = cg_dot (gtemp, d, n) ;
+             Com->nf++ ;
+             Com->ng++ ;
+             if ( (Com->df != Com->df) || (Com->f != Com->f) ||
+-- 
+2.33.0
+
