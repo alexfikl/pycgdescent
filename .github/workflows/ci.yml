@@ -78,6 +78,7 @@ jobs:
         for ex in $(find examples -name "*.py"); do
           echo -e "\x1b[1;32m===> \x1b[97mRunning ${ex}\x1b[0m"
           python "${ex}"
+          sleep 1
         done
 
   pytest:
