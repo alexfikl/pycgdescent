@@ -33,6 +33,9 @@ import numpy as np
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
+import logging
+logger = logging.getLogger()
+
 
 @contextmanager
 def timer() -> Iterator[None]:
@@ -40,7 +43,7 @@ def timer() -> Iterator[None]:
     t_start = time.time()
     yield
     t_end = time.time()
-    print("elapsed: ", t_end - t_start)
+    logger.info("elapsed: %.3fs", t_end - t_start)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -79,21 +82,22 @@ def main(n: int = 100) -> None:
                 callback=None, work=None)
 
     from pycgdescent import STATUS_TO_MESSAGE
-    print()
-    print("status:  ", status)
-    print("message: ", STATUS_TO_MESSAGE[status])
+    logger.info("\n")
+    logger.info("status:  %d", status)
+    logger.info("message: %s", STATUS_TO_MESSAGE[status])
 
-    print()
-    print("maximum norm for gradient: %+.16e" % stats.gnorm)
-    print("function value:            %+.16e" % stats.f)
-    print("cg iterations:            ", stats.iter)
-    print("function evaluations:     ", stats.nfunc)
-    print("gradient evaluations:     ", stats.ngrad)
+    logger.info("\n")
+    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("function value:            %+.16e", stats.f)
+    logger.info("cg iterations:             %d", stats.iter)
+    logger.info("function evaluations:      %d", stats.nfunc)
+    logger.info("gradient evaluations:      %d", stats.ngrad)
 
     # }}}
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
 
 # vim: fdm=marker

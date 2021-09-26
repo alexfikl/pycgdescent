@@ -19,6 +19,9 @@ import numpy as np
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
+import logging
+logger = logging.getLogger()
+
 
 @contextmanager
 def timer() -> Iterator[None]:
@@ -26,7 +29,7 @@ def timer() -> Iterator[None]:
     t_start = time.time()
     yield
     t_end = time.time()
-    print("elapsed: ", t_end - t_start)
+    logger.info("elapsed: %.3fs", t_end - t_start)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -52,13 +55,13 @@ def main(n: int = 100) -> None:
     t = np.sqrt(1 + np.arange(n))
 
     # param = _cg.cg_parameter()
-    # param.PrintParms = 1
+    # param.logger.infoParms = 1
 
     # }}}
 
     # {{{ without fngrad
 
-    print("==== without fngrad ====")
+    logger.info("==== without fngrad ====")
     with timer():
         x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
                 partial(fn, t=t), partial(grad, t=t), None,
@@ -68,7 +71,7 @@ def main(n: int = 100) -> None:
 
     # {{{ with fngrad
 
-    print("==== with fngrad ====")
+    logger.info("==== with fngrad ====")
     with timer():
         x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
@@ -79,19 +82,20 @@ def main(n: int = 100) -> None:
     assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15   # type: ignore
 
     from pycgdescent import STATUS_TO_MESSAGE
-    print()
-    print("status:  ", status)
-    print("message: ", STATUS_TO_MESSAGE[status])
+    logger.info("\n")
+    logger.info("status:  %d", status)
+    logger.info("message: %s", STATUS_TO_MESSAGE[status])
 
-    print()
-    print("maximum norm for gradient: %+.16e" % stats.gnorm)
-    print("function value:            %+.16e" % stats.f)
-    print("cg iterations:            ", stats.iter)
-    print("function evaluations:     ", stats.nfunc)
-    print("gradient evaluations:     ", stats.ngrad)
+    logger.info("\n")
+    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("function value:            %+.16e", stats.f)
+    logger.info("cg iterations:             %d", stats.iter)
+    logger.info("function evaluations:      %d", stats.nfunc)
+    logger.info("gradient evaluations:      %d", stats.ngrad)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
 
 # vim: fdm=marker

@@ -102,7 +102,9 @@ def _stringify_dict(d: Dict[str, Any]) -> str:
             }.items())
 
     return "\n".join([
-        "\t%s" % "\n\t".join(fmt % (k, v) for k, v in items),
+        "\t{}".format("\n\t".join(              # pylint: disable=C0209
+            fmt % (k, v) for k, v in items)
+            ),
         ])
 
 

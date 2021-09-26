@@ -19,7 +19,7 @@ the code detects that the Wolfe line search fails, then it will
 automatically attempt the approximate Wolfe line search.
 
 To see that the Wolfe line search failed, we also need to set the
-``PrintLevel`` to at least ``1``.
+``logger.infoLevel`` to at least ``1``.
 """
 
 from contextlib import contextmanager
@@ -30,6 +30,9 @@ import numpy as np
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
+import logging
+logger = logging.getLogger()
+
 
 @contextmanager
 def timer() -> Iterator[None]:
@@ -37,7 +40,7 @@ def timer() -> Iterator[None]:
     t_start = time.time()
     yield
     t_end = time.time()
-    print("elapsed: ", t_end - t_start)
+    logger.info("elapsed: %.3fs", t_end - t_start)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -65,48 +68,49 @@ def main(n: int = 100) -> None:
     param = _cg.cg_parameter()
     param.AWolfe = 0
     param.AWolfeFac = 0.0
-    # param.PrintLevel = 1
-    # param.PrintParms = 1
+    # param.logger.infoLevel = 1
+    # param.logger.infoParms = 1
 
     # }}}
 
     # {{{
 
-    print("==== with tol 1.0e-8 ====")
+    logger.info("==== with tol 1.0e-8 ====")
     with timer():
         _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
 
-    print()
-    print("maximum norm for gradient: %+.16e" % stats.gnorm)
-    print("function value:            %+.16e" % stats.f)
-    print("cg iterations:            ", stats.iter)
-    print("function evaluations:     ", stats.nfunc)
-    print("gradient evaluations:     ", stats.ngrad)
+    logger.info("\n")
+    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("function value:            %+.16e", stats.f)
+    logger.info("cg iterations:             %d", stats.iter)
+    logger.info("function evaluations:      %d", stats.nfunc)
+    logger.info("gradient evaluations:      %d", stats.ngrad)
 
     # }}}
 
     # {{{
 
-    print()
-    print("==== with tol 1.0e-6 ====")
+    logger.info("\n")
+    logger.info("==== with tol 1.0e-6 ====")
     with timer():
         _, stats, _ = _cg.cg_descent(x0, 1.0e-6, param,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
 
-    print()
-    print("maximum norm for gradient: %+.16e" % stats.gnorm)
-    print("function value:            %+.16e" % stats.f)
-    print("cg iterations:            ", stats.iter)
-    print("function evaluations:     ", stats.nfunc)
-    print("gradient evaluations:     ", stats.ngrad)
+    logger.info("\n")
+    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("function value:            %+.16e", stats.f)
+    logger.info("cg iterations:             %d", stats.iter)
+    logger.info("function evaluations:      %d", stats.nfunc)
+    logger.info("gradient evaluations:      %d", stats.ngrad)
 
     # }}}
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
 
 # vim: fdm=marker

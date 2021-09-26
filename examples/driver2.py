@@ -39,6 +39,9 @@ import numpy as np
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
+import logging
+logger = logging.getLogger()
+
 
 @contextmanager
 def timer() -> Iterator[None]:
@@ -46,7 +49,7 @@ def timer() -> Iterator[None]:
     t_start = time.time()
     yield
     t_end = time.time()
-    print("elapsed: ", t_end - t_start)
+    logger.info("elapsed: %.3fs", t_end - t_start)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -78,43 +81,44 @@ def main(n: int = 100) -> None:
 
     # {{{
 
-    print("==== with QuadStep OFF ====")
+    logger.info("==== with QuadStep OFF ====")
     with timer():
         param.QuadStep = 0
         _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
 
-    print()
-    print("maximum norm for gradient: %+.16e" % stats.gnorm)
-    print("function value:            %+.16e" % stats.f)
-    print("cg iterations:            ", stats.iter)
-    print("function evaluations:     ", stats.nfunc)
-    print("gradient evaluations:     ", stats.ngrad)
+    logger.info("\n")
+    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("function value:            %+.16e", stats.f)
+    logger.info("cg iterations:             %d", stats.iter)
+    logger.info("function evaluations:      %d", stats.nfunc)
+    logger.info("gradient evaluations:      %d", stats.ngrad)
 
     # }}}
 
     # {{{
 
-    print()
-    print("==== with QuadStep ON ====")
+    logger.info("\n")
+    logger.info("==== with QuadStep ON ====")
     with timer():
         param.QuadStep = 1
         _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
 
-    print()
-    print("maximum norm for gradient: %+.16e" % stats.gnorm)
-    print("function value:            %+.16e" % stats.f)
-    print("cg iterations:            ", stats.iter)
-    print("function evaluations:     ", stats.nfunc)
-    print("gradient evaluations:     ", stats.ngrad)
+    logger.info("\n")
+    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("function value:            %+.16e", stats.f)
+    logger.info("cg iterations:             %d", stats.iter)
+    logger.info("function evaluations:      %d", stats.nfunc)
+    logger.info("gradient evaluations:      %d", stats.ngrad)
 
     # }}}
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
 
 # vim: fdm=marker

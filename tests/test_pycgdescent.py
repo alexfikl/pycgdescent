@@ -4,27 +4,30 @@ import pycgdescent as cg
 
 import pytest
 
+import logging
+logger = logging.getLogger()
+
 
 def test_optimize_options() -> None:
     """Test options are immutable."""
     options = cg.OptimizeOptions()
 
     with pytest.raises(AttributeError):
-        options.PrintLevel = 2
+        options.printLevel = 2
 
-    options = options.replace(PrintLevel=2)
-    assert options.PrintLevel == 2
+    options = options.replace(printLevel=2)
+    assert options.printLevel == 2      # type: ignore[attr-defined]
 
     options2 = options.replace(step=1.0)
-    print(options2.pretty())
+    logger.info("\n%s", options2.pretty())
     assert (options2.step - 1.0) < 1.0e-15
-    assert options2.PrintLevel == 2
+    assert options2.printLevel == 2     # type: ignore[attr-defined]
 
-    print(options)
-    print()
-    print(options2)
-    print()
-    print(options2.pretty())
+    logger.info("\n%s", options)
+    logger.info("\n")
+    logger.info("\n%s", options2)
+    logger.info("\n")
+    logger.info("\n%s", options2.pretty())
 
 
 def test_quadratic(tol: float = 1.0e-8) -> None:
@@ -72,10 +75,10 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
 
     error = la.norm(r.x - x_exact) / la.norm(x_exact)           # type: ignore
 
-    print(r.pretty())
-    print()
-    print("Solution: ", x_exact)
-    print("Error:     %.16e" % error)
+    logger.info("\n%s", r.pretty())
+    logger.info("\n")
+    logger.info("Solution:  %s", x_exact)
+    logger.info("Error:     %.16e", error)
 
     assert r.jac < tol
     assert error < tol
@@ -122,10 +125,10 @@ def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> No
 
     error = la.norm(r.x - x_exact) / la.norm(x_exact)           # type: ignore
 
-    print(r.pretty())
-    print()
-    print("Solution: ", x_exact)
-    print("Error:     %.16e" % error)
+    logger.info("\n%s", r.pretty())
+    logger.info("\n")
+    logger.info("Solution:  %s", x_exact)
+    logger.info("Error:     %.16e", error)
 
     assert r.jac < tol
     assert error < tol
@@ -135,6 +138,8 @@ def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> No
 
 if __name__ == "__main__":
     import sys
+    logging.basicConfig(level=logging.INFO)
+
     if len(sys.argv) > 1:
         exec(sys.argv[1])
     else:
