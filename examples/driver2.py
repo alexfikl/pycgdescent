@@ -31,9 +31,7 @@ then with the ``QuadStep`` turned on. Notice that the performance improves
 with the ``QuadStep`` is on. This behavior is typical.
 """
 
-from contextlib import contextmanager
 from functools import partial
-from typing import Iterator
 
 import numpy as np
 import pycgdescent as cg
@@ -41,15 +39,6 @@ import pycgdescent._cg_descent as _cg
 
 import logging
 logger = logging.getLogger()
-
-
-@contextmanager
-def timer() -> Iterator[None]:
-    import time
-    t_start = time.time()
-    yield
-    t_end = time.time()
-    logger.info("elapsed: %.3fs", t_end - t_start)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -82,7 +71,7 @@ def main(n: int = 100) -> None:
     # {{{
 
     logger.info("==== with QuadStep OFF ====")
-    with timer():
+    with cg.timer():
         param.QuadStep = 0
         _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
@@ -101,7 +90,7 @@ def main(n: int = 100) -> None:
 
     logger.info("\n")
     logger.info("==== with QuadStep ON ====")
-    with timer():
+    with cg.timer():
         param.QuadStep = 1
         _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),

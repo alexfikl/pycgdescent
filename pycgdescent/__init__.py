@@ -16,13 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 
+from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import (
+        Any, Callable, Dict, Iterator, List, Optional, Tuple, Union,
+        TYPE_CHECKING)
 
 import numpy as np
 
 import pycgdescent._cg_descent as _cg
-
 
 try:
     # python >=3.8 only
@@ -30,6 +32,9 @@ try:
 except ImportError:
     # https://github.com/python/mypy/issues/1153
     import importlib_metadata as metadata       # type: ignore
+
+import logging
+logger = logging.getLogger()
 
 __version__ = metadata.version("pycgdescent")
 
@@ -688,5 +693,19 @@ def minimize(
             nsubspaceit=stats.IterSub,
             nsubspaces=stats.NumSub,
             )
+
+# }}}
+
+
+# {{{
+
+@contextmanager
+def timer(name: str = "timer") -> Iterator[None]:
+    import time
+    t_start = time.time()
+    yield
+    t_end = time.time()
+    logger.info("%s: %gs", name, t_end - t_start)
+
 
 # }}}

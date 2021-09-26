@@ -11,9 +11,7 @@ The function and gradient are
         \end{aligned}
 """
 
-from contextlib import contextmanager
 from functools import partial
-from typing import Iterator
 
 import numpy as np
 import pycgdescent as cg
@@ -21,15 +19,6 @@ import pycgdescent._cg_descent as _cg
 
 import logging
 logger = logging.getLogger()
-
-
-@contextmanager
-def timer() -> Iterator[None]:
-    import time
-    t_start = time.time()
-    yield
-    t_end = time.time()
-    logger.info("elapsed: %.3fs", t_end - t_start)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -62,7 +51,7 @@ def main(n: int = 100) -> None:
     # {{{ without fngrad
 
     logger.info("==== without fngrad ====")
-    with timer():
+    with cg.timer():
         x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
                 partial(fn, t=t), partial(grad, t=t), None,
                 callback=None, work=None)
@@ -72,7 +61,7 @@ def main(n: int = 100) -> None:
     # {{{ with fngrad
 
     logger.info("==== with fngrad ====")
-    with timer():
+    with cg.timer():
         x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
                 partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
                 callback=None, work=None)
