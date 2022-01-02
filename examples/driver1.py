@@ -40,7 +40,7 @@ def fngrad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> float:
 def main(n: int = 100) -> None:
     # {{{ parameters
 
-    x0 = np.ones(n, dtype=np.float64)
+    x0: cg.ArrayType = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
     # param = _cg.cg_parameter()
@@ -82,7 +82,7 @@ def main(n: int = 100) -> None:
     logger.info("function evaluations:      %d", stats.nfunc)
     logger.info("gradient evaluations:      %d", stats.ngrad)
 
-    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15   # type: ignore
+    assert np.linalg.norm(x1 - x2) / np.linalg.norm(x2) < 1.0e-15
 
 
 if __name__ == "__main__":

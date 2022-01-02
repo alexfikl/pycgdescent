@@ -25,7 +25,7 @@ class CallbackCache:
         self.alpha.append(info.alpha)
         self.x.append(info.x.copy())
         self.f.append(info.f)
-        self.g.append(la.norm(info.g, np.inf))  # type: ignore[no-untyped-call]
+        self.g.append(float(la.norm(info.g, np.inf)))
 
         return 1
 
@@ -46,7 +46,7 @@ def main(
         tol: float = 1.0e-8,
         visualize: bool = False) -> None:
     callback = CallbackCache()
-    x0 = np.array([-3.5, -4.0])
+    x0: cg.ArrayType = np.array([-3.5, -4.0])
 
     options = cg.OptimizeOptions()
     r = cg.minimize(
@@ -77,10 +77,10 @@ def savefig(fig: Any, suffix: str) -> None:
 def plot_rosenbrock_solution(
         r: cg.OptimizeResult, cache: CallbackCache,
         a: float = 100.0, b: float = 1.0) -> None:
-    x = np.array(cache.x).T
-    alpha = np.array(cache.alpha)
-    f = np.array(cache.f)
-    gnorm = np.array(cache.g)
+    x: cg.ArrayType = np.array(cache.x).T
+    alpha: cg.ArrayType = np.array(cache.alpha)
+    f: cg.ArrayType = np.array(cache.f)
+    gnorm: cg.ArrayType = np.array(cache.g)
 
     import matplotlib.pyplot as pt
     fig = pt.figure()
@@ -115,7 +115,7 @@ def plot_rosenbrock_solution(
     # {{{
 
     x1d = np.linspace(-4.0, 4.0, 128)
-    xy = np.stack(np.meshgrid(x1d, x1d))    # type: ignore[no-untyped-call]
+    xy: cg.ArrayType = np.stack(np.meshgrid(x1d, x1d))
     z = fun(xy, a=a, b=b)
 
     ax = fig.gca()

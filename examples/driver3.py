@@ -54,7 +54,7 @@ def fngrad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> float:
 def main(n: int = 100) -> None:
     # {{{ parameters
 
-    x0 = np.ones(n, dtype=np.float64)
+    x0: cg.ArrayType = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
     param = _cg.cg_parameter()
