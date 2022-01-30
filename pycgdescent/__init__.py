@@ -19,8 +19,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import (
-        Any, Callable, Dict, Iterator, List, Optional, Tuple, Union,
-        TYPE_CHECKING)
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    TYPE_CHECKING,
+)
 
 import numpy as np
 
@@ -31,9 +39,10 @@ try:
     from importlib import metadata
 except ImportError:
     # https://github.com/python/mypy/issues/1153
-    import importlib_metadata as metadata       # type: ignore
+    import importlib_metadata as metadata  # type: ignore
 
 import logging
+
 logger = logging.getLogger()
 
 __version__ = metadata.version("pycgdescent")
@@ -90,27 +99,30 @@ Type Aliases
 
 # {{{ options
 
+
 def _getmembers(obj: object) -> List[str]:
     import inspect
+
     return [
-            m for m in obj.__dir__()
-            if not m.startswith("__") and not inspect.ismethod(getattr(obj, m))
-            ]
+        m
+        for m in obj.__dir__()
+        if not m.startswith("__") and not inspect.ismethod(getattr(obj, m))
+    ]
 
 
 def _stringify_dict(d: Dict[str, Any]) -> str:
     width = len(max(d, key=len))
     fmt = f"%{width}s : %s"
 
-    items = sorted({
-            k: repr(v) for k, v in d.items()
-            }.items())
+    items = sorted({k: repr(v) for k, v in d.items()}.items())
 
-    return "\n".join([
-        "\t{}".format("\n\t".join(              # pylint: disable=C0209
-            fmt % (k, v) for k, v in items)
+    return "\n".join(
+        [
+            "\t{}".format(
+                "\n\t".join(fmt % (k, v) for k, v in items)  # pylint: disable=C0209
             ),
-        ])
+        ]
+    )
 
 
 class OptimizeOptions(_cg.cg_parameter):
@@ -429,10 +441,12 @@ class OptimizeOptions(_cg.cg_parameter):
         attrs = {k: getattr(self, k) for k in _getmembers(self) if k != "_changes"}
         return _stringify_dict(attrs)
 
+
 # }}}
 
 
 # {{{ info
+
 
 @dataclass(frozen=True)
 class CallbackInfo:
@@ -464,18 +478,20 @@ class CallbackInfo:
 
 def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
     return CallbackInfo(
-            it=stats.iter,
-            alpha=stats.alpha,
-            x=stats.x,
-            f=stats.f,
-            g=stats.g,
-            d=stats.d,
-            )
+        it=stats.iter,
+        alpha=stats.alpha,
+        x=stats.x,
+        f=stats.f,
+        g=stats.g,
+        d=stats.d,
+    )
+
 
 # }}}
 
 
 # {{{ result
+
 
 @dataclass(frozen=True)
 class OptimizeResult:
@@ -536,6 +552,7 @@ class OptimizeResult:
     def pretty(self) -> str:
         return _stringify_dict(self.__dict__)
 
+
 # }}}
 
 
@@ -549,8 +566,10 @@ STATUS_TO_MESSAGE = {
     3: "Slope is always negative in line search: error in provided functions?",
     4: "Maximum number of line search iterations exceeded: increase 'tol'?",
     5: "Search direction is not a descent direction",
-    6: ("Excessive updating of estimated error in function values: "
-        "increase 'neps'? increase 'tol'?"),
+    6: (
+        "Excessive updating of estimated error in function values: "
+        "increase 'neps'? increase 'tol'?"
+    ),
     7: "Wolfe conditions are never satisfied: increase 'eps'?",
     8: "Function values are not improving (with 'debug')",
     9: "No cost or gradient improvement: increase 'nslow'?",
@@ -571,9 +590,7 @@ FunGradType = Callable[[ArrayType, ArrayType], float]
 CallbackType = Callable[[CallbackInfo], int]
 
 
-def min_work_size(
-        options: OptimizeOptions,
-        n: int) -> int:
+def min_work_size(options: OptimizeOptions, n: int) -> int:
     """
     Get recommended size of a *work* array.
 
@@ -595,9 +612,8 @@ def min_work_size(
 
 
 def allocate_work_for(
-        options: OptimizeOptions,
-        n: int,
-        dtype: Any = np.float64) -> ArrayType:
+    options: OptimizeOptions, n: int, dtype: Any = np.float64
+) -> ArrayType:
     """
     Allocate a *work* array of a recommended size.
 
@@ -608,15 +624,17 @@ def allocate_work_for(
 
 
 def minimize(
-        fun: "FunType",
-        x0: ArrayType, *,
-        jac: "GradType",
-        funjac: Optional["FunGradType"] = None,
-        tol: Optional[float] = None,
-        options: Optional[Union[OptimizeOptions, Dict[str, Any]]] = None,
-        callback: Optional["CallbackType"] = None,
-        work: Optional[ArrayType] = None,
-        args: Tuple[Any, ...] = ()) -> OptimizeResult:
+    fun: "FunType",
+    x0: ArrayType,
+    *,
+    jac: "GradType",
+    funjac: Optional["FunGradType"] = None,
+    tol: Optional[float] = None,
+    options: Optional[Union[OptimizeOptions, Dict[str, Any]]] = None,
+    callback: Optional["CallbackType"] = None,
+    work: Optional[ArrayType] = None,
+    args: Tuple[Any, ...] = (),
+) -> OptimizeResult:
     """
     :param fun: a :class:`~collections.abc.Callable` that returns the
         function value at ``x``.
@@ -663,45 +681,43 @@ def minimize(
     if callback is not None:
         # pylint: disable=function-redefined
         def wrapped_callback(s: _cg.cg_iter_stats) -> int:
-            return callback(_info_from_stats(s))    # type: ignore
+            return callback(_info_from_stats(s))  # type: ignore
 
     # }}}
 
     # {{{ optimize
 
     x, stats, status = _cg.cg_descent(
-            x0,
-            tol,
-            param,
-            fun, jac, funjac,
-            wrapped_callback,
-            work)
+        x0, tol, param, fun, jac, funjac, wrapped_callback, work
+    )
 
     # }}}
 
     return OptimizeResult(
-            x=x,
-            success=status == 0,
-            status=status,
-            message=STATUS_TO_MESSAGE[status],
-            fun=stats.f,
-            jac=stats.gnorm,
-            nfev=stats.nfunc,
-            njev=stats.ngrad,
-            nit=stats.iter,
+        x=x,
+        success=status == 0,
+        status=status,
+        message=STATUS_TO_MESSAGE[status],
+        fun=stats.f,
+        jac=stats.gnorm,
+        nfev=stats.nfunc,
+        njev=stats.ngrad,
+        nit=stats.iter,
+        nsubspaceit=stats.IterSub,
+        nsubspaces=stats.NumSub,
+    )
 
-            nsubspaceit=stats.IterSub,
-            nsubspaces=stats.NumSub,
-            )
 
 # }}}
 
 
 # {{{
 
+
 @contextmanager
 def timer(name: str = "timer") -> Iterator[None]:
     import time
+
     t_start = time.time()
     yield
     t_end = time.time()

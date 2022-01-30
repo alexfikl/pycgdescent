@@ -29,6 +29,7 @@ import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
 import logging
+
 logger = logging.getLogger()
 
 
@@ -66,9 +67,16 @@ def main(n: int = 100) -> None:
 
     logger.info("==== with tol 1.0e-8 ====")
     with cg.timer():
-        _, stats, _ = _cg.cg_descent(x0, 1.0e-8, param,
-                partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
-                callback=None, work=None)
+        _, stats, _ = _cg.cg_descent(
+            x0,
+            1.0e-8,
+            param,
+            partial(fn, t=t),
+            partial(grad, t=t),
+            partial(fngrad, t=t),
+            callback=None,
+            work=None,
+        )
 
     logger.info("\n")
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
@@ -86,9 +94,16 @@ def main(n: int = 100) -> None:
     logger.info("\n")
     logger.info("==== with tol 1.0e-6 ====")
     with cg.timer():
-        _, stats, _ = _cg.cg_descent(x0, 1.0e-6, param,
-                partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
-                callback=None, work=None)
+        _, stats, _ = _cg.cg_descent(
+            x0,
+            1.0e-6,
+            param,
+            partial(fn, t=t),
+            partial(grad, t=t),
+            partial(fngrad, t=t),
+            callback=None,
+            work=None,
+        )
 
     logger.info("\n")
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)

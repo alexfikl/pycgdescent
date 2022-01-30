@@ -28,7 +28,8 @@ extensions = [
 ]
 
 try:
-    import sphinxcontrib.spelling       # noqa: F401
+    import sphinxcontrib.spelling  # noqa: F401
+
     extensions.append("sphinxcontrib.spelling")
 except ImportError:
     pass
@@ -77,13 +78,11 @@ autodoc_type_aliases = {
     "FunType": "pycgdescent.FunType",
     "GradType": "pycgdescent.GradType",
     "FunGradType": "pycgdescent.FunGradType",
-    "CallbackType": "pycgdescent.CallbackType"
+    "CallbackType": "pycgdescent.CallbackType",
 }
 
 # https://github.com/sphinx-doc/sphinx/issues/8127
-nitpick_ignore = [
-    ("py:class", "..")
-]
+nitpick_ignore = [("py:class", "..")]
 
 # }}}
 

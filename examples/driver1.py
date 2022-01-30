@@ -18,6 +18,7 @@ import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
 
 import logging
+
 logger = logging.getLogger()
 
 
@@ -52,9 +53,16 @@ def main(n: int = 100) -> None:
 
     logger.info("==== without fngrad ====")
     with cg.timer():
-        x1, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
-                partial(fn, t=t), partial(grad, t=t), None,
-                callback=None, work=None)
+        x1, stats, status = _cg.cg_descent(
+            x0,
+            1.0e-8,
+            None,
+            partial(fn, t=t),
+            partial(grad, t=t),
+            None,
+            callback=None,
+            work=None,
+        )
 
     # }}}
 
@@ -64,13 +72,21 @@ def main(n: int = 100) -> None:
 
     logger.info("==== with fngrad ====")
     with cg.timer():
-        x2, stats, status = _cg.cg_descent(x0, 1.0e-8, None,
-                partial(fn, t=t), partial(grad, t=t), partial(fngrad, t=t),
-                callback=None, work=None)
+        x2, stats, status = _cg.cg_descent(
+            x0,
+            1.0e-8,
+            None,
+            partial(fn, t=t),
+            partial(grad, t=t),
+            partial(fngrad, t=t),
+            callback=None,
+            work=None,
+        )
 
     # }}}
 
     from pycgdescent import STATUS_TO_MESSAGE
+
     logger.info("\n")
     logger.info("status:  %d", status)
     logger.info("message: %s", STATUS_TO_MESSAGE[status])
