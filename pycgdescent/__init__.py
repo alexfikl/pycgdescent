@@ -117,11 +117,7 @@ def _stringify_dict(d: Dict[str, Any]) -> str:
     items = sorted({k: repr(v) for k, v in d.items()}.items())
 
     return "\n".join(
-        [
-            "\t{}".format(
-                "\n\t".join(fmt % (k, v) for k, v in items)  # pylint: disable=C0209
-            ),
-        ]
+        ["\t" + "\n\t".join(fmt % (k, v) for k, v in items)]  # pylint: disable=C0209
     )
 
 
