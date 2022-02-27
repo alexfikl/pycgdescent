@@ -7,7 +7,7 @@ Uses the classic Rosenbrock function as an example.
 # START_ROSENROCK_EXAMPLE
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, List
+from typing import Any, List, Optional
 
 import numpy as np
 import numpy.linalg as la
@@ -66,10 +66,16 @@ def main(
 # END_ROSENBROCK_EXAMPLE
 
 
-def savefig(fig: Any, suffix: str) -> None:
-    import os
+def savefig(fig: Any, suffix: str, ext: Optional[str] = None) -> None:
+    import pathlib
 
-    filename = os.path.join(os.path.dirname(__file__), f"rosenbrock_{suffix}")
+    if ext is None:
+        import matplotlib.pyplot as pt
+
+        ext = pt.rcParams["savefig.format"]
+
+    filename = pathlib.Path(__file__).parent / f"rosenbrock_{suffix}"
+    filename = filename.with_suffix(f".{ext}")
 
     fig.savefig(filename)
     print("output: ", filename)
@@ -87,13 +93,15 @@ def plot_rosenbrock_solution(
 
     import matplotlib.pyplot as pt
 
-    fig = pt.figure()
+    pt.style.use("seaborn")
+    fig = pt.figure(figsize=(10, 10), dpi=300)
 
     # {{{ alpha
 
     ax = fig.gca()
     ax.plot(alpha)
-    ax.grid(True)
+    ax.set_xlabel("$Iteration$")
+    ax.set_ylabel("$Step~ Size$", fontsize="large")
     savefig(fig, "alpha")
 
     # }}}
@@ -102,7 +110,8 @@ def plot_rosenbrock_solution(
 
     ax = fig.gca()
     ax.semilogy(f)
-    ax.grid(True)
+    ax.set_xlabel("$Iteration$")
+    ax.set_ylabel("$f$")
     savefig(fig, "value")
 
     # }}}
@@ -111,7 +120,8 @@ def plot_rosenbrock_solution(
 
     ax = fig.gca()
     ax.semilogy(gnorm)
-    ax.grid(True)
+    ax.set_xlabel("$Iteration$")
+    ax.set_ylabel("$Gradient~ Magnitude$", fontsize="large")
     savefig(fig, "gnorm")
 
     # }}}
@@ -123,7 +133,7 @@ def plot_rosenbrock_solution(
     z = fun(xy, a=a, b=b)
 
     ax = fig.gca()
-    c = ax.contourf(xy[0], xy[1], z, levels=48, linestyles="dashed")
+    c = ax.contourf(xy[0], xy[1], z, levels=48, linestyles="dashed", cmap="viridis")
     ax.contour(xy[0], xy[1], z, levels=48, colors="k")
     ax.plot(x[0], x[1], "wo-")
     ax.plot(r.x[0], r.x[1], "ro")
