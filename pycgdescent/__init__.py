@@ -104,8 +104,7 @@ def _getmembers(obj: object) -> List[str]:
     import inspect
 
     return [
-        m
-        for m in obj.__dir__()
+        m for m in dir(obj)
         if not m.startswith("__") and not inspect.ismethod(getattr(obj, m))
     ]
 
