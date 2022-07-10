@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from importlib import metadata
 from typing import (
     Any,
     Callable,
@@ -33,13 +34,6 @@ from typing import (
 import numpy as np
 
 import pycgdescent._cg_descent as _cg
-
-try:
-    # python >=3.8 only
-    from importlib import metadata
-except ImportError:
-    # https://github.com/python/mypy/issues/1153
-    import importlib_metadata as metadata  # type: ignore
 
 import logging
 
@@ -104,7 +98,8 @@ def _getmembers(obj: object) -> List[str]:
     import inspect
 
     return [
-        m for m in dir(obj)
+        m
+        for m in dir(obj)
         if not m.startswith("__") and not inspect.ismethod(getattr(obj, m))
     ]
 
