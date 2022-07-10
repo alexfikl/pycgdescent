@@ -9,15 +9,18 @@ flake8:
 	$(PYTHON) -m flake8 pycgdescent examples tests docs setup.py
 	@echo -e "\e[1;32mflake8 clean!\e[0m"
 
-pylint:
-	PYTHONWARNINGS=ignore $(PYTHON) -m pylint pycgdescent tests/*.py examples/*.py
-	@echo -e "\e[1;32mpylint clean!\e[0m"
-
 mypy:
 	$(PYTHON) -m mypy --strict --show-error-codes pycgdescent tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 
+pylint:
+	PYTHONWARNINGS=ignore $(PYTHON) -m pylint pycgdescent tests/*.py examples/*.py
+	@echo -e "\e[1;32mpylint clean!\e[0m"
+
+test:
+	$(PYTHON) -m pytest -v -s
+
 tags:
 	ctags -R
 
-.PHONY: all flake8 pylint mypy
+.PHONY: all black flake8 mypy pylint test
