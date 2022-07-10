@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 from typing import Any, Callable, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np

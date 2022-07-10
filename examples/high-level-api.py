@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 """
 Example of the high-level API with callbacks and everything!
 

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 import numpy as np
 import numpy.linalg as la
 import pycgdescent as cg

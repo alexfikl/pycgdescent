@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
+//
+// SPDX-License-Identifier: MIT
+
 #include "cg_user.h"
 
 #include <pybind11/pybind11.h>

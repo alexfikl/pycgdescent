@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
 r"""
 Simple example using the low level bindings to CG_DESCENT.
 
