@@ -13,6 +13,9 @@ import logging
 logger = logging.getLogger()
 
 
+# {{{ test_optimize_options
+
+
 def test_optimize_options() -> None:
     """Test options are immutable."""
     options = cg.OptimizeOptions()
@@ -33,6 +36,12 @@ def test_optimize_options() -> None:
     logger.info("\n%s", options2)
     logger.info("\n")
     logger.info("\n%s", options2.pretty())
+
+
+# }}}
+
+
+# {{{ test_quadratic
 
 
 def test_quadratic(tol: float = 1.0e-8) -> None:
@@ -64,6 +73,13 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
 
     # {{{ optimize
 
+    def callback(info: cg.CallbackInfo) -> int:
+        logger.info(
+            "[%4d] x %.5e %.5e f %.5e g %.5e %.5e", info.it, *info.x, info.f, *info.g
+        )
+
+        return 1
+
     options = cg.OptimizeOptions()
     r = cg.minimize(
         fun=fun,
@@ -71,8 +87,10 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
         jac=jac,
         funjac=funjac,
         tol=tol,
+        callback=callback,
         options=options,
     )
+    logger.info("\n%s", r.pretty())
 
     # }}}
 
@@ -89,6 +107,12 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
     assert error < tol
 
     # }}}
+
+
+# }}}
+
+
+# {{{ test_rosenbrock
 
 
 def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> None:
@@ -115,14 +139,23 @@ def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> No
 
     # {{{ optimize
 
+    def callback(info: cg.CallbackInfo) -> int:
+        logger.info(
+            "[%4d] x %.5e %.5e f %.5e g %.5e %.5e", info.it, *info.x, info.f, *info.g
+        )
+
+        return 1
+
     options = cg.OptimizeOptions()
     r = cg.minimize(
         fun=fun,
         x0=x0,
         jac=jac,
         tol=tol,
+        callback=callback,
         options=options,
     )
+    logger.info("\n%s", r.pretty())
 
     # }}}
 
@@ -139,6 +172,9 @@ def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> No
     assert error < tol
 
     # }}}
+
+
+# }}}
 
 
 if __name__ == "__main__":
