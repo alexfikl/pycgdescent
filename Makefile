@@ -3,7 +3,7 @@ PYTHON?=python
 all: flake8 pylint mypy
 
 black:
-	$(PYTHON) -m black pycgdescent examples tests docs setup.py
+	$(PYTHON) -m black --safe --target-version py38 pycgdescent examples tests docs setup.py
 
 flake8:
 	$(PYTHON) -m flake8 pycgdescent examples tests docs setup.py
