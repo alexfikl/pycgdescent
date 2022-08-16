@@ -51,25 +51,6 @@ jobs:
         make pip-install
         make mypy
 
-  examples:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-    name: examples-${{ matrix.python-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.x']
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v2
-    -
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Main Script
-      run: |
-        make pip-install
-        make test-examples
-
   pytest:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: pytest-${{ matrix.python-version }}
@@ -88,5 +69,24 @@ jobs:
       run: |
         make pip-install
         make test
+
+  examples:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    name: examples-${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.x']
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    -
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Main Script
+      run: |
+        make pip-install
+        make run-examples
 
 # vim: set ts=2 sw=2 et:
