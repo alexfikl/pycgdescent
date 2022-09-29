@@ -29,7 +29,7 @@ reuse:
 
 pin:
 	$(PYTHON) -m piptools compile \
-		--extra dev --upgrade --resolver legacy \
+		--extra dev --upgrade \
 		-o requirements.txt setup.cfg
 
 pip-install:
