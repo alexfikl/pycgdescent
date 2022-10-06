@@ -39,7 +39,7 @@ mccabe==0.7.0
     # via
     #   flake8
     #   pylint
-mypy==0.981
+mypy==0.982
     # via pycgdescent (setup.cfg)
 mypy-extensions==0.4.3
     # via mypy
@@ -53,7 +53,7 @@ pep517==0.13.0
     # via build
 pep8-naming==0.13.2
     # via pycgdescent (setup.cfg)
-pip-tools==6.8.0
+pip-tools==6.9.0
     # via pycgdescent (setup.cfg)
 platformdirs==2.5.2
     # via pylint
