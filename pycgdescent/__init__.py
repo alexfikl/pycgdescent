@@ -92,13 +92,11 @@ def _getmembers(obj: object) -> List[str]:
 
 def _stringify_dict(d: Dict[str, Any]) -> str:
     width = len(max(d, key=len))
-    fmt = f"%{width}s : %s"
+    fmt = f"{{:{width}}} : {{}}"
 
     items = sorted({k: repr(v) for k, v in d.items()}.items())
 
-    return "\n".join(
-        ["\t" + "\n\t".join(fmt % (k, v) for k, v in items)]  # pylint: disable=C0209
-    )
+    return "\n".join(["\t" + "\n\t".join(fmt.format(k, v) for k, v in items)])
 
 
 class OptimizeOptions(_cg.cg_parameter):
@@ -655,7 +653,7 @@ def minimize(
 
     wrapped_callback: Optional[Callable[[Any], int]] = None
     if callback is not None:
-        # pylint: disable=function-redefined
+
         def wrapped_callback(s: _cg.cg_iter_stats) -> int:
             return callback(_info_from_stats(s))  # type: ignore
 
