@@ -6,6 +6,10 @@
     :alt: Documentation
     :target: https://pycgdescent.readthedocs.io/en/latest/?badge=latest
 
+.. image:: https://api.reuse.software/badge/github.com/alexfikl/pycgdescent
+    :alt: REUSE
+    :target: https://api.reuse.software/info/github.com/alexfikl/pycgdescent
+
 pycgdescent
 ===========
 
