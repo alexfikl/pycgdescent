@@ -32,6 +32,8 @@ if TYPE_CHECKING:
 else:
     ArrayType = np.ndarray
 
+ScalarType = np.float64
+
 __doc__ = """
 Functions
 ^^^^^^^^^
@@ -58,7 +60,7 @@ Type Aliases
 
 .. class:: FunType
 
-    ``Callable[[numpy.ndarray], float]``. This callable takes the current
+    ``Callable[[numpy.ndarray], numpy.float64]``. This callable takes the current
     guess ``x`` and returns the function value.
 
 .. class:: GradType
@@ -69,7 +71,7 @@ Type Aliases
 
 .. class:: FunGradType
 
-    ``Callable[[numpy.ndarray, numpy.ndarray], float]``. This callable takes
+    ``Callable[[numpy.ndarray, numpy.ndarray], numpy.float64]``. This callable takes
     ``(g, x)`` as arguments and returns the function value. The array ``g``
     needs to be updated in place with the gradient at ``x``.
 
@@ -457,9 +459,9 @@ class CallbackInfo:
     """
 
     it: int
-    alpha: float
+    alpha: ScalarType
     x: ArrayType
-    f: float
+    f: ScalarType
     g: ArrayType
     d: ArrayType
 
@@ -526,8 +528,8 @@ class OptimizeResult:
     success: bool
     status: int
     message: str
-    fun: float
-    jac: float
+    fun: ScalarType
+    jac: ScalarType
     nfev: int
     njev: int
     nit: int
@@ -570,9 +572,9 @@ STATUS_TO_MESSAGE = {
 
 # {{{ minimize
 
-FunType = Callable[[ArrayType], float]
+FunType = Callable[[ArrayType], ScalarType]
 GradType = Callable[[ArrayType, ArrayType], None]
-FunGradType = Callable[[ArrayType, ArrayType], float]
+FunGradType = Callable[[ArrayType, ArrayType], ScalarType]
 CallbackType = Callable[[CallbackInfo], int]
 
 
@@ -607,7 +609,7 @@ def allocate_work_for(
     :param n: input size.
     """
     if dtype is None:
-        dtype = np.dtype(np.float64)
+        dtype = np.dtype(ScalarType)
 
     return np.empty(min_work_size(options, n), dtype=dtype)
 
@@ -618,7 +620,7 @@ def minimize(
     *,
     jac: "GradType",
     funjac: Optional["FunGradType"] = None,
-    tol: Optional[float] = None,
+    tol: Optional[Union[float, ScalarType]] = None,
     options: Optional[Union[OptimizeOptions, Dict[str, Any]]] = None,
     callback: Optional["CallbackType"] = None,
     work: Optional[ArrayType] = None,
@@ -665,18 +667,23 @@ def minimize(
         if work.size >= m:
             raise ValueError(f"'work' must have size >= {m}")
 
-    wrapped_callback: Optional[Callable[[Any], int]] = None
+    wrapped_callback: Optional[Callable[[_cg.cg_iter_stats], int]]
+
     if callback is not None:
 
         def wrapped_callback(s: _cg.cg_iter_stats) -> int:
             return callback(_info_from_stats(s))  # type: ignore
+
+    else:
+
+        wrapped_callback = None
 
     # }}}
 
     # {{{ optimize
 
     x, stats, status = _cg.cg_descent(
-        x0, tol, param, fun, jac, funjac, wrapped_callback, work
+        x0, ScalarType(tol), param, fun, jac, funjac, wrapped_callback, work
     )
 
     # }}}

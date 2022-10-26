@@ -24,6 +24,9 @@ codespell:
 		--ignore-words .codespell-ignore \
 		pycgdescent tests examples docs
 
+pyright:
+	pyright --stats pycgdescent tests examples
+
 reuse:
 	@reuse lint
 	@echo -e "\e[1;32mREUSE compliant!\e[0m"
@@ -61,4 +64,4 @@ ctags:
 		--python-kinds=-i \
 		--language-force=python
 
-.PHONY: all black flake8 mypy pylint test pip-install
+.PHONY: black flake8 pylint mypy pyright pin pip-install test run-examples ctags

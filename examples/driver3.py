@@ -40,18 +40,17 @@ import logging
 logger = logging.getLogger()
 
 
-def fn(x: cg.ArrayType, t: float = 1.0) -> float:
-    f: float = np.sum(np.exp(x) - t * x)
-    return f
+def fn(x: cg.ArrayType, *, t: cg.ArrayType) -> cg.ScalarType:
+    return np.sum(np.exp(x) - t * x)
 
 
-def grad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> None:
+def grad(g: cg.ArrayType, x: cg.ArrayType, *, t: cg.ArrayType) -> None:
     g[...] = np.exp(x) - t
 
 
-def fngrad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> float:
-    y: cg.ArrayType = np.exp(x)
-    f: float = np.sum(y - t * x)
+def fngrad(g: cg.ArrayType, x: cg.ArrayType, *, t: cg.ArrayType) -> cg.ScalarType:
+    y = np.exp(x)
+    f = np.sum(y - t * x)
     g[...] = y - t
     return f
 

@@ -56,16 +56,15 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
     x0: cg.ArrayType = np.array([2.0, 1.0])
     x_exact: cg.ArrayType = np.array([1.0 / 11.0, 7.0 / 11.0])
 
-    def fun(x: cg.ArrayType) -> float:
-        f: float = x.dot(A @ x) - x.dot(b)
-        return f
+    def fun(x: cg.ArrayType) -> cg.ScalarType:
+        return x.dot(A @ x) - x.dot(b)
 
     def jac(g: cg.ArrayType, x: cg.ArrayType) -> None:
         g[...] = A @ x - b
 
-    def funjac(g: cg.ArrayType, x: cg.ArrayType) -> float:
-        Ax: cg.ArrayType = A @ x - b  # noqa: N806
-        f = float(x @ g)
+    def funjac(g: cg.ArrayType, x: cg.ArrayType) -> cg.ScalarType:
+        Ax = A.dot(x) - b  # noqa: N806
+        f = x.dot(g)
         g[...] = Ax
         return f
 
@@ -127,9 +126,8 @@ def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> No
     x0: cg.ArrayType = np.array([-2.0, 1.0])
     x_exact: cg.ArrayType = np.array([1.0, 1.0])
 
-    def fun(x: cg.ArrayType) -> float:
-        f: float = a * (x[1] - x[0] ** 2) ** 2 + b * (x[0] - 1.0) ** 2
-        return f
+    def fun(x: cg.ArrayType) -> cg.ScalarType:
+        return a * (x[1] - x[0] ** 2) ** 2 + b * (x[0] - 1.0) ** 2
 
     def jac(g: cg.ArrayType, x: cg.ArrayType) -> None:
         g[0] = -4.0 * a * x[0] * (x[1] - x[0] ** 2) + 2.0 * b * (x[0] - 1.0)
