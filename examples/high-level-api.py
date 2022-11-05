@@ -65,9 +65,7 @@ def main(
 
     if visualize:
         plot_rosenbrock_solution(r, callback, a=a, b=b)
-
-
-# END_ROSENBROCK_EXAMPLE
+    # END_ROSENBROCK_EXAMPLE
 
 
 def savefig(fig: Any, suffix: str, ext: Optional[str] = None) -> None:

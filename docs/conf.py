@@ -64,6 +64,7 @@ html_theme = "sphinx_rtd_theme"
 # {{{ extension settings
 
 autoclass_content = "class"
+autodoc_class_signature = "separated"
 autodoc_member_order = "bysource"
 autodoc_default_options = {
     "show-inheritance": None,
@@ -87,7 +88,7 @@ nitpick_ignore = [("py:class", "..")]
 intersphinx_mapping = {
     "https://docs.python.org/3": None,
     "https://numpy.org/doc/stable": None,
-    "https://docs.scipy.org/doc/scipy/reference": None,
+    "https://docs.scipy.org/doc/scipy": None,
 }
 
 # }}}

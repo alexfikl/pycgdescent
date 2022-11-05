@@ -43,12 +43,15 @@ Functions
 
 .. autoclass:: OptimizeOptions
     :no-show-inheritance:
+    :exclude-members: __init__, __new__
 
 .. autoclass:: OptimizeResult
     :no-show-inheritance:
+    :exclude-members: __init__, __new__
 
 .. autoclass:: CallbackInfo
     :no-show-inheritance:
+    :exclude-members: __init__, __new__
 
 Type Aliases
 ^^^^^^^^^^^^
@@ -396,6 +399,8 @@ class OptimizeOptions(_cg.cg_parameter):
     def replace(self, **changes: Any) -> "OptimizeOptions":
         """Creates a new instance of the same type as *self*, replacing the
         fields with values from *changes*.
+
+        :arg changes: a :class:`dict` of new option values.
         """
         # FIXME: this should just do a deep copy object instead of keeping track
         # of the changes in all instances :(
@@ -431,11 +436,20 @@ class CallbackInfo:
 
     .. attribute:: alpha
 
-        Step size.
+        Step size at the current iteration.
 
     .. attribute:: x
+
+        Point at which the function and gradient are evaluated.
+
     .. attribute:: f
+
+        Function value at the current iteration.
+
     .. attribute:: g
+
+        Gradient (Jacobian) value at the current iteration.
+
     .. attribute:: d
 
         Descent direction at the current iteration. This will usually not
@@ -506,8 +520,6 @@ class OptimizeResult:
     .. attribute:: nit
 
         Number of iterations performed by the optimizer.
-
-    .. automethod:: __init__
     """
 
     x: ArrayType
@@ -568,7 +580,7 @@ def min_work_size(options: OptimizeOptions, n: int) -> int:
     """
     Get recommended size of a *work* array.
 
-    :param options:
+    :param options: options used for the optimization.
     :param n: input size.
     """
     m = min(int(options.memory), n)
@@ -591,7 +603,7 @@ def allocate_work_for(
     """
     Allocate a *work* array of a recommended size.
 
-    :param options:
+    :param options: options used for the optimization
     :param n: input size.
     """
     return np.empty(min_work_size(options, n), dtype=dtype)
@@ -614,7 +626,7 @@ def minimize(
         function value at ``x``.
     :param x0: initial guess.
     :param jac: a :class:`~collections.abc.Callable` that computes the
-        gradient of *fun* at ``x``.
+        gradient of *fun* at ``x``. The gradient is stored in place.
     :param funjac: a :class:`~collections.abc.Callable` that computes both
         the function value and gradient at ``x``. This function can be used
         to improve efficiency by evaluating common parts just once, but is not
