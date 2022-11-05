@@ -143,7 +143,7 @@ class OptimizeOptions(_cg.cg_parameter):
         the subspace condition is checked. It is checked at every
         ``SubCheck * memory`` iterations and, if not satisfied, then
         it is skipped for ``SubSkip * memory`` iterations and :attr:`SubSkip`
-        is doubled. Whenver the subspace condition is satisfied, :attr:`SubSkip`
+        is doubled. Whenever the subspace condition is satisfied, :attr:`SubSkip`
         is returned to the original value.
 
     .. attribute:: eta0
@@ -376,7 +376,7 @@ class OptimizeOptions(_cg.cg_parameter):
 
     .. attribute:: qrestart
 
-        Number of iterations the function is nealy quadratic before a restart.
+        Number of iterations the function is nearly quadratic before a restart.
 
     .. attribute:: qrule
 
@@ -499,7 +499,7 @@ class OptimizeResult:
 
     .. attribute:: message
 
-        Descrition of the termination status in :attr:`status`.
+        Description of the termination status in :attr:`status`.
 
     .. attribute:: fun
 

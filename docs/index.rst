@@ -21,7 +21,7 @@ The problem is setup with default parameters in the following example.
    :language: python
    :linenos:
 
-The outout of ``r.pretty()`` shows that we have found the exact solution::
+The output of ``r.pretty()`` shows that we have found the exact solution::
 
                 fun : 6.019745113421725e-23
                 jac : 3.0587488097952063e-10

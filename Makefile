@@ -19,6 +19,11 @@ mypy:
 	$(PYTHON) -m mypy --strict --show-error-codes pycgdescent tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 
+codespell:
+	@codespell --summary \
+		--ignore-words .codespell-ignore \
+		pycgdescent tests examples docs
+
 reuse:
 	@reuse lint
 	@echo -e "\e[1;32mREUSE compliant!\e[0m"
