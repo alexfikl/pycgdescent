@@ -17,7 +17,7 @@ release = version
 
 # needed extensions
 extensions = [
-    "sphinx.ext.autodoc",
+    "autoapi.extension",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
@@ -34,8 +34,8 @@ except ImportError:
 source_suffix = ".rst"
 # name of the main (master) document
 master_doc = "index"
-# min sphinx version (needed for `autodoc_type_aliases`)
-needs_sphinx = "3.3"
+# min sphinx version
+needs_sphinx = "4.0"
 # files to ignore
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # highlighting
@@ -63,23 +63,16 @@ html_theme = "sphinx_rtd_theme"
 
 # {{{ extension settings
 
-autoclass_content = "class"
-autodoc_class_signature = "separated"
-autodoc_member_order = "bysource"
-autodoc_default_options = {
-    "show-inheritance": None,
-}
+autoapi_type = "python"
+autoapi_dirs = ["."]
+autoapi_add_toctree_entry = False
 
-autodoc_typehints = "description"
-autodoc_type_aliases = {
-    "FunType": "pycgdescent.FunType",
-    "GradType": "pycgdescent.GradType",
-    "FunGradType": "pycgdescent.FunGradType",
-    "CallbackType": "pycgdescent.CallbackType",
-}
-
-# https://github.com/sphinx-doc/sphinx/issues/8127
-nitpick_ignore = [("py:class", "..")]
+autoapi_python_class_content = "class"
+autoapi_member_order = "bysource"
+autoapi_options = [
+    "show-inheritance",
+]
+suppress_warnings = ["autoapi"]
 
 # }}}
 

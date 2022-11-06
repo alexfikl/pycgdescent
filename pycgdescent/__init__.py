@@ -221,7 +221,7 @@ class OptimizeOptions(_cg.cg_parameter):
 
         If *False*, do not use a quadratic interpolation step in the line
         search. If *True*, attempt a step based on
-        :math:`\epsilon = ` :attr:`QuadCutOff` when
+        :math:`\epsilon` equal to :attr:`QuadCutOff` when
 
         .. math::
 
@@ -598,7 +598,7 @@ def min_work_size(options: OptimizeOptions, n: int) -> int:
 
 
 def allocate_work_for(
-    options: OptimizeOptions, n: int, dtype: Any = np.float64
+    options: OptimizeOptions, n: int, dtype: Any = None
 ) -> ArrayType:
     """
     Allocate a *work* array of a recommended size.
@@ -606,6 +606,9 @@ def allocate_work_for(
     :param options: options used for the optimization
     :param n: input size.
     """
+    if dtype is None:
+        dtype = np.dtype(np.float64)
+
     return np.empty(min_work_size(options, n), dtype=dtype)
 
 
@@ -622,20 +625,19 @@ def minimize(
     args: Tuple[Any, ...] = (),
 ) -> OptimizeResult:
     """
-    :param fun: a :class:`~collections.abc.Callable` that returns the
-        function value at ``x``.
+    :param fun: a :class:`~FunType` that returns the function value at ``x``.
     :param x0: initial guess.
-    :param jac: a :class:`~collections.abc.Callable` that computes the
-        gradient of *fun* at ``x``. The gradient is stored in place.
-    :param funjac: a :class:`~collections.abc.Callable` that computes both
+    :param jac: a :class:`~GradType` that computes the gradient of *fun* at ``x``.
+        The gradient is stored in place.
+    :param funjac: a :class:`~FunGradType` that computes both
         the function value and gradient at ``x``. This function can be used
         to improve efficiency by evaluating common parts just once, but is not
         required.
     :param tol: tolerance used to check convergence. Exact meaning depends on
         :attr:`OptimizeOptions.StopRule`.
     :param options: options used by the algorithm.
-    :param callback: a :class:`~collections.abc.Callable` called at the end
-        of each (successful) iteration.
+    :param callback: a :class:`~CallbackType` called at the end of each
+        (successful) iteration.
     :param work: additional work array (see :func:`allocate_work_for`).
     :param args: additional arguments passed to the callables.
     """
