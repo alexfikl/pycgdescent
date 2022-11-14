@@ -21,6 +21,7 @@ mypy:
 
 codespell:
 	@codespell --summary \
+		--skip _build \
 		--ignore-words .codespell-ignore \
 		pycgdescent tests examples docs
 
