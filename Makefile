@@ -35,6 +35,7 @@ reuse:
 
 pin:
 	$(PYTHON) -m piptools compile \
+		--resolver=backtracking \
 		--extra dev --upgrade \
 		-o requirements.txt setup.cfg
 
