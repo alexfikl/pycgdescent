@@ -19,6 +19,21 @@ mypy:
 	$(PYTHON) -m mypy --strict --show-error-codes pycgdescent tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 
+pyright:
+	pyright --stats pycgdescent tests examples
+	@echo -e "\e[1;32mpyright clean!\e[0m"
+
+ruff:
+	ruff pycgdescent tests examples
+	@echo -e "\e[1;32mruff clean!\e[0m"
+
+pytype:
+	$(PYTHON) -m pytype \
+		--strict-parameter-checks \
+		--strict-primitive-comparisons \
+		pycgdescent tests examples
+	@echo -e "\e[1;32mpytype clean!\e[0m"
+
 codespell:
 	@codespell --summary \
 		--skip _build \
