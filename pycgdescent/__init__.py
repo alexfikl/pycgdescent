@@ -16,6 +16,10 @@ from typing import (
     Union,
     TYPE_CHECKING,
 )
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 import numpy as np
 
@@ -28,9 +32,9 @@ logger = logging.getLogger()
 __version__ = metadata.version("pycgdescent")
 
 if TYPE_CHECKING:
-    ArrayType = np.ndarray[Any, np.dtype[np.float64]]
+    ArrayType: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
 else:
-    ArrayType = np.ndarray
+    ArrayType: TypeAlias = np.ndarray
 
 __doc__ = """
 Functions
@@ -570,10 +574,10 @@ STATUS_TO_MESSAGE = {
 
 # {{{ minimize
 
-FunType = Callable[[ArrayType], float]
-GradType = Callable[[ArrayType, ArrayType], None]
-FunGradType = Callable[[ArrayType, ArrayType], float]
-CallbackType = Callable[[CallbackInfo], int]
+FunType: TypeAlias = Callable[[ArrayType], float]
+GradType: TypeAlias = Callable[[ArrayType, ArrayType], None]
+FunGradType: TypeAlias = Callable[[ArrayType, ArrayType], float]
+CallbackType: TypeAlias = Callable[[CallbackInfo], int]
 
 
 def min_work_size(options: OptimizeOptions, n: int) -> int:
