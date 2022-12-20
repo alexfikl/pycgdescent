@@ -7,7 +7,7 @@ Files: docs/* *.md *.rst *.cfg *Makefile requirements.txt MANIFEST.in
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
-Files: .gitignore .ctags.d/project.ctags .readthedocs.yml .pre-commit-config.yaml pyproject.toml .github/workflows/ci.yml .github/dependabot.yml
+Files: .gitignore .ctags.d/project.ctags .readthedocs.yml .pre-commit-config.yaml pyproject.toml .github/workflows/*.yml .github/*.yml
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
