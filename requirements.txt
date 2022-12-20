@@ -18,7 +18,7 @@ dill==0.3.6
     # via pylint
 exceptiongroup==1.0.4
     # via pytest
-flake8==5.0.4
+flake8==6.0.0
     # via
     #   flake8-bugbear
     #   flake8-comprehensions
@@ -29,11 +29,11 @@ flake8-bugbear==22.12.6
     # via pycgdescent (setup.cfg)
 flake8-comprehensions==3.10.1
     # via pycgdescent (setup.cfg)
-flake8-quotes==3.3.1
+flake8-quotes==3.3.2
     # via pycgdescent (setup.cfg)
 iniconfig==1.1.1
     # via pytest
-isort==5.11.2
+isort==5.11.3
     # via pylint
 lazy-object-proxy==1.8.0
     # via astroid
@@ -45,7 +45,7 @@ mypy==0.991
     # via pycgdescent (setup.cfg)
 mypy-extensions==0.4.3
     # via mypy
-numpy==1.23.5
+numpy==1.24.0
     # via pycgdescent (setup.cfg)
 packaging==22.0
     # via
@@ -53,19 +53,19 @@ packaging==22.0
     #   pytest
 pep517==0.13.0
     # via build
-pep8-naming==0.13.2
+pep8-naming==0.13.3
     # via pycgdescent (setup.cfg)
-pip-tools==6.12.0
+pip-tools==6.12.1
     # via pycgdescent (setup.cfg)
 platformdirs==2.6.0
     # via pylint
 pluggy==1.0.0
     # via pytest
-pycodestyle==2.9.1
+pycodestyle==2.10.0
     # via flake8
-pyflakes==2.5.0
+pyflakes==3.0.1
     # via flake8
-pylint==2.15.8
+pylint==2.15.9
     # via pycgdescent (setup.cfg)
 pytest==7.2.0
     # via pycgdescent (setup.cfg)
