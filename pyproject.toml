@@ -25,4 +25,7 @@ ignore = [
     ]
 
 [tool.ruff.per-file-ignores]
-"pycgdescent/_cg_descent.pyi" = ["N801", "N802"]
+"pycgdescent/_cg_descent.pyi" = ["A003", "N801", "N802"]
+
+[tool.ruff.pyupgrade]
+keep-runtime-typing = true
