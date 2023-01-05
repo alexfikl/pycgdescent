@@ -7,19 +7,21 @@ requires = [
 ]
 
 [tool.black]
-line-length = 85
+line-length = 88
 target-version = ['py38']
 exclude='\.eggs|\.git|\.mypy_cache|build|dist|\.pytest_cache|\.pytype'
 
 [tool.ruff]
 target-version = "py38"
 line-length = 88
-select = ["B", "E", "F", "I", "N", "Q", "UP", "W"]
+select = ["A", "B", "C4", "E", "F", "FBT", "I", "ISC", "N", "Q", "S", "UP", "W"]
 ignore = [
     # Module level import not at top of file
     "E402",
     # Import block is un-sorted or un-formatted
     "I001",
+    # Use of assert detected
+    "S101", "S102",
     ]
 
 [tool.ruff.per-file-ignores]

@@ -2,41 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from contextlib import contextmanager
-from dataclasses import dataclass, field
-from importlib import metadata
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Union,
-    TYPE_CHECKING,
-)
-try:
-    from typing import TypeAlias
-except ImportError:
-    from typing_extensions import TypeAlias
-
-import numpy as np
-
-import pycgdescent._cg_descent as _cg
-
-import logging
-
-logger = logging.getLogger()
-
-__version__ = metadata.version("pycgdescent")
-
-if TYPE_CHECKING:
-    ArrayType: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
-else:
-    ArrayType: TypeAlias = np.ndarray
-
-__doc__ = """
+"""
 Functions
 ^^^^^^^^^
 
@@ -82,6 +48,41 @@ Type Aliases
     ``Callable[[CallbackInfo], int]``. Setting the return value to `0` will
     stop the iteration.
 """
+
+from contextlib import contextmanager
+from dataclasses import dataclass, field
+from importlib import metadata
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    TYPE_CHECKING,
+)
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
+
+import numpy as np
+
+import pycgdescent._cg_descent as _cg
+
+import logging
+
+logger = logging.getLogger()
+
+__version__ = metadata.version("pycgdescent")
+
+if TYPE_CHECKING:
+    ArrayType: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
+else:
+    ArrayType: TypeAlias = np.ndarray
 
 
 # {{{ options
@@ -601,9 +602,7 @@ def min_work_size(options: OptimizeOptions, n: int) -> int:
     return (m + 6) * n + (3 * m + 9) * m + 5
 
 
-def allocate_work_for(
-    options: OptimizeOptions, n: int, dtype: Any = None
-) -> ArrayType:
+def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> ArrayType:
     """
     Allocate a *work* array of a recommended size.
 
