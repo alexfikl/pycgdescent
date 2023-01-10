@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 
+import logging
+
 import numpy as np
 import numpy.linalg as la
-import pycgdescent as cg
-
 import pytest
 
-import logging
+import pycgdescent as cg
 
 logger = logging.getLogger()
 

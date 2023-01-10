@@ -26,13 +26,13 @@ To see that the Wolfe line search failed, we also need to set the
 ``logger.infoLevel`` to at least ``1``.
 """
 
+import logging
 from functools import partial
 
 import numpy as np
+
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
-
-import logging
 
 logger = logging.getLogger()
 

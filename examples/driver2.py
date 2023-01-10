@@ -35,13 +35,13 @@ then with the ``QuadStep`` turned on. Notice that the performance improves
 with the ``QuadStep`` is on. This behavior is typical.
 """
 
+import logging
 from functools import partial
 
 import numpy as np
+
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
-
-import logging
 
 logger = logging.getLogger()
 

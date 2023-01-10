@@ -5,6 +5,7 @@ all: flake8 pylint mypy
 # {{{ linting
 
 black:
+	$(PYTHON) -m isort pycgdescent tests examples docs
 	$(PYTHON) -m black --safe --target-version py38 pycgdescent examples tests docs setup.py
 
 flake8:

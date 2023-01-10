@@ -25,13 +25,13 @@ The code has to do a number of expansions to reach a suitable
 interval bracketing the minimizer in the initial search direction.
 """
 
+import logging
 from functools import partial
 
 import numpy as np
+
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
-
-import logging
 
 logger = logging.getLogger()
 

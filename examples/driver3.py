@@ -29,13 +29,13 @@ step size using the parameter ``step``. In the following example, the initial
 step size is set to 1.
 """
 
+import logging
 from functools import partial
 
 import numpy as np
+
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
-
-import logging
 
 logger = logging.getLogger()
 

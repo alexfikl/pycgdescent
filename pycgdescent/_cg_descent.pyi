@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Any, Callable, Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple
 
 import numpy as np
 

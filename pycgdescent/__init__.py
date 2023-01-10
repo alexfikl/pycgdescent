@@ -53,6 +53,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from importlib import metadata
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -61,7 +62,6 @@ from typing import (
     Optional,
     Tuple,
     Union,
-    TYPE_CHECKING,
 )
 
 try:
@@ -69,11 +69,11 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias
 
+import logging
+
 import numpy as np
 
 import pycgdescent._cg_descent as _cg
-
-import logging
 
 logger = logging.getLogger()
 

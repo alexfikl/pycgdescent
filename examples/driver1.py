@@ -15,13 +15,13 @@ The function and gradient are
         \end{aligned}
 """
 
+import logging
 from functools import partial
 
 import numpy as np
+
 import pycgdescent as cg
 import pycgdescent._cg_descent as _cg
-
-import logging
 
 logger = logging.getLogger()
 
