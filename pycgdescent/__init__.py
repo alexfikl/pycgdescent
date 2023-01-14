@@ -399,7 +399,7 @@ class OptimizeOptions(_cg.cg_parameter):
         object.__setattr__(self, "_changes", kwargs)
 
     def __setattr__(self, k: str, v: Any) -> None:
-        raise AttributeError(f"cannot assign to '{k}'")
+        raise AttributeError(f"Cannot assign to {k!r}.")
 
     def replace(self, **changes: Any) -> "OptimizeOptions":
         """Creates a new instance of the same type as *self*, replacing the
@@ -648,7 +648,7 @@ def minimize(
     # {{{ setup
 
     if args:
-        raise ValueError("using 'args' is not supported")
+        raise ValueError("Using 'args' is not supported.")
 
     if tol is None:
         tol = 1.0e-8
@@ -659,14 +659,14 @@ def minimize(
         elif isinstance(options, OptimizeOptions):
             param = options
         else:
-            raise TypeError(f"unknown 'options' type: {type(options).__name__}")
+            raise TypeError(f"Unknown 'options' type: {type(options).__name__!r}.")
     else:
         param = OptimizeOptions()
 
     if work is not None:
         m = min_work_size(param, x0.size)
         if work.size >= m:
-            raise ValueError(f"'work' must have size >= {m}")
+            raise ValueError(f"'work' must have size >= {m}.")
 
     wrapped_callback: Optional[Callable[[Any], int]] = None
     if callback is not None:
