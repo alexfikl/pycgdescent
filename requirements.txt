@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=dev --output-file=requirements.txt --resolver=backtracking setup.cfg
 #
-astroid==2.13.2
+astroid==2.14.1
     # via pylint
 attrs==22.2.0
     # via
@@ -29,7 +29,7 @@ flake8==6.0.0
     #   flake8-rst-docstrings
     #   pep8-naming
     #   pycgdescent (setup.cfg)
-flake8-bugbear==23.1.14
+flake8-bugbear==23.1.20
     # via pycgdescent (setup.cfg)
 flake8-comprehensions==3.10.1
     # via pycgdescent (setup.cfg)
@@ -41,7 +41,7 @@ flake8-rst-docstrings==0.3.0
     # via pycgdescent (setup.cfg)
 iniconfig==2.0.0
     # via pytest
-isort==5.11.4
+isort==5.12.0
     # via
     #   flake8-isort
     #   pylint
@@ -51,11 +51,11 @@ mccabe==0.7.0
     # via
     #   flake8
     #   pylint
-mypy==0.991
+mypy==1.0.0
     # via pycgdescent (setup.cfg)
-mypy-extensions==0.4.3
+mypy-extensions==1.0.0
     # via mypy
-numpy==1.24.1
+numpy==1.24.2
     # via pycgdescent (setup.cfg)
 packaging==23.0
     # via
@@ -63,9 +63,9 @@ packaging==23.0
     #   pytest
 pep8-naming==0.13.3
     # via pycgdescent (setup.cfg)
-pip-tools==6.12.1
+pip-tools==6.12.2
     # via pycgdescent (setup.cfg)
-platformdirs==2.6.2
+platformdirs==3.0.0
     # via pylint
 pluggy==1.0.0
     # via pytest
@@ -75,7 +75,7 @@ pyflakes==3.0.1
     # via flake8
 pygments==2.14.0
     # via flake8-rst-docstrings
-pylint==2.15.10
+pylint==2.16.1
     # via pycgdescent (setup.cfg)
 pyproject-hooks==1.0.0
     # via build
