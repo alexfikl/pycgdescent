@@ -4,10 +4,12 @@ all: flake8 pylint mypy
 
 # {{{ linting
 
-black:
+fmt: black
 	$(PYTHON) -m setup_cfg_fmt --include-version-classifiers setup.cfg
 	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
 	$(PYTHON) -m isort pycgdescent tests examples docs
+
+black:
 	$(PYTHON) -m black --safe --target-version py38 pycgdescent examples tests docs setup.py
 
 flake8:
