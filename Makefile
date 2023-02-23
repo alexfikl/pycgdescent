@@ -80,16 +80,27 @@ manifest:		## Update MANIFEST.in file
 
 # {{{ testing
 
-pin:			## Pin dependency versions to requirements.txt
+REQUIREMENTS=\
+	requirements-dev.txt \
+	requirements.txt
+
+requirements-dev.txt: setup.cfg
 	$(PYTHON) -m piptools compile \
-		--resolver=backtracking \
-		--extra dev --upgrade \
-		-o requirements.txt setup.cfg
+		--resolver=backtracking --upgrade \
+		--extra dev \
+		-o $@ $<
+
+requirements.txt: setup.cfg
+	$(PYTHON) -m piptools compile \
+		--resolver=backtracking --upgrade \
+		-o $@ $<
+
+pin: $(REQUIREMENTS)	## Pin dependency versions to requirements.txt
 .PHONY: pin
 
 pip-install:	## Install pinned dependencies from requirements.txt
 	$(PYTHON) -m pip install --upgrade pip wheel setuptools
-	$(PYTHON) -m pip install -r requirements.txt -e .
+	$(PYTHON) -m pip install -r requirements-dev.txt -e .
 .PHONY: pip-install
 
 test:			## Run pytest tests
