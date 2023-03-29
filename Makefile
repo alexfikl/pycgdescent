@@ -20,7 +20,7 @@ fmt: black		## Run all formatting scripts
 
 black:			## Run black over the source code
 	$(PYTHON) -m black \
-		--safe --target-version py38 \
+		--safe --target-version py38 --preview \
 		pycgdescent examples tests docs setup.py
 .PHONY: black
 

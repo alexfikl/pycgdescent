@@ -105,6 +105,7 @@ def _stringify_dict(d: Dict[str, Any]) -> str:
     items = sorted({k: repr(v) for k, v in d.items()}.items())
 
     from itertools import starmap
+
     return "\n".join(["\t" + "\n\t".join(starmap(fmt.format, items))])
 
 
