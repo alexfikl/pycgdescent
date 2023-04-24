@@ -17,10 +17,12 @@ Functions
 
 .. autoclass:: OptimizeResult
     :no-show-inheritance:
+    :members:
     :exclude-members: __init__, __new__
 
 .. autoclass:: CallbackInfo
     :no-show-inheritance:
+    :members:
     :exclude-members: __init__, __new__
 
 Type Aliases
@@ -131,20 +133,26 @@ class OptimizeOptions(_cg.cg_parameter):
     The attribute names here follow those of the original ``CG_DESCENT`` code.
 
     .. attribute:: PrintLevel
+        :type: int
 
         Display level as an integer in `[0, 1, 2, 3]`.
 
     .. attribute:: LBFGS
+        :type: bool
 
         Boolean flag to handle use of LBFGS. If *False*, LBFGS is only used
         when the :attr:`memory` is larger than the input size :math:`n`.
 
     .. attribute:: memory
+        :type: int
 
         Number of vectors stored in memory.
 
     .. attribute:: SubCheck
+        :type: int
+
     .. attribute:: SubSkip
+        :type: int
 
         Together with :attr:`SubCheck`, it controls the frequency with which
         the subspace condition is checked. It is checked at every
@@ -154,6 +162,7 @@ class OptimizeOptions(_cg.cg_parameter):
         is returned to the original value.
 
     .. attribute:: eta0
+        :type: float
 
         Controls relative distance from current gradient to the subspace.
         If the distance is ``<= eta0`` and the subspace dimension is
@@ -161,18 +170,23 @@ class OptimizeOptions(_cg.cg_parameter):
         :math:`\eta_0^2` in Equation 3.4 from [HagerZhang2013]_.
 
     .. attribute:: eta1
+        :type: float
 
         Controls relative distance from current gradient to the subspace.
         If the distance is ``>= eta1``, the subspace is exited. This is used
         as :math:`\eta_1^2` in Equation 3.4 in [HagerZhang2013]_.
 
     .. attribute:: eta2
+        :type: float
 
         Controls relative distance from current descent direction to the subspace.
         If the distance is ``<= eta2``, the subspace is always entered.
 
     .. attribute:: AWolfe
+        :type: bool
+
     .. attribute:: AWolfeFac
+        :type: float
 
         If :attr:`AWolfe` is *True*, then the approximate Wolfe condition is
         used when :math:`|f_{k + 1} - f_k| < \omega C_k`, for
@@ -180,16 +194,19 @@ class OptimizeOptions(_cg.cg_parameter):
         Equation 25 in [HagerZhang2006]_.
 
     .. attribute:: Qdecay
+        :type: float
 
         Factor in :math:`[0, 1]` used to compute the average cost magnitude
         in the Wolfe condition.
 
     .. attribute:: nslow
+        :type: int
 
         Maximum number of "slow" iterations without strict improvement in
         either function values or gradient.
 
     .. attribute:: StopRule
+        :type: bool
 
         If *True*, a gradient-based stopping condition is used. Otherwise,
         a function value-based stopping condition is used. They are
@@ -206,25 +223,30 @@ class OptimizeOptions(_cg.cg_parameter):
         :math:`\delta` = :attr:`StopFac`.
 
     .. attribute:: StopFac
+        :type: float
 
         Factor used in stopping condition.
 
     .. attribute:: PertRule
+        :type: bool
 
         Estimate error in function values. If *False*, use just :attr:`eps`,
         otherwise use :math:`\epsilon C_k`, where :math:`C_k` is defined in
         Equation 26 in [HagerZhang2006]_.
 
     .. attribute:: eps
+        :type: float
 
         Factor used in :attr:`PertRule`.
 
     .. attribute:: egrow
+        :type: float
 
         Factor by which :attr:`eps` grows when the line search fails during
         contraction.
 
     .. attribute:: QuadStep
+        :type: bool
 
         If *False*, do not use a quadratic interpolation step in the line
         search. If *True*, attempt a step based on
@@ -235,92 +257,113 @@ class OptimizeOptions(_cg.cg_parameter):
             \frac{|f_{k + 1} - f_k|}{|f_k|} > \epsilon.
 
     .. attribute:: QuadCutOff
+        :type: float
 
         Factor used when :attr:`QuadStep` is *True*.
 
     .. attribute:: QuadSafe
+        :type: float
 
         Maximum factor by which a quadratic step can reduce the step size.
 
     .. attribute:: UseCubic
+        :type: bool
 
         Boolean flag that enables a cubic step in the line search.
 
     .. attribute:: CubicCutOff
+        :type: float
 
         Factor used in the cubic step same as :attr:`QuadCutOff`.
 
     .. attribute:: SmallCost
+        :type: float
 
         Tolerance for which the quadratic interpolation step can be skipped,
         checks :math:`|f_k| < \epsilon |f_0|`.
 
     .. attribute:: debug
+        :type: bool
 
         Flag to control checks for decreasing function values.
         If *True*, checks that :math:`f_{k + 1} - f_k \le \delta C_k`, where
         :math:`\delta` = :attr:`debugtol`.
 
     .. attribute:: debugtol
+        :type: float
 
     .. attribute:: step
+        :type: float
 
         Initial step used in the initial line search.
 
     .. attribute:: max_step
+        :type: float
 
         Maximum step size used in the descent. This is a very crude choice,
         as it mostly sidesteps the line search if large values are encountered.
 
     .. attribute:: maxit
+        :type: int
 
         Maximum number of iterations.
 
     .. attribute:: ntries
+        :type: int
 
         Maximum number of times the bracketing interval grows during expansion.
 
     .. attribute:: ExpandSafe
+        :type: float
 
         Maximum factor by which the secand step increases in the expansion
         phase.
 
     .. attribute:: SecantAmp
+        :type: float
 
         Factor by which the secant step is amplified during the expansion
         phase.
 
     .. attribute:: RhoGrow
+        :type: float
 
         Factor by which :math:`rho` grows during the expansion phase.
 
     .. attribute:: neps
+        :type: int
 
         Maximum number of times that :attr:`eps` can be updated.
 
     .. attribute:: nshrink
+        :type: int
 
         Maximum number of times the bracketing interval shrinks.
 
     .. attribute:: nline
+        :type: int
 
         Maximum number of iterations in the line search.
 
     .. attribute:: restart_fac
+        :type: int
 
         Restart method after ``n * restart_fac`` iterations, where :math:`n`
         is the size of the input.
 
     .. attribute:: feps
+        :type: float
 
         Tolerance for change in function values.
 
     .. attribute:: nan_rho
+        :type: float
 
         Growth factor :attr:`RhoGrow` is reset to this value after
         encountering ``nan``.
 
     .. attribute:: nan_decay
+        :type: float
 
         Decay factor :attr:`Qdecay` is reset to this value after
         encountering ``nan``.
@@ -330,62 +373,79 @@ class OptimizeOptions(_cg.cg_parameter):
     so should only be modified with knowledge.
 
     .. attribute:: delta
+        :type: float
 
         Parameter for the Wolfe line search in :math:`[0, 0.5]`.
 
     .. attribute:: sigma
+        :type: float
 
         Parameter for the Wolfe line search in :math:`[\delta, 1]`, where
         :math:`\delta` = :attr:`delta`.
 
     .. attribute:: gamma
+        :type: float
 
         Decay factor for bracket interval width in line search in :math:`(0, 1)`.
 
     .. attribute:: rho
+        :type: float
 
         Growth factor in search for initial bracket interval.
 
     .. attribute:: psi0
+        :type: float
 
         Factor used in starting guess for the line search.
 
     .. attribute:: psi_lo
+        :type: float
+
     .. attribute:: psi_hi
+        :type: float
+
     .. attribute:: psi2
+        :type: float
 
         In a quadratic step, the bracket interval is given by
         :math:`[\psi_{lo}, \psi_{hi}] \times \psi_2 \times \alpha_{k - 1}`, where
         :math:`\alpha_{k - 1}` is the previous step size.
 
     .. attribute:: psi1
+        :type: float
 
         If the function is approximately quadratic, this is used to estimate
         the initial step size by :math:`\psi_1 \psi_2 \alpha_{k - 1}`.
 
     .. attribute:: AdaptiveBeta
+        :type: bool
 
         If *True*, :math:`\theta` is chosen adaptively.
 
     .. attribute:: BetaLower
+        :type: float
 
         Lower bound for :math:`\beta`.
 
     .. attribute:: theta
+        :type: float
 
         Describes the family of ``CG_DESCENT`` methods, as described in
         [HagerZhang2006]_.
 
     .. attribute:: qeps
+        :type: float
 
         Parameter used in cost error estimation for the quadratic restart
         criterion.
 
     .. attribute:: qrestart
+        :type: int
 
         Number of iterations the function is nearly quadratic before a restart.
 
     .. attribute:: qrule
+        :type: float
 
         Tolerance used to determine if the cost can be treated as quadratic.
     """
@@ -436,38 +496,18 @@ class OptimizeOptions(_cg.cg_parameter):
 
 @dataclass(frozen=True)
 class CallbackInfo:
-    """
-    .. attribute:: it
-
-        Current iteration.
-
-    .. attribute:: alpha
-
-        Step size at the current iteration.
-
-    .. attribute:: x
-
-        Point at which the function and gradient are evaluated.
-
-    .. attribute:: f
-
-        Function value at the current iteration.
-
-    .. attribute:: g
-
-        Gradient (Jacobian) value at the current iteration.
-
-    .. attribute:: d
-
-        Descent direction at the current iteration. This will usually not
-        be the same as the gradient and can be used for debugging.
-    """
-
+    #: Current iteration.
     it: int
+    #: Step size at current iteration.
     alpha: float
+    #: Point at which the function and gradient are evaluated.
     x: ArrayType
+    #: Function value at current iteration.
     f: float
+    #: Gradient (Jacobian) value at the current iteration.
     g: ArrayType
+    #: Descent direction at the current iteration. This will usually not be
+    #: the same as the gradient and can be used for debugging.
     d: ArrayType
 
 
@@ -490,59 +530,35 @@ def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
 
 @dataclass(frozen=True)
 class OptimizeResult:
-    """Based on :class:`scipy.optimize.OptimizeResult`.
+    """Based on :class:`scipy.optimize.OptimizeResult`."""
 
-    .. attribute:: x
-
-        Solution of the optimization.
-
-    .. attribute:: success
-
-        Flag to denote a successful exit.
-
-    .. attribute:: status
-
-        Termination status of the optimize.
-
-    .. attribute:: message
-
-        Description of the termination status in :attr:`status`.
-
-    .. attribute:: fun
-
-        Function value at the end of the optimization.
-
-    .. attribute:: jac
-
-        Norm of the gradient (Jacobian) at the end of the optimization.
-
-    .. attribute:: nfev
-
-        Number of function evaluations.
-
-    .. attribute:: njev
-
-        Number of gradient (Jacobian) evaluation.
-
-    .. attribute:: nit
-
-        Number of iterations performed by the optimizer.
-    """
-
+    #: Solution of the optimization to the given tolerances.
     x: ArrayType
+    #: Flag to denote a successful exit.
     success: bool
+    #: Termination status of the optimization.
     status: int
+    #: Description of the termination status in :attr:`status`.
     message: str
+    #: Function value at the end of the optimization.
     fun: float
+    #: Norm of the gradient (Jacobian) at the end of the optimization.
     jac: float
+    #: Number of function evaluations.
     nfev: int
+    #: Number of gradient (Jacobian) evaluations.
     njev: int
+    #: Number of iterations performed by the optimizer.
     nit: int
 
+    #: Number of subspace iterations (valid if :attr:`OptimizeOptions.LBFGS` is
+    #: *True*).
     nsubspaceit: int = field(repr=False)
+    #: Number of subspace (valid if :attr:`OptimizeOptions.LBFGS` is *True*).
     nsubspaces: int = field(repr=False)
 
     def pretty(self) -> str:
+        """Aligned stringify of the results."""
         return _stringify_dict(self.__dict__)
 
 
