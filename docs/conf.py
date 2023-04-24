@@ -79,9 +79,9 @@ suppress_warnings = ["autoapi"]
 # {{{ links
 
 intersphinx_mapping = {
-    "https://docs.python.org/3": None,
-    "https://numpy.org/doc/stable": None,
-    "https://docs.scipy.org/doc/scipy": None,
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
 }
 
 # }}}
