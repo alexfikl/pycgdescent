@@ -3,7 +3,7 @@ Upstream-Name: pycgdescent
 Upstream-Contact: Alexandru Fikl <alexfikl@gmail.com>
 Source: https://github.com/alexfikl/pycgdescent
 
-Files: docs/* *.md *.rst *.cfg *Makefile requirements.txt MANIFEST.in
+Files: docs/* *.md *.rst *.cfg *Makefile requirements*.txt MANIFEST.in
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
