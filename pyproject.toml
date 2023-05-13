@@ -18,11 +18,11 @@ profile = "black"
 warn_unused_ignores = true
 plugins = "numpy.typing.mypy_plugin"
 
-[tool.mypy.overrides]
+[[tool.mypy.overrides]]
 module = [
-    "importlib_metadata",
-    "numpy",
-    "matplotlib",
+    "importlib_metadata.*",
+    "numpy.*",
+    "matplotlib.*",
 ]
 ignore_missing_imports = true
 
