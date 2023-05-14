@@ -24,7 +24,7 @@ black:			## Run black over the source code
 .PHONY: black
 
 ruff:			## Run ruff checks over the source code
-	ruff check --statistics \
+	ruff check \
 		pycgdescent tests examples
 	@echo -e "\e[1;32mruff clean!\e[0m"
 .PHONY: ruff
