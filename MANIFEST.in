@@ -1,11 +1,13 @@
 include download_and_patch_sources.sh
 include Makefile
 include requirements.txt
+include requirements-dev.txt
 include pyproject.toml
 include README.rst
 include setup.cfg
 include setup.py
 include .reuse/dep5
+include .codespell-ignore
 
 recursive-include LICENSES *.txt
 recursive-include docs *.png

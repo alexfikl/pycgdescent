@@ -13,7 +13,6 @@ help: 			## Show this help
 # {{{ linting
 
 fmt: black		## Run all formatting scripts
-	$(PYTHON) -m setup_cfg_fmt --include-version-classifiers setup.cfg
 	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
 	$(PYTHON) -m isort pycgdescent tests examples docs
 .PHONY: fmt
@@ -25,7 +24,8 @@ black:			## Run black over the source code
 .PHONY: black
 
 ruff:			## Run ruff checks over the source code
-	ruff pycgdescent tests examples
+	ruff check --statistics \
+		pycgdescent tests examples
 	@echo -e "\e[1;32mruff clean!\e[0m"
 .PHONY: ruff
 
@@ -61,13 +61,13 @@ REQUIREMENTS=\
 	requirements-dev.txt \
 	requirements.txt
 
-requirements-dev.txt: setup.cfg
+requirements-dev.txt: pyproject.toml
 	$(PYTHON) -m piptools compile \
 		--resolver=backtracking --upgrade \
 		--extra dev \
 		-o $@ $<
 
-requirements.txt: setup.cfg
+requirements.txt: pyproject.toml
 	$(PYTHON) -m piptools compile \
 		--resolver=backtracking --upgrade \
 		-o $@ $<
