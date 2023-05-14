@@ -6,8 +6,8 @@ from importlib import metadata
 
 m = metadata.metadata("pycgdescent")
 project = m["Name"]
-author = m["Author"]
-copyright = f"2020 {author}"
+author = m["Author-email"]
+copyright = f"2020 {author}"  # noqa: A001
 version = m["Version"]
 release = version
 

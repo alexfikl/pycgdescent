@@ -44,12 +44,12 @@ codespell:		## Run codespell over the source code and documentation
 .PHONY: codespell
 
 reuse:			## Check REUSE license compliance
-	@reuse lint
+	$(PYTHON) -m reuse lint
 	@echo -e "\e[1;32mREUSE compliant!\e[0m"
 .PHONY: reuse
 
 manifest:		## Update MANIFEST.in file
-	@check-manifest
+	$(PYTHON) -m check_manifest
 	@echo -e "\e[1;32mMANIFEST.in is up to date!\e[0m"
 .PHONY: manifest
 
