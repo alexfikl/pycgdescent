@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Callable
 
 import numpy as np
 
@@ -15,13 +17,13 @@ def cg_default(arg0: object) -> None: ...
 def cg_descent(
     x: ArrayType,
     grad_tol: float,
-    param: Optional["cg_parameter"],
+    param: cg_parameter | None,
     value: Callable[[ArrayType], float],
     grad: Callable[[ArrayType, ArrayType], None],
-    valgrad: Optional[Callable[[ArrayType, ArrayType], float]],
-    callback: Optional[Callable[["cg_iter_stats"], int]],
-    work: Optional[ArrayType],
-) -> Tuple[ArrayType, "cg_stats", bool]: ...
+    valgrad: Callable[[ArrayType, ArrayType], float] | None,
+    callback: Callable[[cg_iter_stats], int] | None,
+    work: ArrayType | None,
+) -> tuple[ArrayType, cg_stats, bool]: ...
 
 class cg_iter_stats:
     def __init__(self) -> None: ...

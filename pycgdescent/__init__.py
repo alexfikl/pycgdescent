@@ -51,22 +51,15 @@ Type Aliases
     stop the iteration.
 """
 
+from __future__ import annotations
+
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Callable, Iterator
 
 try:
+    # NOTE: only available in python 3.10
     from typing import TypeAlias
 except ImportError:
     from typing_extensions import TypeAlias
@@ -90,7 +83,7 @@ else:
 # {{{ options
 
 
-def _getmembers(obj: object) -> List[str]:
+def _getmembers(obj: Any) -> list[str]:
     import inspect
 
     return [
@@ -100,7 +93,7 @@ def _getmembers(obj: object) -> List[str]:
     ]
 
 
-def _stringify_dict(d: Dict[str, Any]) -> str:
+def _stringify_dict(d: dict[str, Any]) -> str:
     width = len(max(d, key=len))
     fmt = f"{{:{width}}} : {{}}"
 
@@ -450,7 +443,7 @@ class OptimizeOptions(_cg.cg_parameter):
         Tolerance used to determine if the cost can be treated as quadratic.
     """
 
-    _changes: Dict[str, Any] = {}
+    _changes: dict[str, Any] = {}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
@@ -634,16 +627,16 @@ def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> Ar
 
 
 def minimize(
-    fun: "FunType",
+    fun: FunType,
     x0: ArrayType,
     *,
-    jac: "GradType",
-    funjac: Optional["FunGradType"] = None,
-    tol: Optional[float] = None,
-    options: Optional[Union[OptimizeOptions, Dict[str, Any]]] = None,
-    callback: Optional["CallbackType"] = None,
-    work: Optional[ArrayType] = None,
-    args: Tuple[Any, ...] = (),
+    jac: GradType,
+    funjac: FunGradType | None = None,
+    tol: float | None = None,
+    options: OptimizeOptions | dict[str, Any] | None = None,
+    callback: CallbackType | None = None,
+    work: ArrayType | None = None,
+    args: tuple[Any, ...] = (),
 ) -> OptimizeResult:
     """
     :param fun: a :class:`~FunType` that returns the function value at ``x``.
@@ -686,7 +679,7 @@ def minimize(
         if work.size >= m:
             raise ValueError(f"'work' must have size >= {m}.")
 
-    wrapped_callback: Optional[Callable[[Any], int]] = None
+    wrapped_callback: Callable[[Any], int] | None = None
     if callback is not None:
 
         def wrapped_callback(s: _cg.cg_iter_stats) -> int:

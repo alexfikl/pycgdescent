@@ -8,11 +8,13 @@ Example of the high-level API with callbacks and everything!
 Uses the classic Rosenbrock function as an example.
 """
 
+from __future__ import annotations
+
 # START_ROSENROCK_EXAMPLE
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, List, Optional
 
+import matplotlib.pyplot as mp
 import numpy as np
 import numpy.linalg as la
 
@@ -21,10 +23,10 @@ import pycgdescent as cg
 
 @dataclass(frozen=True)
 class CallbackCache:
-    alpha: List[float] = field(default_factory=list)
-    x: List[cg.ArrayType] = field(default_factory=list)
-    f: List[float] = field(default_factory=list)
-    g: List[float] = field(default_factory=list)
+    alpha: list[float] = field(default_factory=list)
+    x: list[cg.ArrayType] = field(default_factory=list)
+    f: list[float] = field(default_factory=list)
+    g: list[float] = field(default_factory=list)
 
     def __call__(self, info: cg.CallbackInfo) -> int:
         self.alpha.append(info.alpha)
@@ -67,19 +69,17 @@ def main(
     )
 
     print(r.pretty())
+    # END_ROSENBROCK_EXAMPLE
 
     if visualize:
         plot_rosenbrock_solution(r, callback, a=a, b=b)
-    # END_ROSENBROCK_EXAMPLE
 
 
-def savefig(fig: Any, suffix: str, ext: Optional[str] = None) -> None:
+def savefig(fig: mp.Figure, suffix: str, ext: str | None = None) -> None:
     import pathlib
 
     if ext is None:
-        import matplotlib.pyplot as pt
-
-        ext = pt.rcParams["savefig.format"]
+        ext = mp.rcParams["savefig.format"]
 
     filename = pathlib.Path(__file__).parent / f"rosenbrock_{suffix}"
     filename = filename.with_suffix(f".{ext}")
@@ -98,10 +98,8 @@ def plot_rosenbrock_solution(
     f: cg.ArrayType = np.array(cache.f)
     gnorm: cg.ArrayType = np.array(cache.g)
 
-    import matplotlib.pyplot as pt
-
-    pt.style.use("seaborn")
-    fig = pt.figure(figsize=(10, 10), dpi=300)
+    mp.style.use("seaborn")
+    fig = mp.figure(figsize=(10, 10), dpi=300)
 
     # {{{ alpha
 
@@ -151,7 +149,7 @@ def plot_rosenbrock_solution(
 
     # }}}
 
-    pt.close(fig)
+    mp.close(fig)
 
 
 if __name__ == "__main__":
