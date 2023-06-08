@@ -35,13 +35,13 @@ pyproject-hooks==1.0.0
     # via build
 pytest==7.3.1
     # via pycgdescent (pyproject.toml)
-ruff==0.0.270
+ruff==0.0.272
     # via pycgdescent (pyproject.toml)
 tomlkit==0.11.8
     # via pyproject-fmt
 types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
-typing-extensions==4.6.2
+typing-extensions==4.6.3
     # via mypy
 wheel==0.40.0
     # via pip-tools
