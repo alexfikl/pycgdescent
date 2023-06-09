@@ -38,6 +38,11 @@ dev = [
     "ruff",
     "types-dataclasses",
 ]
+docs = [
+    "sphinx>=6",
+    "sphinx-autoapi",
+    "sphinx-book-theme",
+]
 [project.urls]
 Documentation = "https://pycgdescent.readthedocs.io"
 Repository = "https://github.com/alexfikl/pycgdescent"
