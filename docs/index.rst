@@ -1,5 +1,5 @@
-Welcome to pycgdescent's documentation!
-=======================================
+pycgdescent documentation
+=========================
 
 Example
 -------

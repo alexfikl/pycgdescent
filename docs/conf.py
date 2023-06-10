@@ -58,12 +58,39 @@ spelling_word_list_filename = "wordlist_en.txt"
 
 # html
 html_theme = "sphinx_book_theme"
+html_title = "pycgdescent"
 html_theme_options = {
     "show_toc_level": 2,
     "use_source_button": True,
     "use_repository_button": True,
     "repository_url": "https://github.com/alexfikl/pycgdescent",
     "repository_branch": "main",
+    "icon_links": [
+        {
+            "name": "Release",
+            "url": "https://github.com/alexfikl/pycgdescent/releases",
+            "icon": "https://img.shields.io/github/v/release/alexfikl/pycgdescent",
+            "type": "url",
+        },
+        {
+            "name": "License",
+            "url": "https://github.com/alexfikl/pycgdescent/tree/main/LICENSES",
+            "icon": "https://img.shields.io/badge/License-GPL_2.0-blue.svg",
+            "type": "url",
+        },
+        {
+            "name": "CI",
+            "url": "https://github.com/alexfikl/pycgdescent",
+            "icon": "https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg",
+            "type": "url",
+        },
+        {
+            "name": "Issues",
+            "url": "https://github.com/alexfikl/pycgdescent/issues",
+            "icon": "https://img.shields.io/github/issues/alexfikl/pycgdescent",
+            "type": "url",
+        },
+    ],
 }
 
 # }}}
