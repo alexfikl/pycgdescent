@@ -63,24 +63,6 @@ line-length = 88
 target-version = ['py38']
 exclude='\.eggs|\.git|\.mypy_cache|build|dist|\.pytest_cache|\.pytype'
 
-[tool.isort]
-profile = "black"
-
-[tool.pytest.ini_options]
-testpaths = "tests"
-
-[tool.mypy]
-warn_unused_ignores = true
-plugins = "numpy.typing.mypy_plugin"
-
-[[tool.mypy.overrides]]
-module = [
-    "importlib_metadata.*",
-    "matplotlib.*",
-    "numpy.*",
-]
-ignore_missing_imports = true
-
 [tool.ruff]
 target-version = "py38"
 line-length = 88
@@ -121,6 +103,24 @@ ignore = [
 docstring-quotes = "double"
 inline-quotes = "double"
 multiline-quotes = "double"
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+
+[tool.mypy]
+warn_unused_ignores = true
+plugins = "numpy.typing.mypy_plugin"
+
+[[tool.mypy.overrides]]
+module = [
+    "importlib_metadata.*",
+    "matplotlib.*",
+    "numpy.*",
+]
+ignore_missing_imports = true
 
 [tool.check-manifest]
 ignore = [
