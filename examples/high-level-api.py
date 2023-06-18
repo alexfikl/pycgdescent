@@ -53,6 +53,7 @@ def main(
     a: float = 100.0,
     b: float = 1.0,
     tol: float = 1.0e-8,
+    dark: bool = False,
     visualize: bool = False,
 ) -> None:
     callback = CallbackCache()
@@ -72,7 +73,7 @@ def main(
     # END_ROSENBROCK_EXAMPLE
 
     if visualize:
-        plot_rosenbrock_solution(r, callback, a=a, b=b)
+        plot_rosenbrock_solution(r, callback, a=a, b=b, dark=dark)
 
 
 def savefig(fig: mp.Figure, suffix: str, ext: str | None = None) -> None:
@@ -81,33 +82,50 @@ def savefig(fig: mp.Figure, suffix: str, ext: str | None = None) -> None:
     if ext is None:
         ext = mp.rcParams["savefig.format"]
 
-    filename = pathlib.Path(__file__).parent / f"rosenbrock_{suffix}"
-    filename = filename.with_suffix(f".{ext}")
+    filename = pathlib.Path(__file__).parent / f"rosenbrock_{suffix}.{ext}"
 
-    fig.savefig(filename)
+    fig.tight_layout()
+    fig.savefig(filename, bbox_inches="tight")
     print("output: ", filename)
 
     fig.clf()
 
 
 def plot_rosenbrock_solution(
-    r: cg.OptimizeResult, cache: CallbackCache, a: float = 100.0, b: float = 1.0
+    r: cg.OptimizeResult,
+    cache: CallbackCache,
+    *,
+    a: float = 100.0,
+    b: float = 1.0,
+    ext: str = "png",
+    dark: bool = False,
 ) -> None:
     x: cg.ArrayType = np.array(cache.x).T
     alpha: cg.ArrayType = np.array(cache.alpha)
     f: cg.ArrayType = np.array(cache.f)
     gnorm: cg.ArrayType = np.array(cache.g)
 
+    facecolor = "#121212" if dark else "#FFFFFF"
+    fontcolor = "#FFFFFF" if dark else "#000000"
+
     mp.style.use("seaborn")
-    fig = mp.figure(figsize=(10, 10), dpi=300)
+    mp.rc("text", usetex=True)
+    mp.rc("figure", facecolor=facecolor)
+    mp.rc("axes", labelsize=32, titlesize=32, labelcolor=fontcolor)
+    mp.rc("xtick", labelsize=18, color=fontcolor)
+    mp.rc("ytick", labelsize=18, color=fontcolor)
+
+    fig = mp.figure(figsize=(10, 10), dpi=300, constrained_layout=True)
+
+    # NOTE: these are the background colors for sphinx-book-theme
 
     # {{{ alpha
 
     ax = fig.gca()
     ax.plot(alpha)
     ax.set_xlabel("$Iteration$")
-    ax.set_ylabel("$Step~ Size$", fontsize="large")
-    savefig(fig, "alpha")
+    ax.set_ylabel("$Step~ Size$")
+    savefig(fig, "alpha", ext=ext)
 
     # }}}
 
@@ -117,7 +135,7 @@ def plot_rosenbrock_solution(
     ax.semilogy(f)
     ax.set_xlabel("$Iteration$")
     ax.set_ylabel("$f$")
-    savefig(fig, "value")
+    savefig(fig, "value", ext=ext)
 
     # }}}
 
@@ -126,8 +144,8 @@ def plot_rosenbrock_solution(
     ax = fig.gca()
     ax.semilogy(gnorm)
     ax.set_xlabel("$Iteration$")
-    ax.set_ylabel("$Gradient~ Magnitude$", fontsize="large")
-    savefig(fig, "gnorm")
+    ax.set_ylabel("$Gradient~ Magnitude$")
+    savefig(fig, "gnorm", ext=ext)
 
     # }}}
 
@@ -142,10 +160,13 @@ def plot_rosenbrock_solution(
     ax.contour(xy[0], xy[1], z, levels=48, colors="k")
     ax.plot(x[0], x[1], "wo-")
     ax.plot(r.x[0], r.x[1], "ro")
-    ax.set_aspect("equal")
-    fig.colorbar(c, shrink=0.75)
 
-    savefig(fig, "convergence")
+    ax.set_aspect("equal")
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
+    fig.colorbar(c, shrink=0.73)
+
+    savefig(fig, "convergence", ext=ext)
 
     # }}}
 
@@ -172,7 +193,8 @@ if __name__ == "__main__":
         default=1.0e-8,
         help="stopping condition gradient tolerance",
     )
+    parser.add_argument("--dark", action="store_true")
     parser.add_argument("--visualize", action="store_true")
     args = parser.parse_args()
 
-    main(a=args.a, b=args.b, tol=args.tol, visualize=args.visualize)
+    main(a=args.a, b=args.b, tol=args.tol, dark=args.dark, visualize=args.visualize)
