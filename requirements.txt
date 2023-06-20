@@ -4,5 +4,5 @@
 #
 #    pip-compile --output-file=requirements.txt --resolver=backtracking pyproject.toml
 #
-numpy==1.24.3
+numpy==1.25.0
     # via pycgdescent (pyproject.toml)

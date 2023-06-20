@@ -683,7 +683,7 @@ def minimize(
     if callback is not None:
 
         def wrapped_callback(s: _cg.cg_iter_stats) -> int:
-            return callback(_info_from_stats(s))  # type: ignore
+            return callback(_info_from_stats(s))
 
     # }}}
 
