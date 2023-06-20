@@ -13,7 +13,8 @@
 pycgdescent
 ===========
 
-Python wrapper for `CG_DESCENT <https://users.clas.ufl.edu/hager/papers/Software/>`__.
+Python wrapper for the `CG_DESCENT <https://users.clas.ufl.edu/hager/papers/Software/>`__
+algorithm by Hager and Zang (see `DOI <https://doi.org/10.1145/1132973.1132979>`__).
 A previous wrapper can be found `here <https://github.com/martiniani-lab/PyCG_DESCENT>`__.
 Some differences:
 
