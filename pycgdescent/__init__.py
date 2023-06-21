@@ -56,7 +56,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, Callable, Iterator
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Iterator
 
 try:
     # NOTE: only available in python 3.10
@@ -443,7 +443,7 @@ class OptimizeOptions(_cg.cg_parameter):
         Tolerance used to determine if the cost can be treated as quadratic.
     """
 
-    _changes: dict[str, Any] = {}
+    _changes: ClassVar[dict[str, Any]] = {}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
