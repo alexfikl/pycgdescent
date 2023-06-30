@@ -81,7 +81,10 @@ pip-install:	## Install pinned dependencies from requirements.txt
 .PHONY: pip-install
 
 test:			## Run pytest tests
-	$(PYTHON) -m pytest -rswx --durations=25 -v -s $(PYTEST_ADDOPTS)
+	$(PYTHON) -m pytest \
+		--junit-xml=pytest-results.xml \
+		-rswx --durations=25 -v -s \
+		$(PYTEST_ADDOPTS)
 .PHONY: test
 
 run-examples:	## Run examples with default options
