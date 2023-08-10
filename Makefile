@@ -39,6 +39,7 @@ mypy:			## Run mypy checks over the source code
 codespell:		## Run codespell over the source code and documentation
 	@codespell --summary \
 		--skip _build \
+		--uri-ignore-words-list '*' \
 		--ignore-words .codespell-ignore \
 		pycgdescent tests examples docs
 .PHONY: codespell
