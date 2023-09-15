@@ -12,9 +12,12 @@ help: 			## Show this help
 
 # {{{ linting
 
-fmt: black		## Run all formatting scripts
+format: black	## Run all formatting scripts
 	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
 	$(PYTHON) -m isort pycgdescent tests examples docs
+.PHONY: format
+
+fmt: format
 .PHONY: fmt
 
 black:			## Run black over the source code
