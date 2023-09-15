@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=dev --output-file=requirements-dev.txt --strip-extras pyproject.toml
 #
-build==0.10.0
+build==1.0.3
     # via pip-tools
 click==8.1.7
     # via pip-tools
@@ -33,9 +33,9 @@ pyproject-fmt==1.1.0
     # via pycgdescent (pyproject.toml)
 pyproject-hooks==1.0.0
     # via build
-pytest==7.4.0
+pytest==7.4.2
     # via pycgdescent (pyproject.toml)
-ruff==0.0.286
+ruff==0.0.289
     # via pycgdescent (pyproject.toml)
 tomlkit==0.12.1
     # via pyproject-fmt
