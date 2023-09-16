@@ -97,7 +97,7 @@ ignore = [
 ]
 
 [tool.ruff.per-file-ignores]
-"pycgdescent/_cg_descent.pyi" = ["A003", "N801", "N802", "SIM108"]
+"pycgdescent/_cg_descent.pyi" = ["A003", "N801", "N802", "SIM108", "PLR0904"]
 
 [tool.ruff.flake8-quotes]
 docstring-quotes = "double"
