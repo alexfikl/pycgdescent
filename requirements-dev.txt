@@ -18,7 +18,7 @@ mypy-extensions==1.0.0
     # via mypy
 natsort==8.4.0
     # via pyproject-fmt
-numpy==1.25.2
+numpy==1.26.0
     # via pycgdescent (pyproject.toml)
 packaging==23.1
     # via
@@ -35,13 +35,13 @@ pyproject-hooks==1.0.0
     # via build
 pytest==7.4.2
     # via pycgdescent (pyproject.toml)
-ruff==0.0.290
+ruff==0.0.291
     # via pycgdescent (pyproject.toml)
 tomlkit==0.12.1
     # via pyproject-fmt
 types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via mypy
 wheel==0.41.2
     # via pip-tools
