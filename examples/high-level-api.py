@@ -17,6 +17,7 @@ from functools import partial
 import matplotlib.pyplot as mp
 import numpy as np
 import numpy.linalg as la
+from matplotlib.figure import Figure
 
 import pycgdescent as cg
 
@@ -76,7 +77,7 @@ def main(
         plot_rosenbrock_solution(r, callback, a=a, b=b, dark=dark)
 
 
-def savefig(fig: mp.Figure, suffix: str, ext: str | None = None) -> None:
+def savefig(fig: Figure, suffix: str, ext: str | None = None) -> None:
     import pathlib
 
     if ext is None:

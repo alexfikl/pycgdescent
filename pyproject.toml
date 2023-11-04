@@ -59,8 +59,10 @@ requires = [
 packages = ["pycgdescent"]
 
 [tool.black]
+safe = true
+preview = true
 line-length = 88
-target-version = ['py38']
+target-version = ["py38", "py39", "py310", "py311"]
 exclude='\.eggs|\.git|\.mypy_cache|build|dist|\.pytest_cache|\.pytype'
 
 [tool.ruff]
@@ -90,6 +92,7 @@ select = [
 ignore = [
     "E402",     # module-import-not-at-top-of-file
     "I001",     # unsorted-imports
+    "PLC0415",  # import-outside-top-level
     "PLR0913",  # too-many-arguments
     "PLR2004",  # magic-value-comparison
     "S101",     # assert
@@ -112,6 +115,8 @@ profile = "black"
 testpaths = "tests"
 
 [tool.mypy]
+strict = true
+hide_error_codes = false
 warn_unused_ignores = true
 plugins = "numpy.typing.mypy_plugin"
 

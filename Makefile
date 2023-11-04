@@ -21,21 +21,17 @@ fmt: format
 .PHONY: fmt
 
 black:			## Run black over the source code
-	$(PYTHON) -m black \
-		--safe --target-version py38 --preview \
-		pycgdescent examples tests docs setup.py
+	$(PYTHON) -m black pycgdescent examples tests docs setup.py
 .PHONY: black
 
+lint: ruff mypy codespell reuse manifest	## Run linting checks
 ruff:			## Run ruff checks over the source code
-	ruff check \
-		pycgdescent tests examples
+	ruff check pycgdescent tests examples
 	@echo -e "\e[1;32mruff clean!\e[0m"
 .PHONY: ruff
 
 mypy:			## Run mypy checks over the source code
-	$(PYTHON) -m mypy \
-		--strict --show-error-codes $(MYPY_ADDOPTS) \
-		pycgdescent tests examples
+	$(PYTHON) -m mypy pycgdescent tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 .PHONY: mypy
 
