@@ -94,6 +94,7 @@ ignore = [
     "I001",     # unsorted-imports
     "PLC0415",  # import-outside-top-level
     "PLR0913",  # too-many-arguments
+    "PLR0917",  # too-many-positional
     "PLR2004",  # magic-value-comparison
     "S101",     # assert
     "S102",     # exec-builtin
