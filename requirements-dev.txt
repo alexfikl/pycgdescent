@@ -12,13 +12,13 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via pycgdescent (pyproject.toml)
-mypy==1.7.1
+mypy==1.8.0
     # via pycgdescent (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
 natsort==8.4.0
     # via pyproject-fmt
-numpy==1.26.2
+numpy==1.26.3
     # via pycgdescent (pyproject.toml)
 packaging==23.2
     # via
@@ -33,9 +33,9 @@ pyproject-fmt==1.5.3
     # via pycgdescent (pyproject.toml)
 pyproject-hooks==1.0.0
     # via build
-pytest==7.4.3
+pytest==7.4.4
     # via pycgdescent (pyproject.toml)
-ruff==0.1.8
+ruff==0.1.11
     # via pycgdescent (pyproject.toml)
 tomlkit==0.12.3
     # via pyproject-fmt
