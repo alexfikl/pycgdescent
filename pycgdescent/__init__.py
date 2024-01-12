@@ -449,9 +449,9 @@ class OptimizeOptions(_cg.cg_parameter):
         super().__init__()
 
         for k, v in kwargs.items():
-            object.__setattr__(self, k, v)
+            object.__setattr__(self, k, v)  # noqa: PLC2801
 
-        object.__setattr__(self, "_changes", kwargs)
+        object.__setattr__(self, "_changes", kwargs)  # noqa: PLC2801
 
     def __setattr__(self, k: str, v: Any) -> None:
         raise AttributeError(f"Cannot assign to {k!r}.")
