@@ -54,6 +54,11 @@ Reference
 
 .. automodule:: pycgdescent
 
+Changelog
+=========
+
+.. include:: ../CHANGELOG.rst
+
 Acknowledgments
 ===============
 
