@@ -1,3 +1,11 @@
+[build-system]
+build-backend = "scikit_build_core.build"
+requires = [
+    "pybind11>=2.6",
+    "scikit-build-core>=0.7",
+    "wheel",
+]
+
 [project]
 name = "pycgdescent"
 version = "0.4.1"
@@ -47,17 +55,10 @@ docs = [
 Documentation = "https://pycgdescent.readthedocs.io"
 Repository = "https://github.com/alexfikl/pycgdescent"
 
-[build-system]
-build-backend = "setuptools.build_meta"
-requires = [
-    "pybind11>=2.6",
-    "setuptools>=42",
-    "wheel",
-]
-
-[tool.setuptools]
-package-dir = { "" = "src" }
-packages = { find = { where = ["src"] } }
+[tool.scikit-build]
+cmake.minimum-version = "3.15.0"
+wheel.license-files = ["LICENCES/GPL-2.0-or-later.txt", "LICENSES/MIT.txt"]
+sdist.exclude = [".github"]
 
 [tool.ruff]
 preview = true
@@ -108,6 +109,7 @@ known-first-party = ["pycgdescent"]
 
 [tool.check-manifest]
 ignore = [
+    ".flake8",
     "*.yml",
     "*.yaml",
     ".ci/*",

@@ -1,12 +1,13 @@
-include download_and_patch_sources.sh
-include Makefile
-include requirements.txt
-include requirements-dev.txt
-include pyproject.toml
-include README.rst
-include setup.py
-include .reuse/dep5
 include .codespell-ignore
+include .reuse/dep5
+include CMakeLists.txt
+include Makefile
+include README.rst
+include download_and_patch_sources.sh
+include pyproject.toml
+include requirements-dev.txt
+include requirements.txt
+include setup.py
 
 recursive-include LICENSES *.txt
 recursive-include docs *.png
@@ -16,8 +17,10 @@ recursive-include docs requirements.txt
 recursive-include docs Makefile
 recursive-include examples *.py
 recursive-include patches *.patch
-recursive-include pycgdescent *.pyi
-recursive-include pycgdescent *.typed
+recursive-include src *.pyi
+recursive-include src *.typed
 recursive-include src *.h
 recursive-include src *.cpp
 recursive-include tests *.py
+
+prune docs/_build
