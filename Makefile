@@ -14,33 +14,33 @@ help: 			## Show this help
 
 format: black	## Run all formatting scripts
 	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
-	$(PYTHON) -m isort pycgdescent tests examples docs
+	$(PYTHON) -m isort src tests examples docs
 .PHONY: format
 
 fmt: format
 .PHONY: fmt
 
 black:			## Run black over the source code
-	$(PYTHON) -m black pycgdescent examples tests docs setup.py
+	$(PYTHON) -m black src examples tests docs setup.py
 .PHONY: black
 
 lint: ruff mypy codespell reuse manifest	## Run linting checks
 ruff:			## Run ruff checks over the source code
-	ruff check pycgdescent tests examples
+	ruff check src tests examples
 	@echo -e "\e[1;32mruff clean!\e[0m"
 .PHONY: ruff
 
 mypy:			## Run mypy checks over the source code
-	$(PYTHON) -m mypy pycgdescent tests examples
+	$(PYTHON) -m mypy src tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 .PHONY: mypy
 
 codespell:		## Run codespell over the source code and documentation
 	@codespell --summary \
-		--skip _build \
+		--skip _build --skip src/wrapper \
 		--uri-ignore-words-list '*' \
 		--ignore-words .codespell-ignore \
-		pycgdescent tests examples docs
+		src tests examples docs
 .PHONY: codespell
 
 reuse:			## Check REUSE license compliance

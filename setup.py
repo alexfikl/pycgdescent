@@ -20,7 +20,7 @@ else:
 
 # }}}
 
-sources = ["src/cg_descent.c", "src/cg_descent_wrap.cpp"]
+sources = ["src/wrapper/cg_descent.c", "src/wrapper/cg_descent_wrap.cpp"]
 
 setup(
     ext_package="pycgdescent",

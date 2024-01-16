@@ -62,7 +62,7 @@ done
 
 echo -e "\033[1;32mCopying patched sources...\033[0m"
 for filename in cg_user.h cg_blas.h cg_descent.h cg_descent.c; do
-  cp "${filename}" "${basedir}/src"
+  cp "${filename}" "${basedir}/src/wrapper"
 done
 
 popd

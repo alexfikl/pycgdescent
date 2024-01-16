@@ -56,7 +56,8 @@ requires = [
 ]
 
 [tool.setuptools]
-packages = ["pycgdescent"]
+package-dir = { "" = "src" }
+packages = { find = { where = ["src"] } }
 
 [tool.black]
 safe = true
@@ -102,7 +103,7 @@ ignore = [
 ]
 
 [tool.ruff.per-file-ignores]
-"pycgdescent/_cg_descent.pyi" = ["A003", "N801", "N802", "SIM108", "PLR0904"]
+"src/pycgdescent/_cg_descent.pyi" = ["A003", "N801", "N802", "SIM108", "PLR0904"]
 
 [tool.ruff.flake8-quotes]
 docstring-quotes = "double"
