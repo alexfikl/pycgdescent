@@ -12,19 +12,30 @@ help: 			## Show this help
 
 # {{{ linting
 
-format: black	## Run all formatting scripts
-	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
-	$(PYTHON) -m isort src tests examples docs
+format: black isort pyproject					## Run all formatting scripts
 .PHONY: format
 
 fmt: format
 .PHONY: fmt
 
-black:			## Run black over the source code
-	$(PYTHON) -m black src examples tests docs setup.py
+pyproject:		## Run pyproject-fmt over the configuration
+	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
+	@echo -e "\e[1;32mpyproject clean!\e[0m"
+.PHONY: pyproject
+
+black:			## Run ruff format over the source code
+	ruff format src tests examples docs setup.py
+	@echo -e "\e[1;32mruff format clean!\e[0m"
 .PHONY: black
 
+isort:			## Run ruff isort fixes over the source code
+	ruff check --fix --select=I src tests examples docs setup.py
+	@echo -e "\e[1;32mruff isort clean!\e[0m"
+.PHONY: isort
+
 lint: ruff mypy codespell reuse manifest	## Run linting checks
+.PHONY: lint
+
 ruff:			## Run ruff checks over the source code
 	ruff check src tests examples
 	@echo -e "\e[1;32mruff clean!\e[0m"
