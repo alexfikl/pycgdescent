@@ -15,7 +15,7 @@ sdist.include = ["docs/*.png"]
 
 [project]
 name = "pycgdescent"
-version = "0.4.1"
+version = "0.7.0"
 description = "Python wrapper for the CG_DESCENT library"
 readme= "README.rst"
 keywords = [
