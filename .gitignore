@@ -10,7 +10,6 @@ _build
 dist
 
 # generated files
-MANIFEST
 tags
 
 # temporaries
