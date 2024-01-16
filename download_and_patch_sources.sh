@@ -10,8 +10,8 @@ set -Eeuo pipefail
 
 pkgname='CG_DESCENT-C'
 pkgver='6.8'
-archive="${pkgname}-${pkgver}.tar.gz"
-url="https://users.clas.ufl.edu/hager/papers/CG/Archive/${archive}"
+archive="${pkgname}-${pkgver}.tar_.gz"
+url="https://people.clas.ufl.edu/hager/files/${archive}"
 
 basedir=$(pwd)
 builddir="${basedir}/_build"
