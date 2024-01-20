@@ -45,11 +45,13 @@ dependencies = [
 ]
 [project.optional-dependencies]
 dev = [
-    "isort",
+    "check-manifest",
+    "codespell",
     "mypy",
     "pip-tools",
     "pyproject-fmt",
     "pytest",
+    "reuse",
     "ruff",
     "types-dataclasses",
 ]

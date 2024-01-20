@@ -4,14 +4,34 @@
 #
 #    pip-compile --extra=dev --output-file=requirements-dev.txt --strip-extras pyproject.toml
 #
+binaryornot==0.4.4
+    # via reuse
+boolean-py==4.0
+    # via
+    #   license-expression
+    #   reuse
 build==1.0.3
-    # via pip-tools
+    # via
+    #   check-manifest
+    #   pip-tools
+chardet==5.2.0
+    # via
+    #   binaryornot
+    #   python-debian
+check-manifest==0.49
+    # via pycgdescent (pyproject.toml)
 click==8.1.7
     # via pip-tools
+codespell==2.2.6
+    # via pycgdescent (pyproject.toml)
 iniconfig==2.0.0
     # via pytest
-isort==5.13.2
-    # via pycgdescent (pyproject.toml)
+jinja2==3.1.3
+    # via reuse
+license-expression==30.2.0
+    # via reuse
+markupsafe==2.1.4
+    # via jinja2
 mypy==1.8.0
     # via pycgdescent (pyproject.toml)
 mypy-extensions==1.0.0
@@ -34,6 +54,10 @@ pyproject-fmt==1.6.0
 pyproject-hooks==1.0.0
     # via build
 pytest==7.4.4
+    # via pycgdescent (pyproject.toml)
+python-debian==0.1.49
+    # via reuse
+reuse==3.0.1
     # via pycgdescent (pyproject.toml)
 ruff==0.1.14
     # via pycgdescent (pyproject.toml)
