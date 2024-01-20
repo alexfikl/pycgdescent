@@ -80,6 +80,35 @@ else:
     ArrayType: TypeAlias = np.ndarray
 
 
+# {{{ wrap
+
+# NOTE: These are mostly here for the examples so they can use the low-level
+# wrappers directly and not the 'minimize' fancy wrapper.
+
+cg_parameter = _cg.cg_parameter
+
+
+def cg_descent(
+    x: ArrayType,
+    grad_tol: float,
+    value: Callable[[ArrayType], float],
+    grad: Callable[[ArrayType, ArrayType], None],
+    *,
+    valgrad: Callable[[ArrayType, ArrayType], float] | None = None,
+    callback: Callable[[_cg.cg_iter_stats], int] | None = None,
+    work: ArrayType | None = None,
+    param: _cg.cg_parameter | None = None,
+) -> tuple[ArrayType, _cg.cg_stats, bool]:
+    """A thin wrapper around the original ``cg_descent`` implementation."""
+    if param is None:
+        param = _cg.cg_parameter()
+
+    return _cg.cg_descent(x, grad_tol, param, value, grad, valgrad, callback, work)
+
+
+# }}}
+
+
 # {{{ options
 
 
@@ -95,7 +124,7 @@ def _getmembers(obj: Any) -> list[str]:
 
 def _stringify_dict(d: dict[str, Any]) -> str:
     width = len(max(d, key=len))
-    fmt = f"{{:{width}}} : {{}}"
+    fmt = "{{:" + str(width) + ":}} : {{}}"
 
     items = sorted({k: repr(v) for k, v in d.items()}.items())
 
@@ -449,9 +478,9 @@ class OptimizeOptions(_cg.cg_parameter):
         super().__init__()
 
         for k, v in kwargs.items():
-            object.__setattr__(self, k, v)  # noqa: PLC2801
+            object.__setattr__(self, k, v)
 
-        object.__setattr__(self, "_changes", kwargs)  # noqa: PLC2801
+        object.__setattr__(self, "_changes", kwargs)
 
     def __setattr__(self, k: str, v: Any) -> None:
         raise AttributeError(f"Cannot assign to {k!r}.")
@@ -721,9 +750,11 @@ def timer(name: str = "timer") -> Iterator[None]:
     import time
 
     t_start = time.time()
-    yield
-    t_end = time.time()
-    logger.info("%s: %gs", name, t_end - t_start)
+    try:
+        yield None
+    finally:
+        t_end = time.time()
+        logger.info("%s: %gs", name, t_end - t_start)
 
 
 # }}}

@@ -30,6 +30,7 @@ black:			## Run ruff format over the source code
 
 isort:			## Run ruff isort fixes over the source code
 	ruff check --fix --select=I src tests examples docs setup.py
+	ruff check --fix --select=RUF022 src
 	@echo -e "\e[1;32mruff isort clean!\e[0m"
 .PHONY: isort
 

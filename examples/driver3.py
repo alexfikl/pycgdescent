@@ -35,7 +35,6 @@ from functools import partial
 import numpy as np
 
 import pycgdescent as cg
-import pycgdescent._cg_descent as _cg
 
 logger = logging.getLogger()
 
@@ -62,7 +61,7 @@ def main(n: int = 100) -> None:
     x0: cg.ArrayType = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
-    param = _cg.cg_parameter()
+    param = cg.cg_parameter()
     param.step = 1.0
     # param.PrintParms = 1
 
@@ -71,15 +70,13 @@ def main(n: int = 100) -> None:
     # {{{ different step size
 
     with cg.timer():
-        _, stats, status = _cg.cg_descent(
+        _, stats, status = cg.cg_descent(
             x0,
             1.0e-8,
-            param,
             partial(fn, t=t),
             partial(grad, t=t),
-            partial(fngrad, t=t),
-            callback=None,
-            work=None,
+            valgrad=partial(fngrad, t=t),
+            param=param,
         )
 
     from pycgdescent import STATUS_TO_MESSAGE

@@ -31,7 +31,6 @@ from functools import partial
 import numpy as np
 
 import pycgdescent as cg
-import pycgdescent._cg_descent as _cg
 
 logger = logging.getLogger()
 
@@ -58,7 +57,7 @@ def main(n: int = 100) -> None:
     x0: cg.ArrayType = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
-    param = _cg.cg_parameter()
+    param = cg.cg_parameter()
     param.QuadStep = 0
     param.step = 1.0e-5
     # param.logger.infoParms = 1
@@ -70,15 +69,13 @@ def main(n: int = 100) -> None:
     logger.info("==== with rho 1.5 ====")
     with cg.timer():
         param.rho = 1.5
-        _, stats, _ = _cg.cg_descent(
+        _, stats, _ = cg.cg_descent(
             x0,
             1.0e-8,
-            param,
             partial(fn, t=t),
             partial(grad, t=t),
-            partial(fngrad, t=t),
-            callback=None,
-            work=None,
+            valgrad=partial(fngrad, t=t),
+            param=param,
         )
 
     logger.info("\n")
@@ -98,15 +95,13 @@ def main(n: int = 100) -> None:
     logger.info("==== with rho 5.0 ====")
     with cg.timer():
         param.rho = 5.0
-        _, stats, _ = _cg.cg_descent(
+        _, stats, _ = cg.cg_descent(
             x0,
             1.0e-8,
-            param,
             partial(fn, t=t),
             partial(grad, t=t),
-            partial(fngrad, t=t),
-            callback=None,
-            work=None,
+            valgrad=partial(fngrad, t=t),
+            param=param,
         )
 
     logger.info("\n")
