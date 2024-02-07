@@ -70,21 +70,24 @@ REQUIREMENTS=\
 
 requirements-dev.txt: pyproject.toml
 	$(PYTHON) -m piptools compile \
-		--resolver=backtracking --strip-extras --upgrade \
-		--extra dev \
+		--resolver=backtracking --allow-unsafe \
+		--strip-extras --upgrade --extra dev \
 		-o $@ $<
+.PHONY: requirements-dev.txt
 
 requirements.txt: pyproject.toml
 	$(PYTHON) -m piptools compile \
-		--resolver=backtracking --strip-extras --upgrade \
+		--resolver=backtracking --allow-unsafe \
+		--strip-extras --upgrade \
 		-o $@ $<
+.PHONY: requirements.txt
 
 pin: $(REQUIREMENTS)	## Pin dependency versions to requirements.txt
 .PHONY: pin
 
 pip-install:	## Install pinned dependencies from requirements.txt
-	$(PYTHON) -m pip install --upgrade pip wheel setuptools
-	$(PYTHON) -m pip install -r requirements-dev.txt -e .
+	$(PYTHON) -m pip install -r requirements-dev.txt
+	$(PYTHON) -m pip install --no-build-isolation -e .
 .PHONY: pip-install
 
 test:			## Run pytest tests

@@ -38,10 +38,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "codespell",
-    "meson-python",
+    "meson-python>=0.14",
     "mypy",
     "ninja",
     "pip-tools",
+    "pybind11>=2.6",
     "pyproject-fmt",
     "pytest",
     "reuse",
