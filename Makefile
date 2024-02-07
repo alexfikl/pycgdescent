@@ -98,7 +98,7 @@ run-examples:	## Run examples with default options
 	@for ex in $$(find examples -name "*.py"); do \
 		echo "::group::Running $${ex}"; \
 		$(PYTHON) "$${ex}"; \
-		echo "::endgroup::" \
+		echo "::endgroup::"; \
 	done
 .PHONY: run-examples
 
