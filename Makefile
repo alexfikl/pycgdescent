@@ -86,8 +86,9 @@ pin: $(REQUIREMENTS)	## Pin dependency versions to requirements.txt
 .PHONY: pin
 
 pip-install:	## Install pinned dependencies from requirements.txt
-	$(PYTHON) -m pip install --requirement requirements-dev.txt
 	$(PYTHON) -m pip install \
+		--verbose \
+		--requirement requirements-dev.txt \
 		--no-build-isolation \
 		--config-settings=setup-args='-Duse-blas=false' \
 		--editable .
