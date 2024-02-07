@@ -1,0 +1,1 @@
+option('use-blas', type: 'boolean', value: true)

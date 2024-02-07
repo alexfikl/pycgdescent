@@ -8,8 +8,12 @@ py_mod = import('python')
 py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
-pybind11_dep = dependency('pybind11', version: '>=2.11.0')
-blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'], required: false)
+pybind11_dep = dependency version: '>=2.11.0')
+if get_option('use-blas')
+  blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'], required: false)
+else
+  blas_dep = []
+endif
 
 py.extension_module(
   '_cg_descent',

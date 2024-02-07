@@ -11,7 +11,7 @@ Files: .gitignore .gitattributes .readthedocs.yml .pre-commit-config.yaml .githu
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
-Files: pyproject.toml meson.build *Makefile
+Files: pyproject.toml meson.build meson_options.txt *Makefile
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
