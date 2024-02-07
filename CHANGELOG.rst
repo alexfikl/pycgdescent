@@ -1,3 +1,10 @@
+pycgdescent 0.8.1 (February 7, 2024)
+------------------------------------
+
+**Fixes**
+
+* Fix the meson build without BLAS and other related issues.
+
 pycgdescent 0.8.0 (February 7, 2024)
 ------------------------------------
 
