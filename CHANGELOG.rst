@@ -1,3 +1,14 @@
+pycgdescent 0.8.0 (February 7, 2024)
+------------------------------------
+
+**Dependencies**
+
+* Requires ``meson-python`` for the build-system.
+
+**Features**
+
+* Export the low level wrapper as used in some examples.
+
 pycgdescent 0.7.0 (January 16, 2024)
 ------------------------------------
 

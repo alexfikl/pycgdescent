@@ -63,6 +63,7 @@ html_theme_options = {
     "show_toc_level": 2,
     "use_source_button": True,
     "use_repository_button": True,
+    "navigation_with_keys": False,
     "repository_url": "https://github.com/alexfikl/pycgdescent",
     "repository_branch": "main",
     "icon_links": [
