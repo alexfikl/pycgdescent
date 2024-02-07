@@ -86,6 +86,7 @@ pin: $(REQUIREMENTS)	## Pin dependency versions to requirements.txt
 .PHONY: pin
 
 pip-install:	## Install pinned dependencies from requirements.txt
+	$(PYTHON) -m pip install --upgrade pybind11 meson-python ninja
 	$(PYTHON) -m pip install \
 		--verbose \
 		--requirement requirements-dev.txt \
