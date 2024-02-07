@@ -10,9 +10,10 @@ py_dep = py.dependency()
 
 pybind11_dep = dependency('pybind11', version: '>=2.11.0')
 if get_option('use-blas')
-  blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'], required: false)
+  blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'])
 else
   blas_dep = []
+  add_project_arguments('-DCG_DISABLE_BLAS', language: 'c')
 endif
 
 py.extension_module(
