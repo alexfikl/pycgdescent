@@ -70,14 +70,14 @@ REQUIREMENTS=\
 
 requirements-dev.txt: pyproject.toml
 	$(PYTHON) -m piptools compile \
-		--resolver=backtracking --allow-unsafe \
+		--resolver=backtracking --no-allow-unsafe \
 		--strip-extras --upgrade --extra dev \
 		-o $@ $<
 .PHONY: requirements-dev.txt
 
 requirements.txt: pyproject.toml
 	$(PYTHON) -m piptools compile \
-		--resolver=backtracking --allow-unsafe \
+		--resolver=backtracking --no-allow-unsafe \
 		--strip-extras --upgrade \
 		-o $@ $<
 .PHONY: requirements.txt
@@ -86,7 +86,7 @@ pin: $(REQUIREMENTS)	## Pin dependency versions to requirements.txt
 .PHONY: pin
 
 pip-install:	## Install pinned dependencies from requirements.txt
-	$(PYTHON) -m pip install --upgrade pybind11 meson-python ninja
+	$(PYTHON) -m pip install --upgrade pip pybind11 meson-python ninja
 	$(PYTHON) -m pip install --upgrade poetry
 	$(PYTHON) -m pip install \
 		--verbose \
