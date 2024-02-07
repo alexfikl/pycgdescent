@@ -38,6 +38,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "codespell",
+    "meson-python",
     "mypy",
     "ninja",
     "pip-tools",

@@ -96,9 +96,9 @@ test:			## Run pytest tests
 
 run-examples:	## Run examples with default options
 	@for ex in $$(find examples -name "*.py"); do \
-		echo -e "\x1b[1;32m===> \x1b[97mRunning $${ex}\x1b[0m"; \
+		echo "::group::Running $${ex}"; \
 		$(PYTHON) "$${ex}"; \
-		sleep 1; \
+		echo "::endgroup::" \
 	done
 .PHONY: run-examples
 
