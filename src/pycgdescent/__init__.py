@@ -124,7 +124,7 @@ def _getmembers(obj: Any) -> list[str]:
 
 def _stringify_dict(d: dict[str, Any]) -> str:
     width = len(max(d, key=len))
-    fmt = "{{:" + str(width) + ":}} : {{}}"
+    fmt = "{:" + str(width) + "} : {}"
 
     items = sorted({k: repr(v) for k, v in d.items()}.items())
 

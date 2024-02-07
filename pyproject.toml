@@ -1,21 +1,13 @@
 [build-system]
-build-backend = "scikit_build_core.build"
+build-backend = "mesonpy"
 requires = [
+    "meson-python",
     "pybind11>=2.6",
-    "scikit-build-core[pyproject]>=0.7",
-    "wheel",
 ]
-
-[tool.scikit-build]
-cmake.minimum-version = "3.15.0"
-wheel.install-dir = "pycgdescent"
-wheel.license-files = ["LICENCES/GPL-2.0-or-later.txt", "LICENSES/MIT.txt"]
-sdist.exclude = [".github"]
-sdist.include = ["docs/*.png"]
 
 [project]
 name = "pycgdescent"
-version = "0.7.0"
+version = "0.8.0"
 description = "Python wrapper for the CG_DESCENT library"
 readme= "README.rst"
 keywords = [
@@ -45,7 +37,6 @@ dependencies = [
 ]
 [project.optional-dependencies]
 dev = [
-    "check-manifest",
     "codespell",
     "mypy",
     "pip-tools",
@@ -113,14 +104,6 @@ multiline-quotes = "double"
 
 [tool.ruff.lint.isort]
 known-first-party = ["pycgdescent"]
-
-[tool.check-manifest]
-ignore = [
-    ".flake8",
-    "*.yml",
-    "*.yaml",
-    ".ci/*",
-]
 
 [tool.pytest.ini_options]
 testpaths = "tests"

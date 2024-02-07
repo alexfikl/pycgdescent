@@ -3,15 +3,15 @@ Upstream-Name: pycgdescent
 Upstream-Contact: Alexandru Fikl <alexfikl@gmail.com>
 Source: https://github.com/alexfikl/pycgdescent
 
-Files: docs/* *.md *.rst *.cfg requirements*.txt MANIFEST.in
+Files: docs/* *.md *.rst *.cfg requirements*.txt
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
-Files: .gitignore .readthedocs.yml .pre-commit-config.yaml .github/workflows/*.yml .github/*.yml
+Files: .gitignore .gitattributes .readthedocs.yml .pre-commit-config.yaml .github/*.yml
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
-Files: pyproject.toml CMakeLists.txt *Makefile
+Files: pyproject.toml meson.build *Makefile
 Copyright: 2022 Alexandru Fikl <alexfikl@gmail.com>
 License: CC0-1.0
 
