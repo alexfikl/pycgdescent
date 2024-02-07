@@ -34,6 +34,8 @@ mypy-extensions==1.0.0
     # via mypy
 natsort==8.4.0
     # via pyproject-fmt
+ninja==1.11.1.1
+    # via pycgdescent (pyproject.toml)
 numpy==1.26.4
     # via pycgdescent (pyproject.toml)
 packaging==23.2

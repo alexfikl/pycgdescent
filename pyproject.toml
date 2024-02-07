@@ -39,6 +39,7 @@ dependencies = [
 dev = [
     "codespell",
     "mypy",
+    "ninja",
     "pip-tools",
     "pyproject-fmt",
     "pytest",
