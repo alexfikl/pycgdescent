@@ -40,7 +40,6 @@ dependencies = [
 dev = [
     "codespell",
     "mypy",
-    "pip-tools",
     "pyproject-fmt",
     "pytest",
     "reuse",

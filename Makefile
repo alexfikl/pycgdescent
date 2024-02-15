@@ -69,16 +69,14 @@ REQUIREMENTS=\
 	requirements.txt
 
 requirements-dev.txt: pyproject.toml
-	$(PYTHON) -m piptools compile \
-		--resolver=backtracking --no-allow-unsafe \
-		--strip-extras --upgrade --extra dev \
+	uv pip compile \
+		--upgrade --resolution highest --extra dev \
 		-o $@ $<
 .PHONY: requirements-dev.txt
 
 requirements.txt: pyproject.toml
-	$(PYTHON) -m piptools compile \
-		--resolver=backtracking --no-allow-unsafe \
-		--strip-extras --upgrade \
+	uv pip compile \
+		--upgrade --resolution highest \
 		-o $@ $<
 .PHONY: requirements.txt
 
