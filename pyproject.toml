@@ -96,7 +96,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/pycgdescent/_cg_descent.pyi" = ["A003", "N801", "N802", "SIM108", "PLR0904"]
+"src/pycgdescent/_cg_descent.pyi" = ["A003", "E302", "N801", "N802", "SIM108", "PLR0904"]
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
