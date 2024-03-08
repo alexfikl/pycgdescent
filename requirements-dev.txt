@@ -19,7 +19,7 @@ license-expression==30.2.0
     # via reuse
 markupsafe==2.1.5
     # via jinja2
-mypy==1.8.0
+mypy==1.9.0
 mypy-extensions==1.0.0
     # via mypy
 natsort==8.4.0
@@ -36,10 +36,10 @@ pytest==8.0.2
 python-debian==0.1.49
     # via reuse
 reuse==3.0.1
-ruff==0.3.0
+ruff==0.3.1
 tomlkit==0.12.4
     # via pyproject-fmt
 types-dataclasses==0.6.6
 typing-extensions==4.10.0
     # via mypy
-uv==0.1.12
+uv==0.1.16
