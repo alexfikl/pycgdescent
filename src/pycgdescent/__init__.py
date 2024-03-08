@@ -12,43 +12,24 @@ Functions
 .. autofunction:: allocate_work_for
 
 .. autoclass:: OptimizeOptions
-    :no-show-inheritance:
-    :exclude-members: __init__, __new__
 
 .. autoclass:: OptimizeResult
-    :no-show-inheritance:
     :members:
-    :exclude-members: __init__, __new__
 
 .. autoclass:: CallbackInfo
-    :no-show-inheritance:
     :members:
-    :exclude-members: __init__, __new__
 
 Type Aliases
 ^^^^^^^^^^^^
 
-.. class:: FunType
+.. autodata:: FunType
 
-    ``Callable[[numpy.ndarray], float]``. This callable takes the current
-    guess ``x`` and returns the function value.
+.. autodata:: GradType
 
-.. class:: GradType
+.. autodata:: FunGradType
 
-    ``Callable[[numpy.ndarray, numpy.ndarray], None]``. This callable takes
-    ``(g, x)`` as arguments. The array ``g`` needs to be updated in place
-    with the gradient at ``x``.
+.. autodata:: CallbackType
 
-.. class:: FunGradType
-
-    ``Callable[[numpy.ndarray, numpy.ndarray], float]``. This callable takes
-    ``(g, x)`` as arguments and returns the function value. The array ``g``
-    needs to be updated in place with the gradient at ``x``.
-
-.. class:: CallbackType
-
-    ``Callable[[CallbackInfo], int]``. Setting the return value to `0` will
-    stop the iteration.
 """
 
 from __future__ import annotations
@@ -518,19 +499,20 @@ class OptimizeOptions(_cg.cg_parameter):
 
 @dataclass(frozen=True)
 class CallbackInfo:
-    #: Current iteration.
     it: int
-    #: Step size at current iteration.
+    """Current iteration."""
     alpha: float
-    #: Point at which the function and gradient are evaluated.
+    """Step size at current iteration."""
     x: ArrayType
-    #: Function value at current iteration.
+    """Point at which the function and gradient are evaluated."""
     f: float
-    #: Gradient (Jacobian) value at the current iteration.
+    """Function value at current iteration."""
     g: ArrayType
-    #: Descent direction at the current iteration. This will usually not be
-    #: the same as the gradient and can be used for debugging.
+    """Gradient (Jacobian) value at the current iteration."""
     d: ArrayType
+    """Descent direction at the current iteration. This will usually not be
+    the same as the gradient and can be used for debugging.
+    """
 
 
 def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
@@ -554,30 +536,31 @@ def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
 class OptimizeResult:
     """Based on :class:`scipy.optimize.OptimizeResult`."""
 
-    #: Solution of the optimization to the given tolerances.
     x: ArrayType
-    #: Flag to denote a successful exit.
+    """Solution of the optimization to the given tolerances."""
     success: bool
-    #: Termination status of the optimization.
+    """Flag to denote a successful exit."""
     status: int
-    #: Description of the termination status in :attr:`status`.
+    """Termination status of the optimization."""
     message: str
-    #: Function value at the end of the optimization.
+    """Description of the termination status in :attr:`status`."""
     fun: float
-    #: Norm of the gradient (Jacobian) at the end of the optimization.
+    """Function value at the end of the optimization."""
     jac: float
-    #: Number of function evaluations.
+    """Norm of the gradient (Jacobian) at the end of the optimization."""
     nfev: int
-    #: Number of gradient (Jacobian) evaluations.
+    """Number of function evaluations."""
     njev: int
-    #: Number of iterations performed by the optimizer.
+    """Number of gradient (Jacobian) evaluations."""
     nit: int
+    """Number of iterations performed by the optimizer."""
 
-    #: Number of subspace iterations (valid if :attr:`OptimizeOptions.LBFGS` is
-    #: *True*).
     nsubspaceit: int = field(repr=False)
-    #: Number of subspace (valid if :attr:`OptimizeOptions.LBFGS` is *True*).
+    """Number of subspace iterations (valid if
+    :attr:`OptimizeOptions.LBFGS` is *True*).
+    """
     nsubspaces: int = field(repr=False)
+    """Number of subspace (valid if :attr:`OptimizeOptions.LBFGS` is *True*)."""
 
     def pretty(self) -> str:
         """Aligned stringify of the results."""
@@ -616,9 +599,17 @@ STATUS_TO_MESSAGE = {
 # {{{ minimize
 
 FunType: TypeAlias = Callable[[ArrayType], float]
+"""This callable takes the current guess ``x`` and returns the function value."""
 GradType: TypeAlias = Callable[[ArrayType, ArrayType], None]
+"""This callable takes ``(g, x)`` as arguments. The array ``g`` is updated in
+place with the gradient at ``x``.
+"""
 FunGradType: TypeAlias = Callable[[ArrayType, ArrayType], float]
+"""This callable takes ``(g, x)`` as arguments and returns the function value.
+The array ``g`` needs to be updated in place with the gradient at ``x``.
+"""
 CallbackType: TypeAlias = Callable[[CallbackInfo], int]
+"""Setting the return value to `0` will stop the iteration."""
 
 
 def min_work_size(options: OptimizeOptions, n: int) -> int:
