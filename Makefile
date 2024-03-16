@@ -24,12 +24,12 @@ pyproject:		## Run pyproject-fmt over the configuration
 .PHONY: pyproject
 
 black:			## Run ruff format over the source code
-	ruff format src tests examples docs setup.py
+	ruff format src tests examples docs
 	@echo -e "\e[1;32mruff format clean!\e[0m"
 .PHONY: black
 
 isort:			## Run ruff isort fixes over the source code
-	ruff check --fix --select=I src tests examples docs setup.py
+	ruff check --fix --select=I src tests examples docs
 	ruff check --fix --select=RUF022 src
 	@echo -e "\e[1;32mruff isort clean!\e[0m"
 .PHONY: isort
