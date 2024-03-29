@@ -14,7 +14,7 @@ archive="${pkgname}-${pkgver}.tar_.gz"
 url="https://people.clas.ufl.edu/hager/files/${archive}"
 
 basedir=$(pwd)
-builddir="${basedir}/_build"
+builddir="${basedir}/build"
 patchdir="${basedir}/patches"
 
 # }}}
@@ -61,6 +61,8 @@ done
 # {{{ copy sources
 
 echo -e "\033[1;32mCopying patched sources...\033[0m"
+mkdir -p ${basedir}/src/wrapper
+
 for filename in cg_user.h cg_blas.h cg_descent.h cg_descent.c; do
   cp "${filename}" "${basedir}/src/wrapper"
 done
