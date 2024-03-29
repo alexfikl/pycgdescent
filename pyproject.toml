@@ -57,6 +57,23 @@ docs = [
 Documentation = "https://pycgdescent.readthedocs.io"
 Repository = "https://github.com/alexfikl/pycgdescent"
 
+[tool.cibuildwheel]
+build = ["cp3{9,10,11,12}-*"]
+test-requires = ["pytest"]
+test-command = "python -m pytest {project}/tests"
+
+[tool.cibuildwheel.linux]
+skip = ["*_i686"]
+
+[tool.cibuildwheel.macos]
+skip = []
+environment = { MACOSX_DEPLOYMENT_TARGET = "10.14" }
+
+[tool.cibuildwheel.windows]
+skip = ["*-win32"]
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+
 [tool.ruff]
 preview = true
 target-version = "py38"
