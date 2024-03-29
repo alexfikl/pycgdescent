@@ -82,6 +82,14 @@ requirements.txt: pyproject.toml
 pin: $(REQUIREMENTS)	## Pin dependency versions to requirements.txt
 .PHONY: pin
 
+develop:		## Install project in editable mode
+	@rm -rf build
+	@rm -rf dist
+	$(PYTHON) -m pip install \
+		--verbose \
+		--no-build-isolation \
+		--editable .
+
 pip-install:	## Install pinned dependencies from requirements.txt
 	$(PYTHON) -m pip install --upgrade pip pybind11 meson-python ninja
 	$(PYTHON) -m pip install --upgrade poetry
