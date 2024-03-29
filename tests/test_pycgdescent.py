@@ -7,10 +7,13 @@ import logging
 import numpy as np
 import numpy.linalg as la
 import pytest
+import rich.logging
 
 import pycgdescent as cg
 
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logger.addHandler(rich.logging.RichHandler())
 
 
 # {{{ test_optimize_options

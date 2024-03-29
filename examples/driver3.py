@@ -30,7 +30,6 @@ step size is set to 1.
 """
 
 import logging
-import pathlib
 from functools import partial
 
 import numpy as np
@@ -38,7 +37,7 @@ import rich.logging
 
 import pycgdescent as cg
 
-logger = logging.getLogger(pathlib.Path(__file__).stem)
+logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(rich.logging.RichHandler())
 
