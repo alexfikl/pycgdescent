@@ -26,13 +26,17 @@ interval bracketing the minimizer in the initial search direction.
 """
 
 import logging
+import pathlib
 from functools import partial
 
 import numpy as np
+import rich.logging
 
 import pycgdescent as cg
 
-logger = logging.getLogger()
+logger = logging.getLogger(pathlib.Path(__file__).stem)
+logger.setLevel(logging.INFO)
+logger.addHandler(rich.logging.RichHandler())
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -67,7 +71,7 @@ def main(n: int = 100) -> None:
     # {{{
 
     logger.info("==== with rho 1.5 ====")
-    with cg.timer():
+    with cg.Timer() as time:
         param.rho = 1.5
         _, stats, _ = cg.cg_descent(
             x0,
@@ -78,12 +82,13 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("\n")
+    logger.info("timing: %s seconds\n", time)
+
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
     logger.info("function value:            %+.16e", stats.f)
     logger.info("cg iterations:             %d", stats.iter)
     logger.info("function evaluations:      %d", stats.nfunc)
-    logger.info("gradient evaluations:      %d", stats.ngrad)
+    logger.info("gradient evaluations:      %d\n", stats.ngrad)
 
     # }}}
 
@@ -91,9 +96,8 @@ def main(n: int = 100) -> None:
 
     x0 = np.ones(n, dtype=np.float64)
 
-    logger.info("\n")
     logger.info("==== with rho 5.0 ====")
-    with cg.timer():
+    with cg.Timer() as time:
         param.rho = 5.0
         _, stats, _ = cg.cg_descent(
             x0,
@@ -104,7 +108,8 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("\n")
+    logger.info("timing: %s seconds\n", time)
+
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
     logger.info("function value:            %+.16e", stats.f)
     logger.info("cg iterations:             %d", stats.iter)
@@ -115,7 +120,6 @@ def main(n: int = 100) -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     main()
 
 # vim: fdm=marker

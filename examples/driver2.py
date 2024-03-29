@@ -36,13 +36,17 @@ with the ``QuadStep`` is on. This behavior is typical.
 """
 
 import logging
+import pathlib
 from functools import partial
 
 import numpy as np
+import rich.logging
 
 import pycgdescent as cg
 
-logger = logging.getLogger()
+logger = logging.getLogger(pathlib.Path(__file__).stem)
+logger.setLevel(logging.INFO)
+logger.addHandler(rich.logging.RichHandler())
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:
@@ -75,7 +79,7 @@ def main(n: int = 100) -> None:
     # {{{
 
     logger.info("==== with QuadStep OFF ====")
-    with cg.timer():
+    with cg.Timer() as time:
         param.QuadStep = 0
         _, stats, _ = cg.cg_descent(
             x0,
@@ -86,7 +90,8 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("\n")
+    logger.info("timing: %s seconds\n", time)
+
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
     logger.info("function value:            %+.16e", stats.f)
     logger.info("cg iterations:             %d", stats.iter)
@@ -101,7 +106,7 @@ def main(n: int = 100) -> None:
 
     logger.info("\n")
     logger.info("==== with QuadStep ON ====")
-    with cg.timer():
+    with cg.Timer() as time:
         param.QuadStep = 1
         _, stats, _ = cg.cg_descent(
             x0,
@@ -112,7 +117,8 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("\n")
+    logger.info("timing: %s seconds\n", time)
+
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
     logger.info("function value:            %+.16e", stats.f)
     logger.info("cg iterations:             %d", stats.iter)
@@ -123,7 +129,6 @@ def main(n: int = 100) -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     main()
 
 # vim: fdm=marker

@@ -34,10 +34,10 @@ Type Aliases
 
 from __future__ import annotations
 
-from contextlib import contextmanager
+import time
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Iterator
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 try:
     # NOTE: only available in python 3.10
@@ -45,13 +45,9 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias
 
-import logging
-
 import numpy as np
 
 import pycgdescent._cg_descent as _cg
-
-logger = logging.getLogger()
 
 __version__ = metadata.version("pycgdescent")
 
@@ -736,16 +732,22 @@ def minimize(
 # {{{
 
 
-@contextmanager
-def timer(name: str = "timer") -> Iterator[None]:
-    import time
+class Timer:
+    def __init__(self) -> None:
+        self.t_start = 0.0
+        self.t_end = 0.0
 
-    t_start = time.time()
-    try:
-        yield None
-    finally:
-        t_end = time.time()
-        logger.info("%s: %gs", name, t_end - t_start)
+    def __enter__(self) -> Timer:
+        self.t_start = time.time()
+        self.t_end = 0.0
+
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        self.t_end = time.time()
+
+    def __str__(self) -> str:
+        return f"{self.t_end - self.t_start:g}"
 
 
 # }}}
