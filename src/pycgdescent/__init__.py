@@ -608,6 +608,19 @@ CallbackType: TypeAlias = Callable[[CallbackInfo], int]
 """Setting the return value to `0` will stop the iteration."""
 
 
+def wrap_callback(cb: CallbackType | None) -> Callable[[_cg.cg_iter_stats], int] | None:
+    from functools import wraps
+
+    if cb is None:
+        return cb
+
+    @wraps(cb)
+    def wrapper(s: _cg.cg_iter_stats) -> int:
+        return cb(_info_from_stats(s))
+
+    return wrapper
+
+
 def min_work_size(options: OptimizeOptions, n: int) -> int:
     """
     Get recommended size of a *work* array.
@@ -695,18 +708,19 @@ def minimize(
         if work.size >= m:
             raise ValueError(f"'work' must have size >= {m}.")
 
-    wrapped_callback: Callable[[Any], int] | None = None
-    if callback is not None:
-
-        def wrapped_callback(s: _cg.cg_iter_stats) -> int:
-            return callback(_info_from_stats(s))
-
     # }}}
 
     # {{{ optimize
 
     x, stats, status = _cg.cg_descent(
-        x0, tol, param, fun, jac, funjac, wrapped_callback, work
+        x0,
+        tol,
+        param,
+        fun,
+        jac,
+        funjac,
+        wrap_callback(callback),
+        work,
     )
 
     # }}}
