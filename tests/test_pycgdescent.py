@@ -67,9 +67,8 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
         g[...] = A @ x - b
 
     def funjac(g: cg.ArrayType, x: cg.ArrayType) -> float:
-        Ax: cg.ArrayType = A @ x - b  # noqa: N806
+        g[...] = A @ x - b
         f = float(x @ g)
-        g[...] = Ax
         return f
 
     # }}}
@@ -83,7 +82,7 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
 
         return 1
 
-    options = cg.OptimizeOptions()
+    options = cg.OptimizeOptions(PrintLevel=3)
     r = cg.minimize(
         fun=fun,
         x0=x0,
