@@ -43,6 +43,7 @@ dev = [
     "pyproject-fmt",
     "pytest",
     "reuse",
+    "rich",
     "ruff",
     "types-dataclasses",
     "uv",

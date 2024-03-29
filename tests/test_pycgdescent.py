@@ -180,8 +180,6 @@ def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> No
 if __name__ == "__main__":
     import sys
 
-    logging.basicConfig(level=logging.INFO)
-
     if len(sys.argv) > 1:
         exec(sys.argv[1])
     else:
