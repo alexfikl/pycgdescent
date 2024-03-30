@@ -785,7 +785,14 @@ def get_logger(
     if level is None:
         level = logging.INFO
 
-    from rich.logging import RichHandler
+    try:
+        from rich.logging import RichHandler
+    except ImportError:
+        try:
+            # NOTE: rich is vendored by pip, so try and get it from there
+            from pip._vendor.rich.logging import RichHandler  # type: ignore[assignment]
+        except ImportError:
+            from logging import StreamHandler as RichHandler  # type: ignore[assignment]
 
     logger = logging.getLogger()
     logger.setLevel(level)
