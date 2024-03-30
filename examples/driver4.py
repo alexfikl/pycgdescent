@@ -25,17 +25,13 @@ The code has to do a number of expansions to reach a suitable
 interval bracketing the minimizer in the initial search direction.
 """
 
-import logging
 from functools import partial
 
 import numpy as np
-import rich.logging
 
 import pycgdescent as cg
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-logger.addHandler(rich.logging.RichHandler())
+logger = cg.get_logger()
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:

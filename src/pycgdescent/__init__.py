@@ -34,6 +34,7 @@ Type Aliases
 
 from __future__ import annotations
 
+import logging
 import time
 from dataclasses import dataclass, field
 from importlib import metadata
@@ -762,6 +763,35 @@ class Timer:
 
     def __str__(self) -> str:
         return f"{self.t_end - self.t_start:g}"
+
+
+# }}}
+
+
+# {{{ logger
+
+
+def get_logger(
+    module: str | None = None,
+    *,
+    level: int | str | None = None,
+) -> logging.Logger:
+    if isinstance(level, str):
+        try:
+            level = getattr(logging, level.upper())
+        except AttributeError:
+            level = None
+
+    if level is None:
+        level = logging.INFO
+
+    from rich.logging import RichHandler
+
+    logger = logging.getLogger()
+    logger.setLevel(level)
+    logger.addHandler(RichHandler())
+
+    return logger
 
 
 # }}}
