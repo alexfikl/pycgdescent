@@ -19,10 +19,19 @@ else
   add_project_arguments('-DCG_DISABLE_BLAS', language: 'c')
 endif
 
+cg_descent_sources = [
+  # sources
+  'src/wrapper/cg_default.c',
+  'src/wrapper/cg_descent.c',
+  'src/wrapper/cg_util.c',
+  # wrapper
+  'src/wrapper/cg_descent_wrap.cpp'
+]
+
 py.extension_module(
-  '_cg_descent',
-  ['src/wrapper/cg_descent.c', 'src/wrapper/cg_descent_wrap.cpp'],
+  '_cg_descent', cg_descent_sources,
   dependencies: [pybind11_dep, blas_dep],
+  c_args: ['-DDLONG'],
   install: true,
   subdir: 'pycgdescent')
 
