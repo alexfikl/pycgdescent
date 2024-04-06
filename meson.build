@@ -28,6 +28,7 @@ endif
 add_project_arguments([
   '-D_DEFAULT_SOURCE',
   '-DSUITEOPT_BLAS_UNDERSCORE',
+  # '-DDLONG',
   ], language: 'c')
 
 cg_descent_sources = [

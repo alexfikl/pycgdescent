@@ -552,6 +552,12 @@ class OptimizeResult:
     nit: int
     """Number of iterations performed by the optimizer."""
 
+    nnewton_cg: int = field(repr=False)
+    """Number of Newton steps computed by the conjugate gradient."""
+    nnewton_ss: int = field(repr=False)
+    """Number of Newton steps computed by the symmetric solver."""
+    nnewton_prp: int = field(repr=False)
+    """Number of PRP iterations in the Newton CG."""
     nsubspaceit: int = field(repr=False)
     """Number of subspace iterations (valid if
     :attr:`OptimizeOptions.LBFGS` is *True*).
@@ -783,10 +789,13 @@ def minimize(
         status=status,
         message=STATUS_TO_MESSAGE[status],
         fun=stats.f,
-        jac=stats.gnorm,
+        jac=stats.err,
         nfev=stats.nfunc,
         njev=stats.ngrad,
         nit=stats.iter,
+        nnewton_cg=stats.nCG,
+        nnewton_ss=stats.nSS,
+        nnewton_prp=stats.PRP,
         nsubspaceit=stats.IterSub,
         nsubspaces=stats.NumSub,
     )

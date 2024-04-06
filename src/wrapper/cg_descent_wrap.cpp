@@ -200,7 +200,6 @@ public:
     ~cg_iter_stats_wrapper() { };
 
     CLASS_RO_PROPERTY(iter, CGINT)
-    CLASS_RO_PROPERTY(n, int)
     CLASS_RO_PROPERTY(alpha, CGFLOAT)
     CLASS_RO_ARRAY_PROPERTY(x, CGFLOAT)
     CLASS_RO_PROPERTY(f, CGFLOAT)
@@ -250,7 +249,7 @@ py::tuple cg_descent_wrapper(
         static cg::valgrad_fn _valgrad;
         static cg::callback_fn _callback;
 
-        int n = x.shape(0);
+        CGINT n = x.shape(0);
         CGFLOAT *ptr = new CGFLOAT[n];
         auto xptr = x.unchecked();
         for (int i = 0; i < n; ++i) {
@@ -300,9 +299,9 @@ py::tuple cg_descent_wrapper(
             };
         }
 
-        cg_stats_wrapper *cgstats = new cg_stats_wrapper;
-
         status = cg_descent(cgdata);
+
+        cg_stats_wrapper *cgstats = new cg_stats_wrapper;
         memcpy(cgstats->data(), cgdata->Stat, sizeof(CGstat));
         cg_terminate(&cgdata);
 

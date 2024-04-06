@@ -517,7 +517,7 @@ typedef struct CGstat_struct
 typedef struct CGiter_struct
 {
     CGINT         iter ; /* current iteration */
-    int              n ; /* size of the inputs */
+    CGINT            n ; /* size of the inputs */
     CGFLOAT      alpha ; /* current step size */
     CGFLOAT         *x ; /* current state vector */
     CGFLOAT          f ; /* current functional value */
