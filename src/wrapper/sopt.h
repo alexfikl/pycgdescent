@@ -290,7 +290,7 @@
 
     /* There are three different ways to input the matrix using the
        SOPT_matrix structure:
- 
+
        1. A dense packed array containing the matrix entries, either by rows
           or by columns. If the matrix is stored by rows, then A_by_rows
           should point to the matrix start; if the matrix is stored by
@@ -394,13 +394,17 @@ typedef struct SOPT_Cmatrix_struct
    SuiteSparse). To use the BLAS in SuiteOPT, comment out the next
    line and then below, specify whether your BLAS routines include an
    underscore, and set the threshhold dimension for using the BLAS.  */
+#ifdef SUITEOPT_DISABLE_BLAS
 #define NOBLAS
+#endif
 
 #ifndef NOBLAS
 
 /* when BLAS are used, comment out the next statement if there is no
    underscore in the subroutine names */
+#ifdef SUITEOPT_BLAS_UNDERSCORE
 #define BLAS_UNDERSCORE
+#endif
 
 #ifdef BLAS_UNDERSCORE
 

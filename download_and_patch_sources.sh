@@ -38,6 +38,21 @@ tar xvf "${archive}"
 
 # {{{ patch sources
 
+pushd "${pkgname}"
+
+declare -a patches=(
+  '0001-feat-guard-BLAS-defines.patch'
+  '0002-feat-extern-C-in-cgdescent-header.patch'
+  '0003-feat-add-user-callback.patch'
+)
+
+for patch in "${patches[@]}"; do
+  echo -e "\033[1;32mApplying '${patchdir}/${patch}\033[0m'"
+  patch -p1 -i "${patchdir}/${patch}"
+done
+
+popd
+
 # }}}
 
 # {{{ copy sources
@@ -45,15 +60,23 @@ tar xvf "${archive}"
 echo -e '\033[1;32mCopying patched sources...\033[0m'
 mkdir -p ${basedir}/src/wrapper
 
-files=(
-  SuiteOPT/CGDESCENT/Include/cg_descent.h
-  SuiteOPT/CGDESCENT/Source/cg_default.c
-  SuiteOPT/CGDESCENT/Source/cg_descent.c
-  SuiteOPT/CGDESCENT/Source/cg_print.c
-  SuiteOPT/CGDESCENT/Source/cg_util.c
-  SuiteOPT/SSM/Include/SSM.h
-  SuiteOPT/SuiteOPTconfig/sopt.h
+declare -a files=(
+  'SuiteOPT/CGDESCENT/Include/cg_descent.h'
+  'SuiteOPT/CGDESCENT/Source/cg_default.c'
+  'SuiteOPT/CGDESCENT/Source/cg_descent.c'
+  'SuiteOPT/CGDESCENT/Source/cg_print.c'
+  'SuiteOPT/CGDESCENT/Source/cg_util.c'
+  'SuiteOPT/SSM/Include/SSM.h'
+  'SuiteOPT/SSM/Source/SSM.c'
+  'SuiteOPT/SSM/Source/SSMdiagopt.c'
+  'SuiteOPT/SSM/Source/SSMmult.c'
+  'SuiteOPT/SSM/Source/SSMprint.c'
+  'SuiteOPT/SSM/Source/SSMrefine.c'
+  'SuiteOPT/SSM/Source/SSMtridiag.c'
+  'SuiteOPT/SuiteOPTconfig/sopt.h'
+  'SuiteOPT/SuiteOPTconfig/sopt.c'
 )
+
 for filename in "${files[@]}"; do
   cp "${filename}" "${basedir}/src/wrapper"
 done

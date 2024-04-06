@@ -1,6 +1,11 @@
 #ifndef _CG_DESCENT_H_
 #define _CG_DESCENT_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "sopt.h"
 #include "SSM.h"
 
@@ -98,6 +103,7 @@
 #define CG_NROW_OR_NCOL_NOT_GIVEN_FOR_DENSE                     (222)
 #define CG_TRIPLES_FORMAT_ERROR                                 (223)
 #define CG_MULTI_SOLVERS                                        (224)
+#define CG_USER_CALLBACK                                        (298)
 #define CG_START_MESSAGES                                       (200)
 #define CG_END_MESSAGES                                         (299)
 
@@ -146,7 +152,7 @@ typedef struct CGparm_struct
        F => do not print statistics */
     int PrintStat ;
 
-    /* T => print parameter values 
+    /* T => print parameter values
        F => do not print parameter values */
     int PrintParm ;
 
@@ -508,6 +514,17 @@ typedef struct CGstat_struct
     int         NumSub ; /* number of subspaces in limited memory cg */
 } CGstat ;
 
+typedef struct CGiter_struct
+{
+    CGINT         iter ; /* current iteration */
+    int              n ; /* size of the inputs */
+    CGFLOAT      alpha ; /* current step size */
+    CGFLOAT         *x ; /* current state vector */
+    CGFLOAT          f ; /* current functional value */
+    CGFLOAT         *g ; /* current gradient value */
+    CGFLOAT         *d ; /* current descent direction value */
+} CGiter ;
+
 typedef struct CGdata_struct
 {
     /* -------- cg input data -------- */
@@ -533,6 +550,8 @@ typedef struct CGdata_struct
        function value f and gradient g at x (size n), the valgrad argument
        is optional. */
     void (*valgrad) (CGFLOAT *, CGFLOAT *, CGFLOAT *, CGINT) ;
+    /* callback function called at the end of an iteration */
+    int    (*callback) (CGiter *) ;
 
     /* When the Hessian-based implementation of CG_DESCENT is employed, a
        function must be provided for evaluating the Hessian at a given point x:
@@ -847,7 +866,7 @@ void cg_update_speed
     CGFLOAT     maxerr, /* max error */
     CGFLOAT        tic, /* start time */
     CGFLOAT        toc  /* end   time */
-    
+
 ) ;
 
 CGINT cg_basis
@@ -858,7 +877,7 @@ CGINT cg_basis
     CGINT      *perm, /* column # of A for column i of Z is perm [i] */
     int   PrintLevel,
     CGINT       nrow,
-    CGINT       ncol, 
+    CGINT       ncol,
     CGFLOAT QRcutoff, /* QRcutoff for discarding dependent columns */
     CGFLOAT    *Work  /* work space for Householder vectors, copy of A,
                            column norms of A, column norms of partially
@@ -907,6 +926,10 @@ void cg_harwell_fact_data
 (
     LBL_Data *lbl
 ) ;
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
