@@ -638,6 +638,7 @@ STATUS_TO_MESSAGE = {
         "The Hessian was given in the 'triples' format, but the format is not correct"
     ),
     _.CG_MULTI_SOLVERS: "Multiple solver were compiled into the library",
+    _.CG_USER_CALLBACK: "User provided callback stopped the iteration",
 }
 
 # }}}
