@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 else:
     ArrayType = np.ndarray
 
+status_code = Any
+
 def cg_default(arg0: object) -> None: ...
 def cg_descent(
     x: ArrayType,

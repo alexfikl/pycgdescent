@@ -17,6 +17,8 @@ namespace py = pybind11;
 
 // {{{ macros
 
+#define ADD_ATTR(NAME) cls.attr(#NAME) = NAME
+
 #define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE) \
     auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *p) { (void)p; })); \
     assert(!NAME.owndata())
@@ -208,7 +210,13 @@ public:
     CGiter *obj;
 };
 
-// }}}}
+// }}}
+
+// {{{ status wrapper
+
+class cg_status {};
+
+// }}}
 
 // {{{ cg_descent wrapper
 
@@ -445,6 +453,38 @@ PYBIND11_MODULE(_cg_descent, m)
             .DEF_RO_PROPERTY(g)
             .DEF_RO_PROPERTY(d)
         ;
+    }
+
+    {
+        py::class_<cg_status> cls(m, "status_code");
+
+        ADD_ATTR(CG_ERROR_TOLERANCE_SATISFIED);
+        ADD_ATTR(CG_ITERATIONS_EXCEED_MAXITS);
+        ADD_ATTR(CG_SLOPE_ALWAYS_NEGATIVE);
+        ADD_ATTR(CG_LINE_SEARCH_STEPS_EXCEED_MAXSTEPS);
+        ADD_ATTR(CG_SEARCH_DIRECTION_NOT_DESCENT_DIRECTION);
+        ADD_ATTR(CG_WOLFE_CONDITIONS_NOT_SATISFIED);
+        ADD_ATTR(CG_DEBUGGER_IS_ON_AND_FUNCTION_VALUE_INCREASES);
+        ADD_ATTR(CG_NO_COST_OR_GRADIENT_IMPROVEMENT);
+        ADD_ATTR(CG_OUT_OF_MEMORY);
+        ADD_ATTR(CG_QUADRATIC_OBJECTIVE_NO_LOWER_BOUND);
+        ADD_ATTR(CG_STARTING_FUNCTION_VALUE_INFINITE_OR_NAN);
+        ADD_ATTR(CG_EXCESSIVE_UPDATING_OF_PERT_EPS);
+        ADD_ATTR(CG_FUNCTION_NAN_OR_INF);
+        ADD_ATTR(CG_QP_LINEAR_TERM_GIVEN_BUT_HPROD_MISSING);
+        ADD_ATTR(CG_N_IS_EMPTY);
+        ADD_ATTR(CG_ERROR_IN_INPUT_MATRIX);
+        ADD_ATTR(CG_MISSING_HESSIAN_FOR_QUADCOST);
+        ADD_ATTR(CG_INVALID_DERIV_MODE_PARAMETER);
+        ADD_ATTR(CG_DERIV_MODE_USES_HESSIAN_BUT_NO_HESSIAN_PROVIDED);
+        ADD_ATTR(CG_SYMMETRIC_SOLVER_FAILS);
+        ADD_ATTR(CG_HESSIAN_NOT_COMPUTED);
+        ADD_ATTR(CG_HPROD_PLUS_HESSIAN);
+        ADD_ATTR(CG_VALUE_OR_GRAD_MISSING);
+        ADD_ATTR(CG_NROW_OR_NCOL_NOT_GIVEN_FOR_DENSE);
+        ADD_ATTR(CG_TRIPLES_FORMAT_ERROR);
+        ADD_ATTR(CG_MULTI_SOLVERS);
+        ADD_ATTR(CG_USER_CALLBACK);
     }
 
     m.def("cg_default", &cg_default_wrapper);
