@@ -1,12 +1,14 @@
-.. image:: https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg
+.. |github-ci| image:: https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg
     :alt: Build Status
     :target: https://github.com/alexfikl/pycgdescent/actions?query=branch%3Amain+workflow%3ACI
-.. image:: https://readthedocs.org/projects/pycgdescent/badge/?version=latest
+.. |rtd-docs| image:: https://readthedocs.org/projects/pycgdescent/badge/?version=latest
     :alt: Documentation
     :target: https://pycgdescent.readthedocs.io/en/latest/?badge=latest
-.. image:: https://api.reuse.software/badge/github.com/alexfikl/pycgdescent
+.. |reuse| image:: https://api.reuse.software/badge/github.com/alexfikl/pycgdescent
     :alt: REUSE
     :target: https://api.reuse.software/info/github.com/alexfikl/pycgdescent
+
+|github-ci| |rtd-docs| |reuse|
 
 pycgdescent
 ===========
