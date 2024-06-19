@@ -4,6 +4,7 @@ __pycache__
 .mypy_cache
 .ruff_cache
 docs/_build
+docs/autoapi
 *.egg-info
 build
 _build

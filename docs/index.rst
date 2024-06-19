@@ -1,6 +1,12 @@
 pycgdescent documentation
 =========================
 
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   autoapi/index
+
 Example
 -------
 
