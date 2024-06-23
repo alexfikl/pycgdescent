@@ -552,6 +552,12 @@ class OptimizeResult:
     nit: int
     """Number of iterations performed by the optimizer."""
 
+    nnewton_cg: int = field(repr=False)
+    """Number of Newton steps computed by the conjugate gradient."""
+    nnewton_ss: int = field(repr=False)
+    """Number of Newton steps computed by the symmetric solver."""
+    nnewton_prp: int = field(repr=False)
+    """Number of PRP iterations in the Newton CG."""
     nsubspaceit: int = field(repr=False)
     """Number of subspace iterations (valid if
     :attr:`OptimizeOptions.LBFGS` is *True*).
@@ -569,25 +575,76 @@ class OptimizeResult:
 
 # {{{ status messages
 
-# NOTE: these are similar to results with PrintFinal == True
+# NOTE: see 'src/wrapper/cg_print.c::cg_print_status' for these error messages
+_ = _cg.status_code
 STATUS_TO_MESSAGE = {
-    0: "Convergence tolerance for gradient satisfied",
-    1: "Change in function value smaller than tolerance: lower 'feps'?",
-    2: "Maximum number of iterations limit exceeded",
-    3: "Slope is always negative in line search: error in provided functions?",
-    4: "Maximum number of line search iterations exceeded: increase 'tol'?",
-    5: "Search direction is not a descent direction",
-    6: (
-        "Excessive updating of estimated error in function values: "
-        "increase 'neps'? increase 'tol'?"
+    _.CG_ERROR_TOLERANCE_SATISFIED: "Error satisfied gradient error tolerance",
+    _.CG_ITERATIONS_EXCEED_MAXITS: "The number of iterations exceeded specified limit",
+    _.CG_SLOPE_ALWAYS_NEGATIVE: (
+        "The slope is always negative in the line search -- your cost function "
+        "likely has an error"
     ),
-    7: "Wolfe conditions are never satisfied: increase 'eps'?",
-    8: "Function values are not improving (with 'debug')",
-    9: "No cost or gradient improvement: increase 'nslow'?",
-    10: "Out of memory",
-    11: "Function value NaN or Inf and cannot be repaired",
-    12: "Invalid choice of 'memory' parameter",
-    13: "Stopped by user callback",
+    _.CG_LINE_SEARCH_STEPS_EXCEED_MAXSTEPS: (
+        "Unable to find an acceptable step in the line search before hitting "
+        "the 'maxsteps' limit"
+    ),
+    _.CG_SEARCH_DIRECTION_NOT_DESCENT_DIRECTION: (
+        "The search direction was not a descent direction"
+    ),
+    _.CG_EXCESSIVE_UPDATING_OF_PERT_EPS: (
+        "The line search failed due toe excessive updating of the "
+        "parameter 'pert-eps'"
+    ),
+    _.CG_WOLFE_CONDITIONS_NOT_SATISFIED: (
+        "The line search failed -- 'pert_eps' may be too small"
+    ),
+    _.CG_DEBUGGER_IS_ON_AND_FUNCTION_VALUE_INCREASES: (
+        "The debugger in was turned on and the function value did not improve"
+    ),
+    _.CG_NO_COST_OR_GRADIENT_IMPROVEMENT: (
+        "Performed 'nslow' iterations without a strict improvement in the "
+        "cost or the gradient"
+    ),
+    _.CG_OUT_OF_MEMORY: "Out of memory",
+    _.CG_QUADRATIC_OBJECTIVE_NO_LOWER_BOUND: (
+        "The quadratic objective has no lower bound over the feasible "
+        "region -- try setting 'QPshift' to a small positive number"
+    ),
+    _.CG_STARTING_FUNCTION_VALUE_INFINITE_OR_NAN: (
+        "The function value is NAN or INF at the starting point"
+    ),
+    _.CG_FUNCTION_NAN_OR_INF: (
+        "The line search could not locate a finite objective value after "
+        "'cg_ninf_tries' attempts"
+    ),
+    _.CG_QP_LINEAR_TERM_GIVEN_BUT_HPROD_MISSING: (
+        "The objective is quadratic but the 'hprod' rule was not provided"
+    ),
+    _.CG_N_IS_EMPTY: "The problem dimension was not provided",
+    _.CG_ERROR_IN_INPUT_MATRIX: (
+        "The Hessian was provided, but an error was detected in the matrix"
+    ),
+    _.CG_MISSING_HESSIAN_FOR_QUADCOST: (
+        "The objective was specified to be quadratic, but no Hessian was provided"
+    ),
+    _.CG_INVALID_DERIV_MODE_PARAMETER: "The 'deriv_mode' parameter is invalid",
+    _.CG_DERIV_MODE_USES_HESSIAN_BUT_NO_HESSIAN_PROVIDED: (
+        "The 'deriv_mode' parameter was set, but no Hessian implementation "
+        "was provided"
+    ),
+    _.CG_SYMMETRIC_SOLVER_FAILS: (
+        "The 'deriv_mode' parameter was set to 2, but the symmetric solver failed"
+    ),
+    _.CG_HESSIAN_NOT_COMPUTED: "The user provided Hessian was not correctly provided",
+    _.CG_HPROD_PLUS_HESSIAN: "The user provided both 'hprod' and 'hessian'",
+    _.CG_VALUE_OR_GRAD_MISSING: (
+        "The user did not provide routines to evaluate the objective or the gradient"
+    ),
+    _.CG_TRIPLES_FORMAT_ERROR: (
+        "The Hessian was given in the 'triples' format, but the format is not correct"
+    ),
+    _.CG_MULTI_SOLVERS: "Multiple solver were compiled into the library",
+    _.CG_USER_CALLBACK: "User provided callback stopped the iteration",
 }
 
 # }}}
@@ -732,10 +789,13 @@ def minimize(
         status=status,
         message=STATUS_TO_MESSAGE[status],
         fun=stats.f,
-        jac=stats.gnorm,
+        jac=stats.err,
         nfev=stats.nfunc,
         njev=stats.ngrad,
         nit=stats.iter,
+        nnewton_cg=stats.nCG,
+        nnewton_ss=stats.nSS,
+        nnewton_prp=stats.PRP,
         nsubspaceit=stats.IterSub,
         nsubspaces=stats.NumSub,
     )

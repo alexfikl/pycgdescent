@@ -1,0 +1,170 @@
+From 609d3c510ef2920830438c3730cb961809309743 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Mon, 1 Apr 2024 21:02:10 +0300
+Subject: [PATCH 3/3] feat: add user callback
+
+---
+ CGDESCENT/Include/cg_descent.h | 14 +++++++++++++
+ CGDESCENT/Source/cg_descent.c  | 37 +++++++++++++++++++++++++++-------
+ 2 files changed, 44 insertions(+), 7 deletions(-)
+
+diff --git a/CGDESCENT/Include/cg_descent.h b/CGDESCENT/Include/cg_descent.h
+index e24014c..1209faa 100644
+--- a/CGDESCENT/Include/cg_descent.h
++++ b/CGDESCENT/Include/cg_descent.h
+@@ -103,6 +103,7 @@ extern "C"
+ #define CG_NROW_OR_NCOL_NOT_GIVEN_FOR_DENSE                     (222)
+ #define CG_TRIPLES_FORMAT_ERROR                                 (223)
+ #define CG_MULTI_SOLVERS                                        (224)
++#define CG_USER_CALLBACK                                        (298)
+ #define CG_START_MESSAGES                                       (200)
+ #define CG_END_MESSAGES                                         (299)
+ 
+@@ -513,6 +514,17 @@ typedef struct CGstat_struct
+     int         NumSub ; /* number of subspaces in limited memory cg */
+ } CGstat ;
+ 
++typedef struct CGiter_struct
++{
++    int           iter ; /* current iteration */
++    int              n ; /* size of the inputs */
++    CGFLOAT      alpha ; /* current step size */
++    CGFLOAT         *x ; /* current state vector */
++    CGFLOAT          f ; /* current functional value */
++    CGFLOAT         *g ; /* current gradient value */
++    CGFLOAT         *d ; /* current descent direction value */
++} CGiter ;
++
+ typedef struct CGdata_struct
+ {
+     /* -------- cg input data -------- */
+@@ -538,6 +550,8 @@ typedef struct CGdata_struct
+        function value f and gradient g at x (size n), the valgrad argument
+        is optional. */
+     void (*valgrad) (CGFLOAT *, CGFLOAT *, CGFLOAT *, CGINT) ;
++    /* callback function called at the end of an iteration */
++    int    (*callback) (CGiter *) ;
+ 
+     /* When the Hessian-based implementation of CG_DESCENT is employed, a
+        function must be provided for evaluating the Hessian at a given point x:
+diff --git a/CGDESCENT/Source/cg_descent.c b/CGDESCENT/Source/cg_descent.c
+index 69ea67a..9eadd42 100644
+--- a/CGDESCENT/Source/cg_descent.c
++++ b/CGDESCENT/Source/cg_descent.c
+@@ -68,6 +68,25 @@
+ #include "cg_descent.h"
+ #endif
+ 
++#define XXCG_CALLBACK(cb)                                                       \
++    if (cb != NULL)                                                             \
++    {                                                                           \
++        cgiter.iter = Stat->iter ;                                              \
++        cgiter.n = cgcom->n ;                                                   \
++        cgiter.x = cgcom->x ;                                                   \
++        cgiter.f = cgcom->f ;                                                   \
++        cgiter.g = cgcom->g ;                                                   \
++        cgiter.d = cgcom->d ;                                                   \
++        if (!cb(&cgiter))                                                       \
++        {                                                                       \
++            status = CG_USER_CALLBACK ;                                         \
++            XXCG(wrapup) (status, FALSE, PASA_CG_COM) ;                         \
++            return status ;                                                     \
++        }                                                                       \
++    }
++
++
++
+ int XXCG(descent)
+ (
+     CGdata    *cgdata /* CG data structure */
+@@ -99,6 +118,7 @@ int XXCG(descent)
+             *Hwork, *Hd, *r, *rhs, *v, *Sk, *SkYk,
+             *tau, *work, *Yk, *xnew, *Xp ;
+     CGcom   *cgcom, cgcom_struc ;
++    CGiter  cgiter;
+     LONG    li, le ;
+ 
+     /* method control variables */
+@@ -160,7 +180,7 @@ int XXCG(descent)
+     cgcom->loop_factor = CGZERO ;
+     cgcom->loop_sstrust = CGZERO ;
+ #endif
+-    
++
+     sF = sizeof (CGFLOAT) ;
+     /* extract variables from cgdata structure */
+     CGFLOAT           *x = cgdata->x ;
+@@ -531,7 +551,7 @@ int XXCG(descent)
+ #endif
+         /* Since CG has not yet been tried, it cannot have failed */
+         *CGNfail = FALSE ;
+-        
++
+         max_d_iter = &cgcom->max_d_iter ;
+         *max_d_iter = EMPTY ;
+         speed = cg_malloc (&status, (CGINT) 3, sizeof (CGFLOAT)) ;
+@@ -1380,6 +1400,8 @@ int XXCG(descent)
+        f is function value for alpha = 0
+        QuadOK = TRUE means that a quadratic step was taken */
+ 
++    XXCG_CALLBACK(cgdata->callback) ;
++
+     /* CGSTART */
+     while ( Stat->iter < maxit )
+     {
+@@ -2487,7 +2509,7 @@ int XXCG(descent)
+                 {
+                     method_tic = method_toc ;
+                 }
+-            
++
+                 OldMethod = NewMethod ;
+             }
+ 
+@@ -2522,7 +2544,7 @@ int XXCG(descent)
+             /* Let H denote current Hessian. Compute a solution to the problem
+ 
+                min 1/2 d' (H + sigma I) d + g'd subject to Bd = 0,
+-               
++
+ 
+                where B = active constraints.
+                First try to compute a solution using PRP+ version of CG.
+@@ -3366,7 +3388,7 @@ tic = sopt_timer () ;
+                             else /* copy Hd to gH */
+ #endif
+                                 sopt_copyx (gH, Hd, n) ;
+-                                
++
+                             /* gH = PHP*d = (PHP*(-g), which is needed for trust
+                                region */
+                             dHdsave = dHd ;
+@@ -4684,7 +4706,7 @@ tic = sopt_timer () ;
+                            AutoChoice will see that it should change to
+                            the CG Newton routine and set a new timer */
+                     }
+-           
++
+                     /* negative gradient = search direction */
+                     cg_scale (D, gproj, -CGONE, n) ;
+ #ifdef PASA
+@@ -5036,7 +5058,7 @@ cgcom->loop_sstrust += sopt_timer () - tic ;
+                     sopt_scale (d, d, -CGONE, n) ;
+                     dphi0 = cg_dot (g, d, n) ;
+                     if ( dphi0 > CGZERO )
+-                    { 
++                    {
+                         status = CG_SEARCH_DIRECTION_NOT_DESCENT_DIRECTION ;
+                         XXCG(wrapup) (status, FALSE, PASA_CG_COM) ;
+                         return (status) ;
+@@ -6350,6 +6372,7 @@ cgcom->loop_sstrust += sopt_timer () - tic ;
+         }
+ #endif
+ 
++        XXCG_CALLBACK(cgdata->callback) ;
+     }
+     status = XXCG(wrapup) (CG_ITERATIONS_EXCEED_MAXITS, FALSE, PASA_CG_COM) ;
+     return (status) ;
+-- 
+2.44.0
+

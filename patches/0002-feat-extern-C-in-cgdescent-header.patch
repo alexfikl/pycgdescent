@@ -1,0 +1,64 @@
+From 82ec574e6dcf0c8b48d25549aa769c4ccced26e0 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Sun, 31 Mar 2024 15:50:30 +0300
+Subject: [PATCH 2/3] feat: extern C in cgdescent header
+
+---
+ CGDESCENT/Include/cg_descent.h | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/CGDESCENT/Include/cg_descent.h b/CGDESCENT/Include/cg_descent.h
+index 9c28887..e24014c 100644
+--- a/CGDESCENT/Include/cg_descent.h
++++ b/CGDESCENT/Include/cg_descent.h
+@@ -1,6 +1,11 @@
+ #ifndef _CG_DESCENT_H_
+ #define _CG_DESCENT_H_
+ 
++#ifdef __cplusplus
++extern "C"
++{
++#endif
++
+ #include "sopt.h"
+ #include "SSM.h"
+ 
+@@ -146,7 +151,7 @@ typedef struct CGparm_struct
+        F => do not print statistics */
+     int PrintStat ;
+ 
+-    /* T => print parameter values 
++    /* T => print parameter values
+        F => do not print parameter values */
+     int PrintParm ;
+ 
+@@ -847,7 +852,7 @@ void cg_update_speed
+     CGFLOAT     maxerr, /* max error */
+     CGFLOAT        tic, /* start time */
+     CGFLOAT        toc  /* end   time */
+-    
++
+ ) ;
+ 
+ CGINT cg_basis
+@@ -858,7 +863,7 @@ CGINT cg_basis
+     CGINT      *perm, /* column # of A for column i of Z is perm [i] */
+     int   PrintLevel,
+     CGINT       nrow,
+-    CGINT       ncol, 
++    CGINT       ncol,
+     CGFLOAT QRcutoff, /* QRcutoff for discarding dependent columns */
+     CGFLOAT    *Work  /* work space for Householder vectors, copy of A,
+                            column norms of A, column norms of partially
+@@ -909,4 +914,8 @@ void cg_harwell_fact_data
+ ) ;
+ #endif
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+-- 
+2.44.0
+
