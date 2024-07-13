@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2024 Alexandru Fikl <alexfikl@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
+version = 1
+SPDX-PackageName = "pycgdescent"
+SPDX-PackageSupplier = "Alexandru Fikl <alexfikl@gmail.com>"
+SPDX-PackageDownloadLocation = "https://github.com/alexfikl/pycgdescent"
+
+[[annotations]]
+path = ["docs/**", "**.md", "**.rst", "**.cfg", "requirements**.txt"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = [".gitignore", ".gitattributes", ".readthedocs.yml", ".pre-commit-config.yaml", ".github/**.yml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["pyproject.toml", "meson.build", "meson_options.txt", "**Makefile"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["src/wrapper/**.h", "src/wrapper/**.c"]
+precedence = "override"
+SPDX-FileCopyrightText = "William W. Hager"
+SPDX-License-Identifier = "GPL-2.0-or-later"
+
+[[annotations]]
+path = "patches/**.patch"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
+SPDX-License-Identifier = "GPL-2.0-or-later"
