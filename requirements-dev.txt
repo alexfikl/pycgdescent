@@ -16,7 +16,7 @@ codespell==2.3.0
     # via pycgdescent (pyproject.toml)
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
-exceptiongroup==1.2.1 ; python_version < '3.11'
+exceptiongroup==1.2.2 ; python_version < '3.11'
     # via pytest
 iniconfig==2.0.0
     # via pytest
@@ -54,14 +54,14 @@ reuse==4.0.3
     # via pycgdescent (pyproject.toml)
 rich==13.7.1
     # via pycgdescent (pyproject.toml)
-ruff==0.5.1
+ruff==0.5.2
     # via pycgdescent (pyproject.toml)
 tomli==2.0.1 ; python_version < '3.11'
     # via
     #   mypy
     #   pyproject-fmt
     #   pytest
-tomlkit==0.12.5
+tomlkit==0.13.0
     # via reuse
 types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
@@ -69,5 +69,5 @@ typing-extensions==4.12.2
     # via
     #   pycgdescent (pyproject.toml)
     #   mypy
-uv==0.2.23
+uv==0.2.25
     # via pycgdescent (pyproject.toml)
