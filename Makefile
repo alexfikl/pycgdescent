@@ -88,6 +88,7 @@ develop:		## Install project in editable mode
 	$(PYTHON) -m pip install \
 		--verbose \
 		--no-build-isolation \
+		--config-settings setup-args='-Duse-blas=true' \
 		--editable .
 
 pip-install:	## Install pinned dependencies from requirements.txt
@@ -97,7 +98,7 @@ pip-install:	## Install pinned dependencies from requirements.txt
 		--verbose \
 		--requirement requirements-dev.txt \
 		--no-build-isolation \
-		--config-settings=setup-args='-Duse-blas=false' \
+		--config-settings setup-args='-Duse-blas=false' \
 		--editable .
 .PHONY: pip-install
 

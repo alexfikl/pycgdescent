@@ -37,13 +37,13 @@ The output of ``r.pretty()`` shows that we have found the exact solution::
 
 The path of the optimization can be seen in the following figure.
 
-.. image:: rosenbrock-dark.png
+.. image:: _static/rosenbrock-dark.png
     :class: only-dark
     :width: 75%
     :align: center
     :alt: Rosenbrock function optimization
 
-.. image:: rosenbrock-light.png
+.. image:: _static/rosenbrock-light.png
     :class: only-light
     :width: 75%
     :align: center

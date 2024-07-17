@@ -94,6 +94,8 @@ html_theme_options = {
     ],
 }
 
+html_static_path = ["_static"]
+
 # }}}
 
 # {{{ extension settings
