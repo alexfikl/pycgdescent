@@ -12,8 +12,6 @@ chardet==5.2.0
     # via
     #   binaryornot
     #   python-debian
-codespell==2.3.0
-    # via pycgdescent (pyproject.toml)
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
 exceptiongroup==1.2.2 ; python_version < '3.11'
@@ -69,5 +67,7 @@ typing-extensions==4.12.2
     # via
     #   pycgdescent (pyproject.toml)
     #   mypy
-uv==0.2.25
+typos==1.23.2
+    # via pycgdescent (pyproject.toml)
+uv==0.2.26
     # via pycgdescent (pyproject.toml)
