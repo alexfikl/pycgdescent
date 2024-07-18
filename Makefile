@@ -34,7 +34,7 @@ isort:			## Run ruff isort fixes over the source code
 	@echo -e "\e[1;32mruff isort clean!\e[0m"
 .PHONY: isort
 
-lint: ruff mypy codespell reuse					## Run linting checks
+lint: ruff mypy typos reuse				## Run linting checks
 .PHONY: lint
 
 ruff:			## Run ruff checks over the source code
@@ -47,13 +47,10 @@ mypy:			## Run mypy checks over the source code
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 .PHONY: mypy
 
-codespell:		## Run codespell over the source code and documentation
-	@codespell --summary \
-		--skip _build --skip src/wrapper \
-		--uri-ignore-words-list '*' \
-		--ignore-words .codespell-ignore \
-		src tests examples docs
-.PHONY: codespell
+typos:			## Run typos over the source code and documentation
+	@typos
+	@echo -e "\e[1;32mtypos clean!\e[0m"
+.PHONY: typos
 
 reuse:			## Check REUSE license compliance
 	$(PYTHON) -m reuse lint
