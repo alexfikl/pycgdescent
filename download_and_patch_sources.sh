@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
+# SPDX-FileCopyrightText: 2020-2024 Alexandru Fikl <alexfikl@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -8,8 +8,8 @@ set -Eeuo pipefail
 
 # {{{ description
 
-pkgname='CG_DESCENT-C'
-pkgver='6.8'
+pkgname='SuiteOPT'
+pkgver='3.0.2'
 archive="${pkgname}-${pkgver}.tar_.gz"
 url="https://people.clas.ufl.edu/hager/files/${archive}"
 
@@ -19,10 +19,10 @@ patchdir="${basedir}/patches"
 
 # }}}
 
-# {{{ get original sources
-
 mkdir -p "${builddir}"
 pushd "${builddir}"
+
+# {{{ get original sources
 
 echo -e "\033[1;32mbuilddir: $(pwd)\033[0m"
 
@@ -36,41 +36,54 @@ tar xvf "${archive}"
 
 # }}}
 
-# {{{ apply patches
+# {{{ patch sources
+
+pushd "${pkgname}"
 
 declare -a patches=(
-  '0000-add-blas-compile-flag.patch'
-  '0001-add-extern-c.patch'
-  '0002-add-header-guards.patch'
-  '0003-add-func-typedefs.patch'
-  '0004-add-user-pointer-to-functions.patch'
-  '0005-add-iteration-callback.patch'
-  '0006-add-step-size-limit.patch'
-  '0007-cg_evaluate-initialize-df.patch'
+  '0001-feat-guard-BLAS-defines.patch'
+  '0002-feat-extern-C-in-cgdescent-header.patch'
+  '0003-feat-add-user-callback.patch'
 )
 
-pushd "${pkgname}-${pkgver}"
-pwd
 for patch in "${patches[@]}"; do
   echo -e "\033[1;32mApplying '${patchdir}/${patch}\033[0m'"
   patch -p1 -i "${patchdir}/${patch}"
 done
 
+popd
+
 # }}}
 
 # {{{ copy sources
 
-echo -e "\033[1;32mCopying patched sources...\033[0m"
+echo -e '\033[1;32mCopying patched sources...\033[0m'
 mkdir -p ${basedir}/src/wrapper
 
-for filename in cg_user.h cg_blas.h cg_descent.h cg_descent.c; do
+declare -a files=(
+  'SuiteOPT/CGDESCENT/Include/cg_descent.h'
+  'SuiteOPT/CGDESCENT/Source/cg_default.c'
+  'SuiteOPT/CGDESCENT/Source/cg_descent.c'
+  'SuiteOPT/CGDESCENT/Source/cg_print.c'
+  'SuiteOPT/CGDESCENT/Source/cg_util.c'
+  'SuiteOPT/SSM/Include/SSM.h'
+  'SuiteOPT/SSM/Source/SSM.c'
+  'SuiteOPT/SSM/Source/SSMdiagopt.c'
+  'SuiteOPT/SSM/Source/SSMmult.c'
+  'SuiteOPT/SSM/Source/SSMprint.c'
+  'SuiteOPT/SSM/Source/SSMrefine.c'
+  'SuiteOPT/SSM/Source/SSMtridiag.c'
+  'SuiteOPT/SuiteOPTconfig/sopt.h'
+  'SuiteOPT/SuiteOPTconfig/sopt.c'
+)
+
+for filename in "${files[@]}"; do
   cp "${filename}" "${basedir}/src/wrapper"
 done
 
-popd
+# }}}
+
 popd
 # rm -rf ${builddir}
-
-# }}}
 
 # vim:set ts=2 sts=2 sw=2 et:

@@ -91,7 +91,7 @@ def main(n: int = 100) -> None:
     logger.info("status:  %d", status)
     logger.info("message: %s\n", STATUS_TO_MESSAGE[status])
 
-    logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
+    logger.info("maximum norm for gradient: %+.16e", stats.err)
     logger.info("function value:            %+.16e", stats.f)
     logger.info("cg iterations:             %d", stats.iter)
     logger.info("function evaluations:      %d", stats.nfunc)
