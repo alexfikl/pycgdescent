@@ -136,6 +136,9 @@ lint.flake8-quotes.multiline-quotes = "double"
 lint.isort.known-first-party = [
     "pycgdescent",
 ]
+lint.isort.required-imports = [
+    "from __future__ import annotations",
+]
 
 [tool.pytest.ini_options]
 testpaths = "tests"

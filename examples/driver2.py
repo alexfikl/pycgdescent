@@ -35,6 +35,8 @@ then with the ``QuadStep`` turned on. Notice that the performance improves
 with the ``QuadStep`` is on. This behavior is typical.
 """
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np

@@ -15,6 +15,8 @@ The function and gradient are
         \end{aligned}
 """
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np

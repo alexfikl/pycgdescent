@@ -26,6 +26,8 @@ To see that the Wolfe line search failed, we also need to set the
 ``logger.infoLevel`` to at least ``1``.
 """
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np

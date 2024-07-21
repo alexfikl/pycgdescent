@@ -1,5 +1,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+
+from __future__ import annotations
+
 from importlib import metadata
 
 # {{{ project information

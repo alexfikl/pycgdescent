@@ -29,6 +29,8 @@ step size using the parameter ``step``. In the following example, the initial
 step size is set to 1.
 """
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np

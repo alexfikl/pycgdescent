@@ -25,6 +25,8 @@ The code has to do a number of expansions to reach a suitable
 interval bracketing the minimizer in the initial search direction.
 """
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np
