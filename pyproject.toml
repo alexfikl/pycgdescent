@@ -122,14 +122,7 @@ lint.ignore = [
     "S102",    # exec-builtin
     "UP037",   # quoted-annotation
 ]
-lint.per-file-ignores."src/pycgdescent/_cg_descent.pyi" = [
-    "A003",
-    "E302",
-    "N801",
-    "N802",
-    "PLR0904",
-    "SIM108",
-]
+lint.exclude = [ "src/pycgdescent/_cg_descent.pyi" ]
 lint.flake8-quotes.docstring-quotes = "double"
 lint.flake8-quotes.inline-quotes = "double"
 lint.flake8-quotes.multiline-quotes = "double"

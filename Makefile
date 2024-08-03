@@ -103,6 +103,12 @@ pip-install:	## Install pinned dependencies from requirements.txt
 		--editable .
 .PHONY: pip-install
 
+stubgen:		## Generate stubs for binary module
+	$(PYTHON) -m pybind11_stubgen \
+		--numpy-array-use-type-var \
+		--output src \
+		pycgdescent._cg_descent
+
 test:			## Run pytest tests
 	$(PYTHON) -m pytest \
 		--junit-xml=pytest-results.xml \

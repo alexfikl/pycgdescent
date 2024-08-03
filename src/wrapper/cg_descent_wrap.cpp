@@ -18,7 +18,7 @@ namespace py = pybind11;
 // {{{ macros
 
 #define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE) \
-    auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *p) {})); \
+    auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *) {})); \
     assert(!NAME.owndata())
 
 #define DEF_RO_PROPERTY(NAME) \
@@ -232,7 +232,7 @@ int user_callback(cg_iter_stats *IterStats, void *User)
     return (*w->m_callback)(wi);
 }
 
-py::tuple cg_descent_wrapper(
+std::tuple<cg::array, cg_stats_wrapper*, bool> cg_descent_wrapper(
         cg::array x,
         double grad_tol,
         std::optional<cg_parameter_wrapper*> param,
@@ -275,11 +275,9 @@ py::tuple cg_descent_wrapper(
             user_callback_p,
             workptr, &w);
 
-    return py::make_tuple(
-            py::array(n, ptr),
-            py::cast(
-                stats,
-                py::return_value_policy::take_ownership),
+    return std::make_tuple(
+            cg::array(n, ptr),
+            stats,
             status
             );
 }
@@ -395,5 +393,6 @@ PYBIND11_MODULE(_cg_descent, m)
             py::arg("grad").none(false),
             py::arg("valgrad").none(true),
             py::arg("callback").none(true),
-            py::arg("work").none(true));
+            py::arg("work").none(true),
+            py::return_value_policy::take_ownership);
 }
