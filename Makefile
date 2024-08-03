@@ -12,27 +12,31 @@ help: 			## Show this help
 
 # {{{ linting
 
-format: black isort pyproject mesonfmt		## Run all formatting scripts
+format: isort black pyproject clangfmt mesonfmt		## Run all formatting scripts
 .PHONY: format
 
 fmt: format
 .PHONY: fmt
-
-pyproject:		## Run pyproject-fmt over the configuration
-	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
-	@echo -e "\e[1;32mpyproject clean!\e[0m"
-.PHONY: pyproject
-
-black:			## Run ruff format over the source code
-	ruff format src tests examples docs
-	@echo -e "\e[1;32mruff format clean!\e[0m"
-.PHONY: black
 
 isort:			## Run ruff isort fixes over the source code
 	ruff check --fix --select=I src tests examples docs
 	ruff check --fix --select=RUF022 src
 	@echo -e "\e[1;32mruff isort clean!\e[0m"
 .PHONY: isort
+
+black:			## Run ruff format over the source code
+	ruff format src tests examples docs
+	@echo -e "\e[1;32mruff format clean!\e[0m"
+.PHONY: black
+
+pyproject:		## Run pyproject-fmt over the configuration
+	$(PYTHON) -m pyproject_fmt --indent 4 pyproject.toml
+	@echo -e "\e[1;32mpyproject clean!\e[0m"
+.PHONY: pyproject
+
+clangfmt:		## Format wrapper code
+	clang-format -i src/wrapper/cg_descent_wrap.cpp
+	@echo -e "\e[1;32mclang-format clean!\e[0m"
 
 mesonfmt: 		## Format meson.build
 	meson fmt -i meson.build
