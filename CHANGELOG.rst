@@ -1,3 +1,19 @@
+pycgdescent 0.9.0 (August 3, 2024)
+----------------------------------
+
+**Features**
+
+* Publishing wheels to PyPI.
+* Tested and working on numpy 2.0.
+* Use ``pybind11-stubgen`` to generate the type annotations for the internal
+  ``_cg_descent`` module.
+* Various maintenance fixes (bumping dependencies, linting, fixing docs).
+
+**Fixes**
+
+* Fix ``sphinx-autoapi`` doc build.
+* Fix the gradient in a test case.
+
 pycgdescent 0.8.1 (February 7, 2024)
 ------------------------------------
 
