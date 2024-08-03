@@ -1,14 +1,20 @@
-.. |github-ci| image:: https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg
+.. |badge-ci| image:: https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg
     :alt: Build Status
     :target: https://github.com/alexfikl/pycgdescent/actions?query=branch%3Amain+workflow%3ACI
-.. |rtd-docs| image:: https://readthedocs.org/projects/pycgdescent/badge/?version=latest
+
+.. |badge-rtd| image:: https://readthedocs.org/projects/pycgdescent/badge/?version=latest
     :alt: Documentation
     :target: https://pycgdescent.readthedocs.io/en/latest/?badge=latest
-.. |reuse| image:: https://api.reuse.software/badge/github.com/alexfikl/pycgdescent
+
+.. |badge-pypi| image:: https://badge.fury.io/py/pycgdescent.svg
+    :alt: PyPI
+    :target: https://pypi.org/project/pycgdescent/
+
+.. |badge-reuse| image:: https://api.reuse.software/badge/github.com/alexfikl/pycgdescent
     :alt: REUSE
     :target: https://api.reuse.software/info/github.com/alexfikl/pycgdescent
 
-|github-ci| |rtd-docs| |reuse|
+|badge-ci| |badge-rtd| |badge-pypi| |badge-reuse|
 
 pycgdescent
 ===========
