@@ -12,7 +12,7 @@ help: 			## Show this help
 
 # {{{ linting
 
-format: black isort pyproject					## Run all formatting scripts
+format: black isort pyproject mesonfmt		## Run all formatting scripts
 .PHONY: format
 
 fmt: format
@@ -33,6 +33,10 @@ isort:			## Run ruff isort fixes over the source code
 	ruff check --fix --select=RUF022 src
 	@echo -e "\e[1;32mruff isort clean!\e[0m"
 .PHONY: isort
+
+mesonfmt: 		## Format meson.build
+	meson fmt -i meson.build
+	@echo -e "\e[1;32mmeson fmt clean!\e[0m"
 
 lint: ruff mypy typos reuse				## Run linting checks
 .PHONY: lint
