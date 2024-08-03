@@ -28,11 +28,11 @@ markupsafe==2.1.5
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
-mypy==1.10.1
+mypy==1.11.1
     # via pycgdescent (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-numpy==2.0.0
+numpy==2.0.1
     # via pycgdescent (pyproject.toml)
 packaging==24.1
     # via pytest
@@ -40,11 +40,11 @@ pluggy==1.5.0
     # via pytest
 pygments==2.18.0
     # via rich
-pyproject-fmt==2.1.4
+pyproject-fmt==2.2.1
     # via pycgdescent (pyproject.toml)
-pyproject-fmt-rust==1.1.5
+pyproject-fmt-rust==1.1.6
     # via pyproject-fmt
-pytest==8.2.2
+pytest==8.3.2
     # via pycgdescent (pyproject.toml)
 python-debian==0.1.49
     # via reuse
@@ -52,7 +52,7 @@ reuse==4.0.3
     # via pycgdescent (pyproject.toml)
 rich==13.7.1
     # via pycgdescent (pyproject.toml)
-ruff==0.5.2
+ruff==0.5.6
     # via pycgdescent (pyproject.toml)
 tomli==2.0.1 ; python_version < '3.11'
     # via
@@ -67,7 +67,7 @@ typing-extensions==4.12.2
     # via
     #   pycgdescent (pyproject.toml)
     #   mypy
-typos==1.23.2
+typos==1.23.6
     # via pycgdescent (pyproject.toml)
-uv==0.2.26
+uv==0.2.33
     # via pycgdescent (pyproject.toml)
