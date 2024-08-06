@@ -35,15 +35,16 @@ Type Aliases
 from __future__ import annotations
 
 import logging
+import sys
 import time
 from dataclasses import dataclass, field
 from importlib import metadata
 from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
-try:
-    # NOTE: only available in python 3.10
+# NOTE: https://peps.python.org/pep-0484/#version-and-platform-checking
+if sys.version_info >= (3, 10):
     from typing import TypeAlias
-except ImportError:
+else:
     from typing_extensions import TypeAlias
 
 import numpy as np

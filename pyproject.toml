@@ -136,6 +136,7 @@ testpaths = "tests"
 
 [tool.mypy]
 strict = true
+python_version = "3.9"
 hide_error_codes = false
 warn_unused_ignores = true
 local_partial_types = true
