@@ -42,8 +42,18 @@ mesonfmt: 		## Format meson.build
 	meson fmt -i meson.build
 	@echo -e "\e[1;32mmeson fmt clean!\e[0m"
 
-lint: ruff mypy typos reuse				## Run linting checks
+lint: typos reuse ruff mypy		## Run linting checks
 .PHONY: lint
+
+typos:			## Run typos over the source code and documentation
+	typos --sort
+	@echo -e "\e[1;32mtypos clean!\e[0m"
+.PHONY: typos
+
+reuse:			## Check REUSE license compliance
+	$(PYTHON) -m reuse lint
+	@echo -e "\e[1;32mREUSE compliant!\e[0m"
+.PHONY: reuse
 
 ruff:			## Run ruff checks over the source code
 	ruff check src tests examples
@@ -54,16 +64,6 @@ mypy:			## Run mypy checks over the source code
 	$(PYTHON) -m mypy src tests examples
 	@echo -e "\e[1;32mmypy clean!\e[0m"
 .PHONY: mypy
-
-typos:			## Run typos over the source code and documentation
-	@typos
-	@echo -e "\e[1;32mtypos clean!\e[0m"
-.PHONY: typos
-
-reuse:			## Check REUSE license compliance
-	$(PYTHON) -m reuse lint
-	@echo -e "\e[1;32mREUSE compliant!\e[0m"
-.PHONY: reuse
 
 # }}}
 
