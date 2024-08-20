@@ -2,5 +2,5 @@
 #    uv pip compile --universal --python-version 3.9 -o requirements.txt pyproject.toml
 numpy==2.0.1
     # via pycgdescent (pyproject.toml)
-typing-extensions==4.12.2 ; python_version < '3.10'
+typing-extensions==4.12.2 ; python_full_version < '3.10'
     # via pycgdescent (pyproject.toml)
