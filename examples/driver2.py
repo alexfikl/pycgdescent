@@ -87,7 +87,7 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("timing: %s seconds\n", time)
+    logger.info("timing: %s\n", time)
 
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
     logger.info("function value:            %+.16e", stats.f)
@@ -114,7 +114,7 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("timing: %s seconds\n", time)
+    logger.info("timing: %s\n", time)
 
     logger.info("maximum norm for gradient: %+.16e", stats.gnorm)
     logger.info("function value:            %+.16e", stats.f)

@@ -35,17 +35,9 @@ Type Aliases
 from __future__ import annotations
 
 import logging
-import sys
-import time
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
-
-# NOTE: https://peps.python.org/pep-0484/#version-and-platform-checking
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeAlias, cast
 
 import numpy as np
 
@@ -749,21 +741,59 @@ def minimize(
 
 
 class Timer:
+    """A simpler timer context manager.
+
+    .. code:: python
+
+        with Timer() as time:
+            # perform some operations
+            ...
+
+        print(time)
+
+    .. autoattribute:: t_start
+    .. autoattribute:: t_end
+    .. autoattribute:: t_wall
+    """
+
     def __init__(self) -> None:
-        self.t_start = 0.0
-        self.t_end = 0.0
+        self.t_start: float = -1.0
+        """
+        A time stamp (obtained from :func:`time.perf_counter`) for when the
+        context manager was entered. This is not updated again until the context
+        manager is entered again.
+        """
+        self.t_end: float = -1.0
+        """
+        A time stamp (obtained from :func:`time.perf_counter`) for when the
+        context manager has exited. This is not valid in the ``with`` block
+        itself.
+        """
+        self.t_wall: float = -1.0
+        """The total wall time between the context manager enter and exit. This
+        is only valid after exiting the context manager.
+        """
 
     def __enter__(self) -> Timer:
-        self.t_start = time.time()
-        self.t_end = 0.0
+        import time
+
+        self.t_start = time.perf_counter()
+        self.t_end = -1.0
+        self.t_wall = -1.0
 
         return self
 
     def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
-        self.t_end = time.time()
+        import time
+
+        self.t_end = time.perf_counter()
+        self.t_wall = self.t_end - self.t_start
 
     def __str__(self) -> str:
-        return f"{self.t_end - self.t_start:g}"
+        return f"Elapsed time is {self.t_wall:.5f} seconds."
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(t_start={self.t_start}, t_end={self.t_end})"
 
 
 # }}}

@@ -65,7 +65,7 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("timing: %s seconds\n", time)
+    logger.info("timing: %s\n", time)
 
     # }}}
 
@@ -84,7 +84,7 @@ def main(n: int = 100) -> None:
             param=param,
         )
 
-    logger.info("timing: %s seconds\n", time)
+    logger.info("timing: %s\n", time)
 
     # }}}
 
