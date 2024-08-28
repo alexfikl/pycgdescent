@@ -39,7 +39,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, Callable, ClassVar
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
 
 # NOTE: https://peps.python.org/pep-0484/#version-and-platform-checking
 if sys.version_info >= (3, 10):
@@ -54,7 +54,7 @@ import pycgdescent._cg_descent as _cg
 __version__ = metadata.version("pycgdescent")
 
 if TYPE_CHECKING:
-    ArrayType: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
+    ArrayType: TypeAlias = np.ndarray[Any, np.dtype[Any]]
 else:
     ArrayType: TypeAlias = np.ndarray
 
@@ -654,7 +654,7 @@ def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> Ar
     if dtype is None:
         dtype = np.dtype(np.float64)
 
-    return np.empty(min_work_size(options, n), dtype=dtype)
+    return cast(ArrayType, np.empty(min_work_size(options, n), dtype=dtype))
 
 
 def minimize(

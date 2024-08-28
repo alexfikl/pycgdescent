@@ -39,8 +39,8 @@ class CallbackCache:
 
 
 def fun(x: cg.ArrayType, *, a: float = 100.0, b: float = 1.0) -> float:
-    x0: float = x[0]
-    x1: float = x[1]
+    x0 = float(x[0])
+    x1 = float(x[1])
     return a * (x1 - x0**2) ** 2 + b * (x0 - 1.0) ** 2
 
 
@@ -58,7 +58,7 @@ def main(
     visualize: bool = False,
 ) -> None:
     callback = CallbackCache()
-    x0: cg.ArrayType = np.array([-3.5, -4.0])
+    x0 = np.array([-3.5, -4.0])
 
     options = cg.OptimizeOptions()
     r = cg.minimize(
@@ -101,10 +101,10 @@ def plot_rosenbrock_solution(
     ext: str = "png",
     dark: bool = False,
 ) -> None:
-    x: cg.ArrayType = np.array(cache.x).T
-    alpha: cg.ArrayType = np.array(cache.alpha)
-    f: cg.ArrayType = np.array(cache.f)
-    gnorm: cg.ArrayType = np.array(cache.g)
+    x = np.array(cache.x).T
+    alpha = np.array(cache.alpha)
+    f = np.array(cache.f)
+    gnorm = np.array(cache.g)
 
     facecolor = "#121212" if dark else "#FFFFFF"
     fontcolor = "#FFFFFF" if dark else "#000000"
