@@ -94,6 +94,12 @@ html_theme_options = {
             "icon": "https://img.shields.io/github/issues/alexfikl/pycgdescent",
             "type": "url",
         },
+        {
+            "Name": "PyPI",
+            "url": "https://pypi.org/project/pycgdescent",
+            "icon": "https://badge.fury.io/py/pycgdescent.svg",
+            "type": "url"
+        },
     ],
 }
 
