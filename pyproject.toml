@@ -8,7 +8,7 @@ requires = [
 
 [project]
 name = "pycgdescent"
-version = "0.10.1"
+version = "0.10.2"
 description = "Python wrapper for the CG_DESCENT library"
 readme = "README.rst"
 keywords = [
@@ -59,7 +59,7 @@ urls.Repository = "https://github.com/alexfikl/pycgdescent"
 
 [tool.cibuildwheel]
 build = [
-    "cp3{9,10,11,12}-*",
+    "cp3{10,11,12}-*",
 ]
 test-requires = [
     "pytest",

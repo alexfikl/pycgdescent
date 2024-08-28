@@ -1,3 +1,10 @@
+pycgdescent 0.10.2 (August 28, 2024)
+------------------------------------
+
+**Fixes**
+
+* Do not build and publish wheels for Python 3.9.
+
 pycgdescent 0.10.1 (August 28, 2024)
 ------------------------------------
 
