@@ -121,12 +121,12 @@ class OptimizeOptions(_cg.cg_parameter):
         *Algorithm 851: CG_DESCENT, a Conjugate Gradient Method With Guaranteed
         Descent*,
         ACM Transactions on Mathematical Software, Vol. 32, pp. 113--137, 2006,
-        `DOI <http://dx.doi.org/10.1145/1132973.1132979>`__.
+        `DOI <https://dx.doi.org/10.1145/1132973.1132979>`__.
 
     .. [HagerZhang2013] W. W. Hager, H. Zhang,
         *The Limited Memory Conjugate Gradient Method*,
         SIAM Journal on Optimization, Vol. 23, pp. 2150--2168, 2013,
-        `DOI <http://dx.doi.org/10.1137/120898097>`__.
+        `DOI <https://dx.doi.org/10.1137/120898097>`__.
 
     .. automethod:: replace
     .. automethod:: pretty
