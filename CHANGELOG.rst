@@ -1,3 +1,10 @@
+pycgdescent 0.10.1 (August 28, 2024)
+------------------------------------
+
+**Fixes**
+
+* Update CI Python version matrix to exclude 3.9.
+
 pycgdescent 0.10.0 (August 28, 2024)
 ------------------------------------
 
