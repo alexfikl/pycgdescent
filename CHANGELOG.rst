@@ -1,3 +1,14 @@
+pycgdescent 0.10.0 (August 28, 2024)
+------------------------------------
+
+**Dependencies**
+
+* Bumped minimum Python version to 3.10 to match the newly released numpy 2.1.
+
+**Features**
+
+* Various maintenance updates (bumping CI dependencies, linting, fixing docs).
+
 pycgdescent 0.9.0 (August 3, 2024)
 ----------------------------------
 
@@ -7,7 +18,7 @@ pycgdescent 0.9.0 (August 3, 2024)
 * Tested and working on numpy 2.0.
 * Use ``pybind11-stubgen`` to generate the type annotations for the internal
   ``_cg_descent`` module.
-* Various maintenance fixes (bumping dependencies, linting, fixing docs).
+* Various maintenance updates (bumping CI dependencies, linting, fixing docs).
 
 **Fixes**
 
