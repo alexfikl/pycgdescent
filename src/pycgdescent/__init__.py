@@ -790,6 +790,7 @@ class Timer:
         self.t_wall = self.t_end - self.t_start
 
     def __str__(self) -> str:
+        # NOTE: this matches the output of MATLAB's toc
         return f"Elapsed time is {self.t_wall:.5f} seconds."
 
     def __repr__(self) -> str:

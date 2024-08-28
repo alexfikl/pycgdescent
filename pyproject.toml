@@ -8,7 +8,7 @@ requires = [
 
 [project]
 name = "pycgdescent"
-version = "0.9.0"
+version = "0.10.0"
 description = "Python wrapper for the CG_DESCENT library"
 readme = "README.rst"
 keywords = [
@@ -22,14 +22,13 @@ maintainers = [
 authors = [
     { name = "Alexandru Fikl", email = "alexfikl@gmail.com" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -38,7 +37,6 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
-    "typing-extensions; python_version<'3.10'",
 ]
 optional-dependencies.dev = [
     "mypy",
@@ -84,7 +82,7 @@ before-build = "pip install delvewheel"
 repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 line-length = 88
 
 preview = true
@@ -136,7 +134,7 @@ testpaths = "tests"
 
 [tool.mypy]
 strict = true
-python_version = "3.9"
+python_version = "3.10"
 hide_error_codes = false
 warn_unused_ignores = true
 local_partial_types = true
