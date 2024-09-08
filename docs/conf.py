@@ -98,7 +98,7 @@ html_theme_options = {
             "Name": "PyPI",
             "url": "https://pypi.org/project/pycgdescent",
             "icon": "https://badge.fury.io/py/pycgdescent.svg",
-            "type": "url"
+            "type": "url",
         },
     ],
 }
