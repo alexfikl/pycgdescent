@@ -722,7 +722,7 @@ def minimize(
     return OptimizeResult(
         x=x,
         success=status == 0,
-        status=status,
+        status=int(status),
         message=STATUS_TO_MESSAGE[status],
         fun=stats.f,
         jac=stats.gnorm,

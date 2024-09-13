@@ -10,53 +10,47 @@ Uses the classic Rosenbrock function as an example.
 
 from __future__ import annotations
 
-# START_ROSENROCK_EXAMPLE
-from dataclasses import dataclass, field
 from functools import partial
 
+import matplotlib.figure
 import matplotlib.pyplot as mp
+
+# START_ROSENROCK_EXAMPLE
 import numpy as np
 import numpy.linalg as la
-from matplotlib.figure import Figure
 
 import pycgdescent as cg
 
+Array = np.ndarray[tuple[int], np.dtype[np.float64]]
+Float = np.float64
 
-@dataclass(frozen=True)
+
 class CallbackCache:
-    alpha: list[float] = field(default_factory=list)
-    x: list[cg.ArrayType] = field(default_factory=list)
-    f: list[float] = field(default_factory=list)
-    g: list[float] = field(default_factory=list)
+    def __init__(self) -> None:
+        self.alpha: list[float] = []
+        self.x: list[Array] = []
+        self.f: list[float] = []
+        self.g: list[Float] = []
 
     def __call__(self, info: cg.CallbackInfo) -> int:
         self.alpha.append(info.alpha)
         self.x.append(info.x.copy())
         self.f.append(info.f)
-        self.g.append(float(la.norm(info.g, np.inf)))
+        self.g.append(la.norm(info.g, np.inf))
 
         return 1
 
 
-def fun(x: cg.ArrayType, *, a: float = 100.0, b: float = 1.0) -> float:
-    x0 = float(x[0])
-    x1 = float(x[1])
-    return a * (x1 - x0**2) ** 2 + b * (x0 - 1.0) ** 2
+def fun(x: Array, *, a: float, b: float) -> float:
+    return a * (x[1] - x[0] ** 2) ** 2 + b * (x[0] - 1.0) ** 2  # type: ignore
 
 
-def jac(g: cg.ArrayType, x: cg.ArrayType, *, a: float = 100.0, b: float = 1.0) -> None:
+def jac(g: Array, x: Array, *, a: float, b: float) -> None:
     g[0] = -4.0 * a * x[0] * (x[1] - x[0] ** 2) + 2.0 * b * (x[0] - 1.0)
     g[1] = 2.0 * a * (x[1] - x[0] ** 2)
 
 
-def main(
-    *,
-    a: float = 100.0,
-    b: float = 1.0,
-    tol: float = 1.0e-8,
-    dark: bool = False,
-    visualize: bool = False,
-) -> None:
+def main(*, a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> None:
     callback = CallbackCache()
     x0 = np.array([-3.5, -4.0])
 
@@ -73,11 +67,10 @@ def main(
     print(r.pretty())
     # END_ROSENBROCK_EXAMPLE
 
-    if visualize:
-        plot_rosenbrock_solution(r, callback, a=a, b=b, dark=dark)
+    return r, callback  # type: ignore[return-value]
 
 
-def savefig(fig: Figure, suffix: str, ext: str | None = None) -> None:
+def savefig(fig: matplotlib.figure.Figure, suffix: str, ext: str | None = None) -> None:
     import pathlib
 
     if ext is None:
@@ -153,7 +146,7 @@ def plot_rosenbrock_solution(
     # {{{
 
     x1d = np.linspace(-4.0, 4.0, 128)
-    xy: cg.ArrayType = np.stack(np.meshgrid(x1d, x1d))
+    xy = np.stack(np.meshgrid(x1d, x1d))
     z = fun(xy, a=a, b=b)
 
     ax = fig.gca()
@@ -198,4 +191,6 @@ if __name__ == "__main__":
     parser.add_argument("--visualize", action="store_true")
     args = parser.parse_args()
 
-    main(a=args.a, b=args.b, tol=args.tol, dark=args.dark, visualize=args.visualize)
+    result, callback = main(a=args.a, b=args.b, tol=args.tol)  # type: ignore
+    if args.visualize:
+        plot_rosenbrock_solution(result, callback, a=args.a, b=args.b, dark=args.dark)
