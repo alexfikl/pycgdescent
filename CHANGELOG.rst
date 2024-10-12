@@ -1,3 +1,10 @@
+pycgdescent 0.10.3 (October 12, 2024)
+-------------------------------------
+
+**Dependencies**
+
+* Added official support for Python 3.13.
+
 pycgdescent 0.10.2 (August 28, 2024)
 ------------------------------------
 
