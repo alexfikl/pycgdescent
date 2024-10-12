@@ -24,7 +24,7 @@ license-expression==30.3.1
     # via reuse
 markdown-it-py==3.0.0
     # via rich
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
@@ -32,7 +32,7 @@ mypy==1.11.2
     # via pycgdescent (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-numpy==2.1.1
+numpy==2.1.2
     # via pycgdescent (pyproject.toml)
 packaging==24.1
     # via pytest
@@ -40,21 +40,21 @@ pluggy==1.5.0
     # via pytest
 pygments==2.18.0
     # via rich
-pyproject-fmt==2.2.3
+pyproject-fmt==2.3.0
     # via pycgdescent (pyproject.toml)
-pyproject-fmt-rust==1.1.6
+pyproject-fmt-rust==1.2.0
     # via pyproject-fmt
-pytest==8.3.2
+pytest==8.3.3
     # via pycgdescent (pyproject.toml)
 python-debian==0.1.49
     # via reuse
 reuse==4.0.3
     # via pycgdescent (pyproject.toml)
-rich==13.8.0
+rich==13.9.2
     # via pycgdescent (pyproject.toml)
-ruff==0.6.4
+ruff==0.6.9
     # via pycgdescent (pyproject.toml)
-tomli==2.0.1 ; python_full_version < '3.11'
+tomli==2.0.2 ; python_full_version < '3.11'
     # via
     #   mypy
     #   pyproject-fmt
@@ -64,8 +64,10 @@ tomlkit==0.13.2
 types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
 typing-extensions==4.12.2
-    # via mypy
-typos==1.24.5
+    # via
+    #   mypy
+    #   rich
+typos==1.26.0
     # via pycgdescent (pyproject.toml)
-uv==0.4.7
+uv==0.4.20
     # via pycgdescent (pyproject.toml)
