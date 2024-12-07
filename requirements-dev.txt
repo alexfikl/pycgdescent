@@ -12,53 +12,57 @@ chardet==5.2.0
     # via
     #   binaryornot
     #   python-debian
-colorama==0.4.6 ; sys_platform == 'win32'
-    # via pytest
+click==8.1.7
+    # via reuse
+colorama==0.4.6 ; sys_platform == 'win32' or platform_system == 'Windows'
+    # via
+    #   click
+    #   pytest
 exceptiongroup==1.2.2 ; python_full_version < '3.11'
     # via pytest
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.4
     # via reuse
-license-expression==30.3.1
+license-expression==30.4.0
     # via reuse
 markdown-it-py==3.0.0
     # via rich
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
-mypy==1.11.2
+mypy==1.13.0
     # via pycgdescent (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-numpy==2.1.2
+numpy==2.1.3
     # via pycgdescent (pyproject.toml)
-packaging==24.1
+packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
 pygments==2.18.0
     # via rich
-pyproject-fmt==2.3.0
+pyproject-fmt==2.5.0
     # via pycgdescent (pyproject.toml)
-pyproject-fmt-rust==1.2.0
-    # via pyproject-fmt
-pytest==8.3.3
+pytest==8.3.4
     # via pycgdescent (pyproject.toml)
 python-debian==0.1.49
     # via reuse
-reuse==4.0.3
+reuse==5.0.2
     # via pycgdescent (pyproject.toml)
-rich==13.9.2
+rich==13.9.4
     # via pycgdescent (pyproject.toml)
-ruff==0.6.9
+ruff==0.8.2
     # via pycgdescent (pyproject.toml)
-tomli==2.0.2 ; python_full_version < '3.11'
+toml-fmt-common==1.0.1
+    # via pyproject-fmt
+tomli==2.2.1 ; python_full_version < '3.11'
     # via
     #   mypy
-    #   pyproject-fmt
     #   pytest
+    #   toml-fmt-common
 tomlkit==0.13.2
     # via reuse
 types-dataclasses==0.6.6
@@ -67,7 +71,7 @@ typing-extensions==4.12.2
     # via
     #   mypy
     #   rich
-typos==1.26.0
+typos==1.28.2
     # via pycgdescent (pyproject.toml)
-uv==0.4.20
+uv==0.5.7
     # via pycgdescent (pyproject.toml)
