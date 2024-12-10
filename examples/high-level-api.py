@@ -11,6 +11,7 @@ Uses the classic Rosenbrock function as an example.
 from __future__ import annotations
 
 from functools import partial
+from typing import Any
 
 import matplotlib.figure
 import matplotlib.pyplot as mp
@@ -21,8 +22,8 @@ import numpy.linalg as la
 
 import pycgdescent as cg
 
-Array = np.ndarray[tuple[int], np.dtype[np.float64]]
-Float = np.float64
+Float = np.floating[Any]
+Array = np.ndarray[tuple[int], np.dtype[Float]]
 
 
 class CallbackCache:
