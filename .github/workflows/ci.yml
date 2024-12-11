@@ -33,16 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    -
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-        cache: 'pip'
-        cache-dependency-path: 'requirements-dev.txt'
-    - name: Main Script
+    - uses: extractions/setup-just@v2
+    - uses: astral-sh/ruff-action@v2
+    - name: Run ruff
       run: |
-        make pip-install
-        make ruff
+        just ruff
 
   mypy:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -50,16 +45,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    -
-      uses: actions/setup-python@v5
+    - uses: extractions/setup-just@v2
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.13'
         cache: 'pip'
         cache-dependency-path: 'requirements-dev.txt'
     - name: Main Script
       run: |
-        make pip-install
-        make mypy
+        just pip-install
+        just mypy
 
   pytest:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -71,16 +66,16 @@ jobs:
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
-    -
-      uses: actions/setup-python@v5
+    - uses: extractions/setup-just@v2
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
         cache-dependency-path: 'requirements-dev.txt'
     - name: Main Script
       run: |
-        make pip-install
-        make test
+        just pip-install
+        just test
 
   examples:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -92,15 +87,15 @@ jobs:
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
-    -
-      uses: actions/setup-python@v5
+    - uses: extractions/setup-just@v2
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
         cache-dependency-path: 'requirements-dev.txt'
     - name: Main Script
       run: |
-        make pip-install
-        make run-examples
+        just pip-install
+        just examples
 
 # vim: set ts=2 sw=2 et:
