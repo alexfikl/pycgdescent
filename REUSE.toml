@@ -24,7 +24,7 @@ SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["pyproject.toml", "meson.build", "meson_options.txt", "**Makefile"]
+path = ["pyproject.toml", "meson.build", "meson_options.txt", "justfile", "**Makefile"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
 SPDX-License-Identifier = "CC0-1.0"
