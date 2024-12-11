@@ -150,6 +150,10 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = [ "pycgdescent._cg_descent" ]
+disallow_untyped_defs = false
+
 [tool.typos.files]
 extend-exclude = [
     "src/wrapper/*.c",
