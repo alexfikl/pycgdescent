@@ -37,7 +37,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeAlias, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeAlias
 
 import numpy as np
 
@@ -646,7 +646,7 @@ def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> Ar
     if dtype is None:
         dtype = np.dtype(np.float64)
 
-    return cast(ArrayType, np.empty(min_work_size(options, n), dtype=dtype))
+    return np.empty(min_work_size(options, n), dtype=dtype)
 
 
 def minimize(
