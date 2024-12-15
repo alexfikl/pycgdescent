@@ -94,7 +94,7 @@ develop:
 
 [doc("Editable install using pinned dependencies from requirements-dev.txt")]
 pip-install:
-    {{ PYTHON }} -m pip install --upgrade pip pybind11 meson-python ninja
+    {{ PYTHON }} -m pip install --upgrade pip pybind11 meson-python ninja poetry
     {{ PYTHON }} -m pip install \
         --verbose \
         --requirement requirements-dev.txt \
