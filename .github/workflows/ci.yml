@@ -34,7 +34,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: extractions/setup-just@v2
-    - uses: astral-sh/ruff-action@v2
+    - uses: astral-sh/ruff-action@v3
     - name: Run ruff
       run: |
         just ruff
