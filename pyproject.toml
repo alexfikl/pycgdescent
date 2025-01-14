@@ -83,7 +83,7 @@ before-build = "pip install delvewheel"
 repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 88
 
 preview = true
@@ -144,7 +144,6 @@ plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
 module = [
-    "importlib_metadata.*",
     "matplotlib.*",
     "numpy.*",
 ]

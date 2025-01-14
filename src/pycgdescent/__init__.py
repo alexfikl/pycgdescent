@@ -35,9 +35,10 @@ Type Aliases
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeAlias
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import numpy as np
 
