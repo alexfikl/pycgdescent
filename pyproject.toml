@@ -39,14 +39,16 @@ classifiers = [
 dependencies = [
     "numpy",
 ]
-optional-dependencies.dev = [
+optional-dependencies.test = [
     "mypy",
-    "pyproject-fmt",
     "pytest",
-    "reuse",
     "rich",
-    "ruff",
     "types-dataclasses",
+]
+optional-dependencies.dev = [
+    "pyproject-fmt",
+    "reuse",
+    "ruff",
     "typos",
     "uv",
 ]
