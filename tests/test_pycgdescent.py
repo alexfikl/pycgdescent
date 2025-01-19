@@ -44,7 +44,8 @@ def test_optimize_options() -> None:
 # {{{ test_quadratic
 
 
-def test_quadratic(tol: float = 1.0e-8) -> None:
+@pytest.mark.parametrize("tol", [1.0e-8])
+def test_quadratic(tol: float) -> None:
     """Test optimization of a quadratic function with default options."""
 
     # {{{ setup
@@ -114,7 +115,8 @@ def test_quadratic(tol: float = 1.0e-8) -> None:
 # {{{ test_rosenbrock
 
 
-def test_rosenbrock(a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> None:
+@pytest.mark.parametrize(("a", "b", "tol"), [(100.0, 1.0, 1.0e-8)])
+def test_rosenbrock(a: float, b: float, tol: float) -> None:
     """Test optimization of the Rosenbrock function with default options."""
 
     if a < 0.0 or b < 0.0:
