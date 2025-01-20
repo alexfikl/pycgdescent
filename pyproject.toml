@@ -40,7 +40,9 @@ dependencies = [
     "numpy",
 ]
 optional-dependencies.dev = [
+    "pyproject-fmt",
     "reuse",
+    "rich",
     "typos",
     "uv",
 ]
@@ -51,7 +53,6 @@ optional-dependencies.docs = [
 ]
 optional-dependencies.test = [
     "mypy",
-    "pyproject-fmt",
     "pytest",
     "ruff",
     "types-dataclasses",

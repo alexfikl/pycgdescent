@@ -16,19 +16,14 @@ packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
-pyproject-fmt==2.5.0
-    # via pycgdescent (pyproject.toml)
 pytest==8.3.4
     # via pycgdescent (pyproject.toml)
 ruff==0.9.2
     # via pycgdescent (pyproject.toml)
-toml-fmt-common==1.0.1
-    # via pyproject-fmt
 tomli==2.2.1 ; python_full_version < '3.11'
     # via
     #   mypy
     #   pytest
-    #   toml-fmt-common
 types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
 typing-extensions==4.12.2
