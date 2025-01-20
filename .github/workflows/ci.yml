@@ -34,9 +34,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: extractions/setup-just@v2
-    - uses: astral-sh/ruff-action@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        cache: 'pip'
+        cache-dependency-path: 'requirements-dev.txt'
     - name: Run ruff
       run: |
+        just pip-install
         just ruff
 
   mypy:
