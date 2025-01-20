@@ -66,10 +66,10 @@ mypy:
 # {{{ pin
 
 [private]
-requirements_dev_txt:
+requirements_test_txt:
     uv pip compile --upgrade --universal --python-version '3.10' \
         --extra test \
-        -o requirements-dev.txt pyproject.toml
+        -o requirements-test.txt pyproject.toml
 
 [private]
 requirements_txt:
@@ -77,7 +77,7 @@ requirements_txt:
         -o requirements.txt pyproject.toml
 
 [doc('Pin dependency versions to requirements.txt')]
-pin: requirements_txt requirements_dev_txt
+pin: requirements_txt requirements_test_txt
 
 # }}}
 # {{{ develop
@@ -92,12 +92,12 @@ develop:
         --config-settings setup-args='-Duse-blas=true' \
         --editable .
 
-[doc("Editable install using pinned dependencies from requirements-dev.txt")]
+[doc("Editable install using pinned dependencies from requirements-test.txt")]
 pip-install:
     {{ PYTHON }} -m pip install --upgrade pip pybind11 meson-python ninja poetry
     {{ PYTHON }} -m pip install \
         --verbose \
-        --requirement requirements-dev.txt \
+        --requirement requirements-test.txt \
         --no-build-isolation \
         --config-settings setup-args='-Duse-blas=false' \
         --editable .

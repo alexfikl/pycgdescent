@@ -40,9 +40,7 @@ dependencies = [
     "numpy",
 ]
 optional-dependencies.dev = [
-    "pyproject-fmt",
     "reuse",
-    "ruff",
     "typos",
     "uv",
 ]
@@ -53,8 +51,9 @@ optional-dependencies.docs = [
 ]
 optional-dependencies.test = [
     "mypy",
+    "pyproject-fmt",
     "pytest",
-    "rich",
+    "ruff",
     "types-dataclasses",
 ]
 urls.Documentation = "https://pycgdescent.readthedocs.io"
