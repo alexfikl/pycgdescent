@@ -39,12 +39,6 @@ classifiers = [
 dependencies = [
     "numpy",
 ]
-optional-dependencies.test = [
-    "mypy",
-    "pytest",
-    "rich",
-    "types-dataclasses",
-]
 optional-dependencies.dev = [
     "pyproject-fmt",
     "reuse",
@@ -56,6 +50,12 @@ optional-dependencies.docs = [
     "sphinx>=6",
     "sphinx-autoapi",
     "sphinx-book-theme",
+]
+optional-dependencies.test = [
+    "mypy",
+    "pytest",
+    "rich",
+    "types-dataclasses",
 ]
 urls.Documentation = "https://pycgdescent.readthedocs.io"
 urls.Repository = "https://github.com/alexfikl/pycgdescent"
