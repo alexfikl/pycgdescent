@@ -34,6 +34,7 @@ clangfmt:
 [doc('Run just --fmt over the justfile')]
 justfmt:
     just --unstable --fmt
+    just -f docs/justfile --unstable --fmt
     @echo -e "\e[1;32mjust --fmt clean!\e[0m"
 
 # }}}

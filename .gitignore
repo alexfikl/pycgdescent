@@ -3,11 +3,12 @@ __pycache__
 .pytest_cache
 .mypy_cache
 .ruff_cache
-docs/_build
-docs/autoapi
+docs/build*
+docs/_build*
+docs/autoapi*
 *.egg-info
-build
-_build
+build*
+_build*
 dist
 
 # generated files
