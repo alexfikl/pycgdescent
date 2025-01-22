@@ -12,13 +12,14 @@ targets:
 
 [doc('Build the Sphinx documentation (clear BUILDDIR)')]
 build target='html':
-    @{{ SPHINXBUILD }} -M clean "{{ SOURCEDIR }}" "{{ BUILDDIR }}" {{ SPHINXOPTS }}
+    @rm -rf {{ BUILDDIR }}
     @{{ SPHINXBUILD }} -M {{ target }} "{{ SOURCEDIR }}" "{{ BUILDDIR }}" {{ SPHINXOPTS }}
-    @echo 'Build documentation in {{ BUILDDIR }}'
+    @echo 'Built documentation in {{ BUILDDIR }}/{{ target }}'
 
 [doc('Rebuild the Sphinx documentation (reuse BUILDDIR)')]
 rebuild target='html':
     @{{ SPHINXBUILD }} -M {{ target }} "{{ SOURCEDIR }}" "{{ BUILDDIR }}" {{ SPHINXOPTS }}
+    @echo 'Built documentation in {{ BUILDDIR }}/{{ target }}'
 
 [doc("Open HTML documentation")]
 view:
