@@ -72,10 +72,15 @@ mypy:
 # {{{ pin
 
 [private]
+requirements_build_txt:
+    uv pip compile --upgrade --universal --python-version "3.10" \
+        -o .github/requirements-build.txt .github/requirements-build.in
+
+[private]
 requirements_test_txt:
     uv pip compile --upgrade --universal --python-version '3.10' \
         --extra test \
-        -o requirements-test.txt pyproject.toml
+        -o .github/requirements-test.txt pyproject.toml
 
 [private]
 requirements_txt:
@@ -83,7 +88,7 @@ requirements_txt:
         -o requirements.txt pyproject.toml
 
 [doc('Pin dependency versions to requirements.txt')]
-pin: requirements_txt requirements_test_txt
+pin: requirements_txt requirements_test_txt requirements_build_txt
 
 # }}}
 # {{{ develop
@@ -100,10 +105,10 @@ develop:
 
 [doc("Editable install using pinned dependencies from requirements-test.txt")]
 pip-install:
-    {{ PYTHON }} -m pip install --upgrade pip pybind11 meson-python ninja poetry
+    {{ PYTHON }} -m pip install --requirement .github/requirements-build.txt
     {{ PYTHON }} -m pip install \
         --verbose \
-        --requirement requirements-test.txt \
+        --requirement .github/requirements-test.txt \
         --no-build-isolation \
         --config-settings setup-args='-Duse-blas=false' \
         --editable .
@@ -119,7 +124,7 @@ stubgen:
 [doc("Remove various build artifacts")]
 clean:
     rm -rf build dist
-    rm -rf docs/_build
+    rm -rf docs/build.sphinx
 
 [doc("Remove various temporary files")]
 purge: clean

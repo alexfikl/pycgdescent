@@ -1,0 +1,5 @@
+pip
+pybind11
+meson-python
+ninja
+poetry-core
