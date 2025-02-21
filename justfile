@@ -8,7 +8,7 @@ _default:
 alias fmt: format
 
 [doc('Reformat all source code')]
-format: isort black pyproject clangfmt justfmt
+format: isort black pyproject clangfmt mesonfmt justfmt
 
 [doc('Run ruff isort fixes over the source code')]
 isort:
@@ -30,6 +30,11 @@ pyproject:
 clangfmt:
     clang-format -i src/wrapper/cg_descent_wrap.cpp
     @echo -e "\e[1;32mclang-format clean!\e[0m"
+
+[doc("Run meson format over all meson files")]
+mesonfmt:
+    meson format --inplace --recursive
+    @echo -e "\e[1;32mmeson format clean!\e[0m"
 
 [doc('Run just --fmt over the justfile')]
 justfmt:
