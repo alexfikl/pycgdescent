@@ -42,6 +42,11 @@ justfmt:
     just -f docs/justfile --unstable --fmt
     @echo -e "\e[1;32mjust --fmt clean!\e[0m"
 
+[doc("Run shfmt over bash scripts")]
+shfmt:
+    shfmt --write --language-dialect bash --indent 2 *.sh
+    @echo -e "\e[1;32mshfmt clean!\e[0m"
+
 # }}}
 # {{{ linting
 
