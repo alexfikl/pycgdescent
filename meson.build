@@ -15,6 +15,7 @@ pybind11_dep = dependency('pybind11', version: '>=2.11.0')
 if get_option('use-blas')
     blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'], required: false)
     if not blas_dep.found()
+        warning('No BLAS implementation found.')
         add_project_arguments('-DCG_DISABLE_BLAS', language: 'c')
     endif
 else
