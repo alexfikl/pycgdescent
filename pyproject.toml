@@ -145,6 +145,13 @@ local_partial_types = true
 plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
+module = [
+    "matplotlib.*",
+]
+
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = [ "pycgdescent._cg_descent" ]
 disallow_untyped_defs = false
 
