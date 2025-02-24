@@ -49,8 +49,8 @@ The path of the optimization can be seen in the following figure.
     :align: center
     :alt: Rosenbrock function optimization
 
-Reference
----------
+API Reference
+-------------
 
 .. automodule:: pycgdescent
 
