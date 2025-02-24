@@ -1,4 +1,4 @@
-PYTHON := 'python -X dev'
+PYTHON := "python -X dev"
 
 _default:
     @just --list
@@ -7,26 +7,26 @@ _default:
 
 alias fmt: format
 
-[doc('Reformat all source code')]
+[doc("Reformat all source code")]
 format: isort black pyproject clangfmt mesonfmt justfmt
 
-[doc('Run ruff isort fixes over the source code')]
+[doc("Run ruff isort fixes over the source code")]
 isort:
     ruff check --fix --select=I src tests examples docs
     ruff check --fix --select=RUF022 src
     @echo -e "\e[1;32mruff isort clean!\e[0m"
 
-[doc('Run ruff format over the source code')]
+[doc("Run ruff format over the source code")]
 black:
     ruff format src tests examples docs
     @echo -e "\e[1;32mruff format clean!\e[0m"
 
-[doc('Run pyproject-fmt over the configuration')]
+[doc("Run pyproject-fmt over the configuration")]
 pyproject:
     {{ PYTHON }} -m pyproject_fmt --indent 4 pyproject.toml
     @echo -e "\e[1;32mpyproject clean!\e[0m"
 
-[doc('Run clang-format over wrapper code')]
+[doc("Run clang-format over wrapper code")]
 clangfmt:
     clang-format -i src/wrapper/cg_descent_wrap.cpp
     @echo -e "\e[1;32mclang-format clean!\e[0m"
@@ -36,7 +36,7 @@ mesonfmt:
     meson format --inplace --recursive
     @echo -e "\e[1;32mmeson format clean!\e[0m"
 
-[doc('Run just --fmt over the justfile')]
+[doc("Run just --fmt over the justfile")]
 justfmt:
     just --unstable --fmt
     just -f docs/justfile --unstable --fmt
@@ -50,25 +50,25 @@ shfmt:
 # }}}
 # {{{ linting
 
-[doc('Run all linting checks over the source code')]
+[doc("Run all linting checks over the source code")]
 lint: typos reuse ruff mypy
 
-[doc('Run typos over the source code and documentation')]
+[doc("Run typos over the source code and documentation")]
 typos:
     typos --sort
     @echo -e "\e[1;32mtypos clean!\e[0m"
 
-[doc('Check REUSE license compliance')]
+[doc("Check REUSE license compliance")]
 reuse:
     {{ PYTHON }} -m reuse lint
     @echo -e "\e[1;32mREUSE compliant!\e[0m"
 
-[doc('Run ruff checks over the source code')]
+[doc("Run ruff checks over the source code")]
 ruff:
     ruff check src tests examples
     @echo -e "\e[1;32mruff clean!\e[0m"
 
-[doc('Run mypy checks over the source code')]
+[doc("Run mypy checks over the source code")]
 mypy:
     {{ PYTHON }} -m mypy src tests examples
     @echo -e "\e[1;32mmypy clean!\e[0m"
@@ -83,29 +83,29 @@ requirements_build_txt:
 
 [private]
 requirements_test_txt:
-    uv pip compile --upgrade --universal --python-version '3.10' \
+    uv pip compile --upgrade --universal --python-version "3.10" \
         --extra test \
         -o .ci/requirements-test.txt pyproject.toml
 
 [private]
 requirements_txt:
-    uv pip compile --upgrade --universal --python-version '3.10' \
+    uv pip compile --upgrade --universal --python-version "3.10" \
         -o requirements.txt pyproject.toml
 
-[doc('Pin dependency versions to requirements.txt')]
+[doc("Pin dependency versions to requirements.txt")]
 pin: requirements_txt requirements_test_txt requirements_build_txt
 
 # }}}
 # {{{ develop
 
-[doc('Install project in editable mode')]
+[doc("Install project in editable mode")]
 develop:
     @rm -rf build
     @rm -rf dist
     {{ PYTHON }} -m pip install \
         --verbose \
         --no-build-isolation \
-        --config-settings setup-args='-Duse-blas=true' \
+        --config-settings setup-args="-Duse-blas=true" \
         --editable .
 
 [doc("Editable install using pinned dependencies from requirements-test.txt")]
@@ -115,7 +115,7 @@ pip-install:
         --verbose \
         --requirement .ci/requirements-test.txt \
         --no-build-isolation \
-        --config-settings setup-args='-Duse-blas=false' \
+        --config-settings setup-args="-Duse-blas=false" \
         --editable .
 
 [doc("Generate typing stubs for binary module")]
