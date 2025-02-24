@@ -11,7 +11,6 @@ Uses the classic Rosenbrock function as an example.
 from __future__ import annotations
 
 from functools import partial
-from typing import Any
 
 import matplotlib.figure
 import matplotlib.pyplot as mp
@@ -22,16 +21,13 @@ import numpy.linalg as la
 
 import pycgdescent as cg
 
-Float = np.floating[Any]
-Array = np.ndarray[tuple[int], np.dtype[Float]]
-
 
 class CallbackCache:
     def __init__(self) -> None:
         self.alpha: list[float] = []
-        self.x: list[Array] = []
-        self.f: list[float] = []
-        self.g: list[Float] = []
+        self.x: list[cg.Array] = []
+        self.f: list[cg.Float] = []
+        self.g: list[cg.Float] = []
 
     def __call__(self, info: cg.CallbackInfo) -> int:
         self.alpha.append(info.alpha)
@@ -42,11 +38,11 @@ class CallbackCache:
         return 1
 
 
-def fun(x: Array, *, a: float, b: float) -> float:
+def fun(x: cg.Array, *, a: float, b: float) -> float:
     return a * (x[1] - x[0] ** 2) ** 2 + b * (x[0] - 1.0) ** 2  # type: ignore
 
 
-def jac(g: Array, x: Array, *, a: float, b: float) -> None:
+def jac(g: cg.Array, x: cg.Array, *, a: float, b: float) -> None:
     g[0] = -4.0 * a * x[0] * (x[1] - x[0] ** 2) + 2.0 * b * (x[0] - 1.0)
     g[1] = 2.0 * a * (x[1] - x[0] ** 2)
 

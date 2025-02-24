@@ -38,7 +38,7 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
+from typing import Any, ClassVar, TypeAlias
 
 import numpy as np
 
@@ -46,11 +46,12 @@ import pycgdescent._cg_descent as _cg
 
 __version__ = metadata.version("pycgdescent")
 
-if TYPE_CHECKING:
-    ArrayType: TypeAlias = np.ndarray[Any, np.dtype[Any]]
-else:
-    ArrayType: TypeAlias = np.ndarray
 
+Float: TypeAlias = np.floating[Any] | float
+Array: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
+
+# NOTE: deprecated
+ArrayType = Array
 
 # {{{ wrap
 
