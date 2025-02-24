@@ -805,7 +805,7 @@ class Timer:
 
 
 def get_logger(
-    module: str | None = None,
+    module: str,
     *,
     level: int | str | None = None,
 ) -> logging.Logger:
@@ -827,7 +827,7 @@ def get_logger(
         except ImportError:
             from logging import StreamHandler as RichHandler  # type: ignore[assignment]
 
-    logger = logging.getLogger()
+    logger = logging.getLogger(module)
     logger.setLevel(level)
     logger.addHandler(RichHandler())
 

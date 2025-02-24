@@ -33,7 +33,7 @@ import numpy as np
 
 import pycgdescent as cg
 
-logger = cg.get_logger()
+logger = cg.get_logger(__name__)
 
 
 def fn(x: cg.ArrayType, t: float = 1.0) -> float:

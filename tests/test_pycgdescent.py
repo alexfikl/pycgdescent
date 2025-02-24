@@ -10,7 +10,7 @@ import pytest
 
 import pycgdescent as cg
 
-logger = cg.get_logger()
+logger = cg.get_logger(__name__)
 
 
 # {{{ test_optimize_options
