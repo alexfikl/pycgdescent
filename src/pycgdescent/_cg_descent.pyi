@@ -5,8 +5,6 @@ import typing
 __all__ = ["cg_default", "cg_descent", "cg_iter_stats", "cg_parameter", "cg_stats"]
 
 class cg_iter_stats:
-    @staticmethod
-    def _pybind11_conduit_v1_(*args, **kwargs): ...
     @property
     def alpha(self) -> float: ...
     @property
@@ -76,13 +74,9 @@ class cg_parameter:
     sigma: float
     step: float
     theta: float
-    @staticmethod
-    def _pybind11_conduit_v1_(*args, **kwargs): ...
     def __init__(self) -> None: ...
 
 class cg_stats:
-    @staticmethod
-    def _pybind11_conduit_v1_(*args, **kwargs): ...
     @property
     def IterSub(self) -> int: ...
     @property
