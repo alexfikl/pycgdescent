@@ -2,36 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-"""
-Functions
-^^^^^^^^^
-
-.. autofunction:: minimize
-
-.. autofunction:: min_work_size
-.. autofunction:: allocate_work_for
-
-.. autoclass:: OptimizeOptions
-
-.. autoclass:: OptimizeResult
-    :members:
-
-.. autoclass:: CallbackInfo
-    :members:
-
-Type Aliases
-^^^^^^^^^^^^
-
-.. autodata:: FunType
-
-.. autodata:: GradType
-
-.. autodata:: FunGradType
-
-.. autodata:: CallbackType
-
-"""
-
 from __future__ import annotations
 
 import logging

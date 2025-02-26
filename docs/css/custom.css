@@ -1,0 +1,22 @@
+.terminal h1 {
+    font-size: 1.5em;
+}
+
+.terminal h2 {
+    font-size: 1.25em;
+}
+
+.terminal h3 {
+    font-size: 1em;
+}
+
+.headerlink {
+    padding-left: 0.25em;
+}
+
+.container {
+    max-width: 67em;
+}
+.terminal-mkdocs-main-grid {
+    grid-template-columns: 2.5fr 9fr;
+}

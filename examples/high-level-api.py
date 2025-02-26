@@ -15,7 +15,7 @@ from functools import partial
 import matplotlib.figure
 import matplotlib.pyplot as mp
 
-# START_ROSENROCK_EXAMPLE
+# --8<-- [start:rosenbrock]
 import numpy as np
 import numpy.linalg as la
 
@@ -62,7 +62,7 @@ def main(*, a: float = 100.0, b: float = 1.0, tol: float = 1.0e-8) -> None:
     )
 
     print(r.pretty())
-    # END_ROSENBROCK_EXAMPLE
+    # --8<-- [end:rosenbrock]
 
     return r, callback  # type: ignore[return-value]
 
