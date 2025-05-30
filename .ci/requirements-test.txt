@@ -2,7 +2,7 @@
 #    uv pip compile --universal --python-version 3.10 --extra test -o .ci/requirements-test.txt pyproject.toml
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
-exceptiongroup==1.2.2 ; python_full_version < '3.11'
+exceptiongroup==1.3.0 ; python_full_version < '3.11'
     # via pytest
 iniconfig==2.1.0
     # via pytest
@@ -10,15 +10,17 @@ markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
-mypy==1.15.0
+mypy==1.16.0
     # via pycgdescent (pyproject.toml)
 mypy-extensions==1.1.0
     # via mypy
-numpy==2.2.5
+numpy==2.2.6
     # via pycgdescent (pyproject.toml)
 packaging==25.0
     # via pytest
-pluggy==1.5.0
+pathspec==0.12.1
+    # via mypy
+pluggy==1.6.0
     # via pytest
 pygments==2.19.1
     # via rich
@@ -26,7 +28,7 @@ pytest==8.3.5
     # via pycgdescent (pyproject.toml)
 rich==14.0.0
     # via pycgdescent (pyproject.toml)
-ruff==0.11.8
+ruff==0.11.12
     # via pycgdescent (pyproject.toml)
 tomli==2.2.1 ; python_full_version < '3.11'
     # via
@@ -36,5 +38,6 @@ types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
 typing-extensions==4.13.2
     # via
+    #   exceptiongroup
     #   mypy
     #   rich
