@@ -41,14 +41,16 @@ from importlib import metadata
 from typing import Any, ClassVar, TypeAlias
 
 import numpy as np
+from typing_extensions import override
 
 import pycgdescent._cg_descent as _cg
 
 __version__ = metadata.version("pycgdescent")
 
 
-Float: TypeAlias = np.floating[Any] | float
-Array: TypeAlias = np.ndarray[Any, np.dtype[np.float64]]
+Float: TypeAlias = np.float32 | np.float64 | float
+Array: TypeAlias = np.ndarray[tuple[int, ...], np.dtype[np.float64]]
+ArrayOrScalar: TypeAlias = Array | Float
 
 # NOTE: deprecated
 ArrayType = Array
@@ -62,16 +64,16 @@ cg_parameter = _cg.cg_parameter
 
 
 def cg_descent(
-    x: ArrayType,
+    x: Array,
     grad_tol: float,
-    value: Callable[[ArrayType], float],
-    grad: Callable[[ArrayType, ArrayType], None],
+    value: Callable[[Array], float],
+    grad: Callable[[Array, Array], None],
     *,
-    valgrad: Callable[[ArrayType, ArrayType], float] | None = None,
+    valgrad: Callable[[Array, Array], float] | None = None,
     callback: Callable[[_cg.cg_iter_stats], int] | None = None,
-    work: ArrayType | None = None,
+    work: Array | None = None,
     param: _cg.cg_parameter | None = None,
-) -> tuple[ArrayType, _cg.cg_stats, bool]:
+) -> tuple[Array, _cg.cg_stats, bool]:
     """A thin wrapper around the original ``cg_descent`` implementation."""
     if param is None:
         param = _cg.cg_parameter()
@@ -85,7 +87,7 @@ def cg_descent(
 # {{{ options
 
 
-def _getmembers(obj: Any) -> list[str]:
+def _getmembers(obj: object) -> list[str]:
     import inspect
 
     return [
@@ -455,6 +457,7 @@ class OptimizeOptions(_cg.cg_parameter):
 
         object.__setattr__(self, "_changes", kwargs)
 
+    @override
     def __setattr__(self, k: str, v: Any) -> None:
         raise AttributeError(f"Cannot assign to {k!r}.")
 
@@ -471,6 +474,7 @@ class OptimizeOptions(_cg.cg_parameter):
 
         return type(self)(**kwargs)
 
+    @override
     def __repr__(self) -> str:
         attrs = {k: getattr(self, k) for k in _getmembers(self) if k != "_changes"}
         return f"{type(self).__name__}<{attrs}>"
@@ -495,13 +499,13 @@ class CallbackInfo:
     """Current iteration."""
     alpha: float
     """Step size at current iteration."""
-    x: ArrayType
+    x: Array
     """Point at which the function and gradient are evaluated."""
     f: float
     """Function value at current iteration."""
-    g: ArrayType
+    g: Array
     """Gradient (Jacobian) value at the current iteration."""
-    d: ArrayType
+    d: Array
     """Descent direction at the current iteration. This will usually not be
     the same as the gradient and can be used for debugging.
     """
@@ -528,7 +532,7 @@ def _info_from_stats(stats: _cg.cg_iter_stats) -> "CallbackInfo":
 class OptimizeResult:
     """Based on :class:`scipy.optimize.OptimizeResult`."""
 
-    x: ArrayType
+    x: Array
     """Solution of the optimization to the given tolerances."""
     success: bool
     """Flag to denote a successful exit."""
@@ -590,13 +594,13 @@ STATUS_TO_MESSAGE = {
 
 # {{{ minimize
 
-FunType: TypeAlias = Callable[[ArrayType], float]
+FunType: TypeAlias = Callable[[Array], float]
 """This callable takes the current guess ``x`` and returns the function value."""
-GradType: TypeAlias = Callable[[ArrayType, ArrayType], None]
+GradType: TypeAlias = Callable[[Array, Array], None]
 """This callable takes ``(g, x)`` as arguments. The array ``g`` is updated in
 place with the gradient at ``x``.
 """
-FunGradType: TypeAlias = Callable[[ArrayType, ArrayType], float]
+FunGradType: TypeAlias = Callable[[Array, Array], float]
 """This callable takes ``(g, x)`` as arguments and returns the function value.
 The array ``g`` needs to be updated in place with the gradient at ``x``.
 """
@@ -638,7 +642,7 @@ def min_work_size(options: OptimizeOptions, n: int) -> int:
     return (m + 6) * n + (3 * m + 9) * m + 5
 
 
-def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> ArrayType:
+def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> Array:
     """
     Allocate a *work* array of a recommended size.
 
@@ -653,14 +657,14 @@ def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> Ar
 
 def minimize(
     fun: FunType,
-    x0: ArrayType,
+    x0: Array,
     *,
     jac: GradType,
     funjac: FunGradType | None = None,
     tol: float | None = None,
     options: OptimizeOptions | dict[str, Any] | None = None,
     callback: CallbackType | None = None,
-    work: ArrayType | None = None,
+    work: Array | None = None,
     args: tuple[Any, ...] = (),
 ) -> OptimizeResult:
     """
@@ -692,10 +696,10 @@ def minimize(
     if options is not None:
         if isinstance(options, dict):
             param = OptimizeOptions(**options)
-        elif isinstance(options, OptimizeOptions):
+        elif isinstance(options, OptimizeOptions):  # pyright: ignore[reportUnnecessaryIsInstance]
             param = options
         else:
-            raise TypeError(f"Unknown 'options' type: {type(options).__name__!r}.")
+            raise TypeError(f"Unknown 'options' type: {type(options).__name__!r}.")  # pyright: ignore[reportUnreachable]
     else:
         param = OptimizeOptions()
 
@@ -791,10 +795,12 @@ class Timer:
         self.t_end = time.perf_counter()
         self.t_wall = self.t_end - self.t_start
 
+    @override
     def __str__(self) -> str:
         # NOTE: this matches the output of MATLAB's toc
         return f"Elapsed time is {self.t_wall:.5f} seconds."
 
+    @override
     def __repr__(self) -> str:
         return f"{type(self).__name__}(t_start={self.t_start}, t_end={self.t_end})"
 
@@ -824,9 +830,9 @@ def get_logger(
     except ImportError:
         try:
             # NOTE: rich is vendored by pip, so try and get it from there
-            from pip._vendor.rich.logging import RichHandler  # type: ignore[assignment]
+            from pip._vendor.rich.logging import RichHandler
         except ImportError:
-            from logging import StreamHandler as RichHandler  # type: ignore[assignment]
+            from logging import StreamHandler as RichHandler
 
     logger = logging.getLogger(module)
     logger.setLevel(level)

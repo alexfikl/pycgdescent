@@ -26,18 +26,18 @@ import pycgdescent as cg
 logger = cg.get_logger(__name__)
 
 
-def fn(x: cg.ArrayType, t: float = 1.0) -> float:
-    f: float = np.sum(np.exp(x) - t * x)
+def fn(x: cg.Array, t: cg.ArrayOrScalar = 1.0) -> float:
+    f = np.sum(np.exp(x) - t * x)
     return f
 
 
-def grad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> None:
+def grad(g: cg.Array, x: cg.Array, t: cg.ArrayOrScalar = 1.0) -> None:
     g[...] = np.exp(x) - t
 
 
-def fngrad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> float:
-    y: cg.ArrayType = np.exp(x)
-    f: float = np.sum(y - t * x)
+def fngrad(g: cg.Array, x: cg.Array, t: cg.ArrayOrScalar = 1.0) -> float:
+    y = np.exp(x)
+    f = np.sum(y - t * x)
     g[...] = y - t
     return f
 
@@ -45,7 +45,7 @@ def fngrad(g: cg.ArrayType, x: cg.ArrayType, t: float = 1.0) -> float:
 def main(n: int = 100) -> None:
     # {{{ parameters
 
-    x0: cg.ArrayType = np.ones(n, dtype=np.float64)
+    x0 = np.ones(n, dtype=np.float64)
     t = np.sqrt(1 + np.arange(n))
 
     param = cg.cg_parameter()

@@ -35,7 +35,8 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
-    "numpy",
+    "numpy>=2.1",
+    "typing-extensions>=4.10",
 ]
 optional-dependencies.dev = [
     "pyproject-fmt",
@@ -133,6 +134,16 @@ lint.isort.required-imports = [
 
 [tool.pytest.ini_options]
 testpaths = "tests"
+
+[tool.basedpyright]
+pythonVersion = "3.10"
+pythonPlatform = "All"
+
+reportUnknownMemberType = "hint"
+reportExplicitAny = "hint"
+reportAny = "hint"
+
+ignore = [ "build", "docs" ]
 
 [tool.typos.files]
 extend-exclude = [
