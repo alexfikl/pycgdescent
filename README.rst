@@ -1,3 +1,6 @@
+pycgdescent
+===========
+
 .. |badge-ci| image:: https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg
     :alt: Build Status
     :target: https://github.com/alexfikl/pycgdescent/actions?query=branch%3Amain+workflow%3ACI
@@ -15,9 +18,6 @@
     :target: https://api.reuse.software/info/github.com/alexfikl/pycgdescent
 
 |badge-ci| |badge-rtd| |badge-pypi| |badge-reuse|
-
-pycgdescent
-===========
 
 Python wrapper for the `CG_DESCENT <https://people.clas.ufl.edu/hager/software/>`__
 algorithm by Hager and Zang (see `DOI <https://doi.org/10.1145/1132973.1132979>`__).
