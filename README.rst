@@ -29,7 +29,7 @@ A previous wrapper can be found `here <https://github.com/martiniani-lab/PyCG_DE
 Some differences:
 
 * This one only depends on `pybind11 <https://github.com/pybind/pybind11>`__.
-* Tries to emulate the interface from `scipy <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html>`__
+* Tries to emulate the interface of `scipy.optimize.minimize <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html>`__
   (still needs work).
 
 Interesting links:
