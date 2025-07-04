@@ -1,3 +1,12 @@
+pycgdescent 0.10.4 (July 4, 2025)
+---------------------------------
+
+**Maintenance**
+
+* Switched to ``basedpyright`` for type checking.
+* Switched to ``just`` for task runner.
+* Various maintenance updates (bumping CI dependencies, linting, fixing docs).
+
 pycgdescent 0.10.3 (October 12, 2024)
 -------------------------------------
 
