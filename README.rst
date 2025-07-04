@@ -13,6 +13,10 @@ pycgdescent
     :alt: PyPI
     :target: https://pypi.org/project/pycgdescent/
 
+.. |badge-license| image:: https://img.shields.io/badge/License-MIT-green.svg
+    :target: https://spdx.org/licenses/MIT.html
+    :alt: MIT License
+
 .. |badge-reuse| image:: https://api.reuse.software/badge/github.com/alexfikl/pycgdescent
     :alt: REUSE
     :target: https://api.reuse.software/info/github.com/alexfikl/pycgdescent
@@ -20,7 +24,7 @@ pycgdescent
 |badge-ci| |badge-rtd| |badge-pypi| |badge-reuse|
 
 Python wrapper for the `CG_DESCENT <https://people.clas.ufl.edu/hager/software/>`__
-algorithm by Hager and Zang (see `DOI <https://doi.org/10.1145/1132973.1132979>`__).
+algorithm by Hager and Zhang (see `DOI <https://doi.org/10.1145/1132973.1132979>`__).
 A previous wrapper can be found `here <https://github.com/martiniani-lab/PyCG_DESCENT>`__.
 Some differences:
 
