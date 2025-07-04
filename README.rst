@@ -1,9 +1,9 @@
 pycgdescent
 ===========
 
-.. |badge-ci| image:: https://github.com/alexfikl/pycgdescent/workflows/CI/badge.svg
+.. |badge-ci| image:: https://github.com/alexfikl/pycgdescent/actions/workflows/ci.yml/badge.svg
     :alt: Build Status
-    :target: https://github.com/alexfikl/pycgdescent/actions?query=branch%3Amain+workflow%3ACI
+    :target: https://github.com/alexfikl/pycgdescent/actions/workflows/ci.yml
 
 .. |badge-rtd| image:: https://readthedocs.org/projects/pycgdescent/badge/?version=latest
     :alt: Documentation
