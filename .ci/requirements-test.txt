@@ -30,13 +30,14 @@ pytest==8.4.1
     # via pycgdescent (pyproject.toml)
 rich==14.0.0
     # via pycgdescent (pyproject.toml)
-ruff==0.12.1
+ruff==0.12.2
     # via pycgdescent (pyproject.toml)
 tomli==2.2.1 ; python_full_version < '3.11'
     # via pytest
 types-dataclasses==0.6.6
     # via pycgdescent (pyproject.toml)
-typing-extensions==4.14.0 ; python_full_version < '3.11'
+typing-extensions==4.14.0
     # via
+    #   pycgdescent (pyproject.toml)
     #   exceptiongroup
     #   rich
