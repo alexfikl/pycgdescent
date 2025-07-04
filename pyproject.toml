@@ -51,6 +51,7 @@ optional-dependencies.docs = [
 ]
 optional-dependencies.test = [
     "basedpyright",
+    "matplotlib",
     "pytest",
     "rich",
     "ruff",
