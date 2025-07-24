@@ -4,5 +4,5 @@ numpy==2.2.6 ; python_full_version < '3.11'
     # via pycgdescent (pyproject.toml)
 numpy==2.3.1 ; python_full_version >= '3.11'
     # via pycgdescent (pyproject.toml)
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via pycgdescent (pyproject.toml)
