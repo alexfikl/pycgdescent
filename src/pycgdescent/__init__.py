@@ -22,6 +22,10 @@ Functions
 Type Aliases
 ^^^^^^^^^^^^
 
+.. autodata:: Float
+
+.. autodata:: Array
+
 .. autodata:: FunType
 
 .. autodata:: GradType
@@ -29,7 +33,6 @@ Type Aliases
 .. autodata:: FunGradType
 
 .. autodata:: CallbackType
-
 """
 
 from __future__ import annotations
@@ -49,7 +52,9 @@ __version__ = metadata.version("pycgdescent")
 
 
 Float: TypeAlias = np.float32 | np.float64 | float
+"""Supported floating point number types."""
 Array: TypeAlias = np.ndarray[tuple[int, ...], np.dtype[np.float64]]
+"""Supported array type."""
 ArrayOrScalar: TypeAlias = Array | Float
 
 # NOTE: deprecated
@@ -656,7 +661,7 @@ def allocate_work_for(options: OptimizeOptions, n: int, dtype: Any = None) -> Ar
 
 
 def minimize(
-    fun: FunType,
+    fun: Callable[[Array], float],
     x0: Array,
     *,
     jac: GradType,

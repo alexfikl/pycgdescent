@@ -117,7 +117,46 @@ autoapi_python_class_content = "class"
 autoapi_member_order = "bysource"
 autoapi_options = [
     "show-inheritance",
+    "show-signatures",
 ]
+
+autodoc_typehints = "description"
+# NOTE: values are `(inventory, module, reftype)`
+custom_type_links = {
+    # NOTE: `numpy.float64` tries to link to `pycgdescent.float64` in some
+    # annotations, so this will re-route it back to the numpy documentation
+    "numpy.float64": ("numpy", "numpy", "attr"),
+}
+
+
+def process_autodoc_missing_reference(app, env, node, contnode):
+    """Fix missing references due to string annotations."""
+    # NOTE: only classes for now, since we just need some numpy objects
+    if node["reftype"] != "class":
+        return None
+
+    target = node["reftarget"]
+    if target not in custom_type_links:
+        return None
+
+    from sphinx.ext import intersphinx
+
+    inventory, module, reftype = custom_type_links[target]
+    if inventory:
+        node.attributes["py:module"] = module
+        node.attributes["reftype"] = reftype
+
+        return intersphinx.resolve_reference_in_inventory(
+            env, inventory, node, contnode
+        )
+    else:
+        # TODO: put local missing references in here :D
+        return None
+
+
+def setup(app):
+    app.connect("missing-reference", process_autodoc_missing_reference)
+
 
 # }}}
 
