@@ -36,6 +36,11 @@ mesonfmt:
     meson format --inplace --recursive
     @echo -e "\e[1;32mmeson format clean!\e[0m"
 
+[doc("Run yamlfix over all the YAML files")]
+yamlfmt:
+    yamlfix .readthedocs.yml .github/**/*.yml
+    @echo -e "\e[1;32myamlfix clean!\e[0m"
+
 [doc("Run just --fmt over the justfile")]
 justfmt:
     just --unstable --fmt

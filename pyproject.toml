@@ -156,3 +156,8 @@ extend-exclude = [
 [tool.typos.default.extend-words]
 Parms = "Parms"
 Parm = "Parm"
+
+[tool.yamlfix]
+line_length = 88
+section_whitelines = 1
+sequence_style = "block_style"

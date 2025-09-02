@@ -1,12 +1,15 @@
+---
 name: CI
 
 on:
   push:
-    branches: [ 'main' ]
+    branches:
+      - main
   pull_request:
-    branches: [ 'main' ]
+    branches:
+      - main
   schedule:
-    - cron: '30 12 * * 0'
+    - cron: 30 12 * * 0
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -17,90 +20,93 @@ jobs:
     name: Licensing (REUSE)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
-    - uses: fsfe/reuse-action@v5
-
+      - uses: actions/checkout@v5
+      - uses: fsfe/reuse-action@v5
   typos:
     name: Spelling (typos)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
-    - uses: crate-ci/typos@master
-
+      - uses: actions/checkout@v5
+      - uses: crate-ci/typos@master
   ruff:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Linting (ruff)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
-    - uses: extractions/setup-just@v3
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-        cache: 'pip'
-        cache-dependency-path: '.github/requirements-test.txt'
-    - name: Run ruff
-      run: |
-        just pip-install
-        just ruff
-
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: .github/requirements-test.txt
+      - name: Run ruff
+        run: |
+          just pip-install
+          just ruff
   pyright:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Annotations (pyright)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
-    - uses: extractions/setup-just@v3
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-        cache: 'pip'
-        cache-dependency-path: '.github/requirements-test.txt'
-    - name: Main Script
-      run: |
-        just pip-install
-        just pyright
-
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: .github/requirements-test.txt
+      - name: Main Script
+        run: |
+          just pip-install
+          just pyright
   pytest:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Tests (pytest-${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
+        python-version:
+          - '3.10'
+          - '3.11'
+          - '3.12'
+          - '3.13'
       fail-fast: false
     steps:
-    - uses: actions/checkout@v5
-    - uses: extractions/setup-just@v3
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'pip'
-        cache-dependency-path: '.github/requirements-test.txt'
-    - name: Main Script
-      run: |
-        just pip-install
-        just test
-
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: .github/requirements-test.txt
+      - name: Main Script
+        run: |
+          just pip-install
+          just test
   examples:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Examples (py-${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
+        python-version:
+          - '3.10'
+          - '3.11'
+          - '3.12'
+          - '3.13'
       fail-fast: false
     steps:
-    - uses: actions/checkout@v5
-    - uses: extractions/setup-just@v3
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'pip'
-        cache-dependency-path: '.github/requirements-test.txt'
-    - name: Main Script
-      run: |
-        just pip-install
-        just examples
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: .github/requirements-test.txt
+      - name: Main Script
+        run: |
+          just pip-install
+          just examples
 
 # vim: set ts=2 sw=2 et:

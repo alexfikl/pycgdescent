@@ -1,13 +1,17 @@
+---
 name: Publish
 
 on:
   push:
-    branches: [ 'main' ]
-    tags: [ 'v**' ]
+    branches:
+      - main
+    tags:
+      - v**
   pull_request:
-    branches: [ 'main' ]
+    branches:
+      - main
   schedule:
-    - cron: '30 12 * * 0'
+    - cron: 30 12 * * 0
 
 jobs:
   build_sdist:
@@ -22,14 +26,16 @@ jobs:
         with:
           name: cibw-sdist
           path: dist/*.tar.gz
-
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
     steps:
       - uses: actions/checkout@v5
       - name: Run cibuildwheel
@@ -40,9 +46,10 @@ jobs:
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: wheelhouse/*.whl
-
   publish:
-    needs: [ 'build_sdist', 'build_wheels' ]
+    needs:
+      - build_sdist
+      - build_wheels
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
