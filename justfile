@@ -8,7 +8,7 @@ _default:
 alias fmt: format
 
 [doc("Reformat all source code")]
-format: isort black pyproject clangfmt mesonfmt justfmt
+format: isort black pyproject clangfmt mesonfmt yamlfmt justfmt
 
 [doc("Run ruff isort fixes over the source code")]
 isort:
