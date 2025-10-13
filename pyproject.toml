@@ -63,7 +63,7 @@ urls.Repository = "https://github.com/alexfikl/pycgdescent"
 
 [tool.cibuildwheel]
 build = [
-    "cp3{10,11,12,13}-*",
+    "cp3{10,11,12,13,14}-*",
 ]
 test-requires = [
     "pytest",
