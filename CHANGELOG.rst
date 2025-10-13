@@ -1,3 +1,14 @@
+pycgdescent 0.10.5 (October 13, 2025)
+-------------------------------------
+
+**Dependencies**
+
+* Added official support for Python 3.14.
+
+**Maintenance**
+
+* Various maintenance updates (bumping CI dependencies, linting, fixing docs).
+
 pycgdescent 0.10.4 (July 4, 2025)
 ---------------------------------
 
