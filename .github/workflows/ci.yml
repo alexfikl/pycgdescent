@@ -22,12 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: fsfe/reuse-action@v6
+
   typos:
     name: Spelling (typos)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: crate-ci/typos@master
+
   ruff:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Linting (ruff)
@@ -44,6 +46,7 @@ jobs:
         run: |
           just pip-install
           just ruff
+
   pyright:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Annotations (pyright)
@@ -60,6 +63,7 @@ jobs:
         run: |
           just pip-install
           just pyright
+
   pytest:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Tests (pytest-${{ matrix.python-version }})
@@ -71,6 +75,7 @@ jobs:
           - '3.11'
           - '3.12'
           - '3.13'
+          - '3.14'
       fail-fast: false
     steps:
       - uses: actions/checkout@v5
@@ -84,6 +89,7 @@ jobs:
         run: |
           just pip-install
           just test
+
   examples:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Examples (py-${{ matrix.python-version }})
@@ -95,6 +101,7 @@ jobs:
           - '3.11'
           - '3.12'
           - '3.13'
+          - '3.14'
       fail-fast: false
     steps:
       - uses: actions/checkout@v5
