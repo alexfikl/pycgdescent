@@ -621,6 +621,7 @@ def wrap_callback(cb: CallbackType | None) -> Callable[[_cg.cg_iter_stats], int]
 
     @wraps(cb)
     def wrapper(s: _cg.cg_iter_stats) -> int:
+        assert cb is not None
         return cb(_info_from_stats(s))
 
     return wrapper
@@ -699,10 +700,10 @@ def minimize(
         tol = 1.0e-8
 
     if options is not None:
-        if isinstance(options, dict):
-            param = OptimizeOptions(**options)
-        elif isinstance(options, OptimizeOptions):  # pyright: ignore[reportUnnecessaryIsInstance]
+        if isinstance(options, OptimizeOptions):
             param = options
+        elif isinstance(options, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+            param = OptimizeOptions(**options)
         else:
             raise TypeError(f"Unknown 'options' type: {type(options).__name__!r}.")  # pyright: ignore[reportUnreachable]
     else:
