@@ -10,7 +10,7 @@ packaging==25.0
     # via
     #   meson-python
     #   pyproject-metadata
-pip==25.2
+pip==25.3
     # via -r .ci/requirements-build.in
 poetry-core==2.2.1
     # via -r .ci/requirements-build.in
