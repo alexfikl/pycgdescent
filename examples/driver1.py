@@ -27,7 +27,7 @@ logger = cg.get_logger(__name__)
 
 
 def fn(x: cg.Array, t: cg.ArrayOrScalar = 1.0) -> float:
-    f = np.sum(np.exp(x) - t * x)
+    f = np.sum(np.exp(x) - x * t)
     return f
 
 
@@ -37,7 +37,7 @@ def grad(g: cg.Array, x: cg.Array, t: cg.ArrayOrScalar = 1.0) -> None:
 
 def fngrad(g: cg.Array, x: cg.Array, t: cg.ArrayOrScalar = 1.0) -> float:
     y = np.exp(x)
-    f = np.sum(y - t * x)
+    f = np.sum(y - x * t)
     g[...] = y - t
     return f
 

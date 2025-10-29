@@ -58,16 +58,14 @@ def test_quadratic(tol: float) -> None:
     x_exact: cg.ArrayType = np.array([1.0 / 11.0, 7.0 / 11.0])
 
     def fun(x: cg.ArrayType) -> float:
-        f: float = x.dot(A @ x) - x.dot(b)
-        return f
+        return (x @ (A @ x) - x @ b).item()
 
     def jac(g: cg.ArrayType, x: cg.ArrayType) -> None:
         g[...] = A @ x - b
 
     def funjac(g: cg.ArrayType, x: cg.ArrayType) -> float:
         g[...] = A @ x - b
-        f = float(x @ g)
-        return f
+        return (x @ g).item()
 
     # }}}
 
@@ -129,8 +127,7 @@ def test_rosenbrock(a: float, b: float, tol: float) -> None:
     x_exact: cg.ArrayType = np.array([1.0, 1.0])
 
     def fun(x: cg.ArrayType) -> float:
-        f: float = a * (x[1] - x[0] ** 2) ** 2 + b * (x[0] - 1.0) ** 2
-        return f
+        return a * (x[1] - x[0] ** 2) ** 2 + b * (x[0] - 1.0) ** 2
 
     def jac(g: cg.ArrayType, x: cg.ArrayType) -> None:
         g[0] = -4.0 * a * x[0] * (x[1] - x[0] ** 2) + 2.0 * b * (x[0] - 1.0)
