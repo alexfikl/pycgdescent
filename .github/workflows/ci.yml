@@ -20,14 +20,14 @@ jobs:
     name: Licensing (REUSE)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: fsfe/reuse-action@v6
 
   typos:
     name: Spelling (typos)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: crate-ci/typos@master
 
   ruff:
@@ -35,7 +35,7 @@ jobs:
     name: Linting (ruff)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: extractions/setup-just@v3
       - uses: actions/setup-python@v6
         with:
@@ -52,7 +52,7 @@ jobs:
     name: Annotations (pyright)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: extractions/setup-just@v3
       - uses: actions/setup-python@v6
         with:
@@ -78,7 +78,7 @@ jobs:
           - '3.14'
       fail-fast: false
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: extractions/setup-just@v3
       - uses: actions/setup-python@v6
         with:
@@ -104,7 +104,7 @@ jobs:
           - '3.14'
       fail-fast: false
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: extractions/setup-just@v3
       - uses: actions/setup-python@v6
         with:
