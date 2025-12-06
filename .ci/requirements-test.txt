@@ -56,8 +56,6 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 rich==14.2.0
     # via pycgdescent (pyproject.toml:test)
-ruff==0.14.8
-    # via pycgdescent (pyproject.toml:test)
 six==1.17.0
     # via python-dateutil
 tomli==2.3.0 ; python_full_version < '3.11'
