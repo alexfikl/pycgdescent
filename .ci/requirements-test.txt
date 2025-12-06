@@ -4,26 +4,62 @@ basedpyright==1.35.0
     # via pycgdescent (pyproject.toml:test)
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
+contourpy==1.3.2 ; python_full_version < '3.11'
+    # via matplotlib
+contourpy==1.3.3 ; python_full_version >= '3.11'
+    # via matplotlib
+cycler==0.12.1
+    # via matplotlib
 exceptiongroup==1.3.1 ; python_full_version < '3.11'
     # via pytest
+fonttools==4.61.0
+    # via matplotlib
 iniconfig==2.3.0
     # via pytest
+kiwisolver==1.4.9
+    # via matplotlib
+markdown-it-py==4.0.0
+    # via rich
+matplotlib==3.10.7
+    # via pycgdescent (pyproject.toml:test)
+mdurl==0.1.2
+    # via markdown-it-py
 nodejs-wheel-binaries==24.11.1
     # via basedpyright
 numpy==2.2.6 ; python_full_version < '3.11'
-    # via pycgdescent (pyproject.toml)
+    # via
+    #   pycgdescent (pyproject.toml)
+    #   contourpy
+    #   matplotlib
 numpy==2.3.5 ; python_full_version >= '3.11'
-    # via pycgdescent (pyproject.toml)
+    # via
+    #   pycgdescent (pyproject.toml)
+    #   contourpy
+    #   matplotlib
 packaging==25.0
-    # via pytest
+    # via
+    #   matplotlib
+    #   pytest
+pillow==12.0.0
+    # via matplotlib
 pluggy==1.6.0
     # via pytest
 pygments==2.19.2
-    # via pytest
+    # via
+    #   pytest
+    #   rich
+pyparsing==3.2.5
+    # via matplotlib
 pytest==9.0.1
+    # via pycgdescent (pyproject.toml:test)
+python-dateutil==2.9.0.post0
+    # via matplotlib
+rich==14.2.0
     # via pycgdescent (pyproject.toml:test)
 ruff==0.14.8
     # via pycgdescent (pyproject.toml:test)
+six==1.17.0
+    # via python-dateutil
 tomli==2.3.0 ; python_full_version < '3.11'
     # via pytest
 typing-extensions==4.15.0
