@@ -39,27 +39,19 @@ dependencies = [
     "numpy>=2.1",
     "typing-extensions>=4.10",
 ]
-optional-dependencies.dev = [
-    "pyproject-fmt",
-    "reuse",
-    "typos",
-    "uv",
-]
+# NOTE: this is only here for readthedocs (keep in sync with the dependency group)
 optional-dependencies.docs = [
     "sphinx>=6",
     "sphinx-autoapi",
     "sphinx-book-theme",
 ]
-optional-dependencies.test = [
-    "basedpyright",
-    "matplotlib",
-    "pytest",
-    "rich",
-    "ruff",
-    "types-dataclasses",
-]
 urls.Documentation = "https://pycgdescent.readthedocs.io"
 urls.Repository = "https://github.com/alexfikl/pycgdescent"
+
+[dependency-groups]
+dev = [ "matplotlib", "pyproject-fmt", "reuse", "rich", "typos", "uv" ]
+test = [ "basedpyright", "pytest", "ruff" ]
+docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
 [tool.cibuildwheel]
 build = [
