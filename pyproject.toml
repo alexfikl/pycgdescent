@@ -1,4 +1,3 @@
-[build-system]
 build-backend = "mesonpy"
 requires = [
     "meson-python>=0.14",
@@ -51,7 +50,7 @@ urls.Repository = "https://github.com/alexfikl/pycgdescent"
 [dependency-groups]
 dev = [ "pyproject-fmt", "reuse", "typos", "uv" ]
 # NOTE: typing dependencies: matplotlib, rich
-test = [ "basedpyright", "matplotlib", "pytest", "rich", "ruff" ]
+test = [ "matplotlib", "pytest", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
 [tool.cibuildwheel]
@@ -129,16 +128,6 @@ lint.isort.required-imports = [
 
 [tool.pytest.ini_options]
 testpaths = "tests"
-
-[tool.basedpyright]
-pythonVersion = "3.10"
-pythonPlatform = "All"
-
-reportUnknownMemberType = "hint"
-reportExplicitAny = "hint"
-reportAny = "hint"
-
-ignore = [ "build", "docs" ]
 
 [tool.typos.files]
 extend-exclude = [

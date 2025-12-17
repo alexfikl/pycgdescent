@@ -7,7 +7,7 @@ SPDX-PackageSupplier = "Alexandru Fikl <alexfikl@gmail.com>"
 SPDX-PackageDownloadLocation = "https://github.com/alexfikl/pycgdescent"
 
 [[annotations]]
-path = ["src/pycgdescent/_cg_descent.pyi", ".basedpyright/baseline.json"]
+path = ["src/pycgdescent/_cg_descent.pyi"]
 SPDX-FileCopyrightText = "2024 Alexandru Fikl <alexfikl@gmail.com>"
 SPDX-License-Identifier = "CC0-1.0"
 

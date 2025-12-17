@@ -56,7 +56,7 @@ shfmt:
 # {{{ linting
 
 [doc("Run all linting checks over the source code")]
-lint: typos reuse ruff pyright
+lint: typos reuse ruff
 
 [doc("Run typos over the source code and documentation")]
 typos:
@@ -72,11 +72,6 @@ reuse:
 ruff:
     ruff check src tests examples
     @echo -e "\e[1;32mruff clean!\e[0m"
-
-[doc("Run pyright checks over the source code")]
-pyright:
-    basedpyright src tests examples
-    @echo -e "\e[1;32mpyright clean!\e[0m"
 
 # }}}
 # {{{ pin
