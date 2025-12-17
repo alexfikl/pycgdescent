@@ -1,3 +1,4 @@
+[build-system]
 build-backend = "mesonpy"
 requires = [
     "meson-python>=0.14",
@@ -52,6 +53,9 @@ dev = [ "pyproject-fmt", "reuse", "typos", "uv" ]
 # NOTE: typing dependencies: matplotlib, rich
 test = [ "matplotlib", "pytest", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
+
+[tool.setuptools_scm]
+# NOTE: empty section to avoid some warnings
 
 [tool.cibuildwheel]
 build = [
