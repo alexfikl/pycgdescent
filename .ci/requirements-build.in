@@ -3,4 +3,3 @@ ninja
 pip
 poetry-core
 pybind11
-setuptools

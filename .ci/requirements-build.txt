@@ -18,7 +18,5 @@ pybind11==3.0.1
     # via -r .ci/requirements-build.in
 pyproject-metadata==0.10.0
     # via meson-python
-setuptools==80.9.0
-    # via -r .ci/requirements-build.in
 tomli==2.3.0 ; python_full_version < '3.11'
     # via meson-python

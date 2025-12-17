@@ -54,9 +54,6 @@ dev = [ "pyproject-fmt", "reuse", "typos", "uv" ]
 test = [ "matplotlib", "pytest", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
-[tool.setuptools_scm]
-# NOTE: empty section to avoid some warnings
-
 [tool.cibuildwheel]
 build = [
     "cp3{10,11,12,13,14}-*",
