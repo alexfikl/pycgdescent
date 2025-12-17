@@ -114,12 +114,12 @@ develop:
         --editable .
 
 [doc("Editable install using pinned dependencies from requirements-test.txt")]
-ci-install:
+ci-install venv=".venv":
     #!/usr/bin/env bash
 
     # build a virtual environment
-    python -m venv .venv
-    source .venv/bin/activate
+    python -m venv {{ venv }}
+    source {{ venv }}/bin/activate
 
     # install build dependencies (need to be first due to  --no-build-isolation)
     {{ PYTHON }} -m pip install --requirement .ci/requirements-build.txt
@@ -132,7 +132,7 @@ ci-install:
         --config-settings setup-args="-Duse-blas=false" \
         --editable .
 
-    @echo -e "\e[1;32mvenv setup completed: '{{ venv }}'!\e[0m"
+    echo -e "\e[1;32mvenv setup completed: '{{ venv }}'!\e[0m"
 
 [doc("Generate typing stubs for binary module")]
 stubgen:

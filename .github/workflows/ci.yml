@@ -44,7 +44,7 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Run ruff
         run: |
-          just ci-install
+          just ci-install .venv
           source .venv/bin/activate
           just ruff
 
@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Main Script
         run: |
-          just ci-install
+          just ci-install .venv
           source .venv/bin/activate
           just ty
 
@@ -89,7 +89,7 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Main Script
         run: |
-          just ci-install
+          just ci-install .venv
           source .venv/bin/activate
           just test
 
@@ -116,7 +116,7 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Main Script
         run: |
-          just ci-install
+          just ci-install .venv
           source .venv/bin/activate
           just examples
 
