@@ -134,7 +134,7 @@ stubgen:
 [doc("Remove various build artifacts")]
 clean:
     rm -rf build dist
-    rm -rf docs/build.sphinx
+    rm -rf docs/_build
 
 [doc("Remove various temporary files")]
 purge: clean
