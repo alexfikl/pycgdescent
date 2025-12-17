@@ -118,7 +118,7 @@ ci-install:
     #!/usr/bin/env bash
 
     # build a virtual environment
-    python -m venv --without-pip .venv
+    python -m venv .venv
     source .venv/bin/activate
 
     # install build dependencies (need to be first due to  --no-build-isolation)
