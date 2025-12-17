@@ -44,7 +44,8 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Run ruff
         run: |
-          just pip-install
+          just ci-install
+          source .venv/bin/activate
           just ruff
 
   ty:
@@ -61,7 +62,8 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Main Script
         run: |
-          just pip-install
+          just ci-install
+          source .venv/bin/activate
           just ty
 
   pytest:
@@ -87,7 +89,8 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Main Script
         run: |
-          just pip-install
+          just ci-install
+          source .venv/bin/activate
           just test
 
   examples:
@@ -113,7 +116,8 @@ jobs:
           cache-dependency-path: .ci/requirements-test.txt
       - name: Main Script
         run: |
-          just pip-install
+          just ci-install
+          source .venv/bin/activate
           just examples
 
 # vim: set ts=2 sw=2 et:

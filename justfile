@@ -114,8 +114,17 @@ develop:
         --editable .
 
 [doc("Editable install using pinned dependencies from requirements-test.txt")]
-pip-install:
+ci-install:
+    #!/usr/bin/env bash
+
+    # build a virtual environment
+    python -m venv --without-pip .venv
+    source .venv/bin/activate
+
+    # install build dependencies (need to be first due to  --no-build-isolation)
     {{ PYTHON }} -m pip install --requirement .ci/requirements-build.txt
+
+    # install all other pinned dependencies
     {{ PYTHON }} -m pip install \
         --verbose \
         --requirement .ci/requirements-test.txt \
