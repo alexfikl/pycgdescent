@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: 2020-2022 Alexandru Fikl <alexfikl@gmail.com>
-#
 # SPDX-License-Identifier: MIT
 
 """
@@ -702,10 +701,10 @@ def minimize(
     if options is not None:
         if isinstance(options, OptimizeOptions):
             param = options
-        elif isinstance(options, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+        elif isinstance(options, dict):
             param = OptimizeOptions(**options)
         else:
-            raise TypeError(f"Unknown 'options' type: {type(options).__name__!r}.")  # pyright: ignore[reportUnreachable]
+            raise TypeError(f"Unknown 'options' type: {type(options).__name__!r}.")
     else:
         param = OptimizeOptions()
 

@@ -56,7 +56,7 @@ shfmt:
 # {{{ linting
 
 [doc("Run all linting checks over the source code")]
-lint: typos reuse ruff
+lint: typos reuse ruff ty
 
 [doc("Run typos over the source code and documentation")]
 typos:
@@ -71,6 +71,11 @@ reuse:
 [doc("Run ruff checks over the source code")]
 ruff:
     ruff check src tests examples
+    @echo -e "\e[1;32mruff clean!\e[0m"
+
+[doc("Run ty checks over the source code")]
+ty:
+    ty check src tests examples
     @echo -e "\e[1;32mruff clean!\e[0m"
 
 # }}}

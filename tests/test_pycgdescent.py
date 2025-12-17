@@ -24,12 +24,12 @@ def test_optimize_options() -> None:
         options.printLevel = 2
 
     options = options.replace(printLevel=2)
-    assert options.printLevel == 2  # pyright: ignore[reportAttributeAccessIssue]
+    assert options.printLevel == 2  # ty: ignore[unresolved-attribute]
 
     options2 = options.replace(step=1.0)
     logger.info("\n%s", options2.pretty())
     assert (options2.step - 1.0) < 1.0e-15
-    assert options2.printLevel == 2  # pyright: ignore[reportAttributeAccessIssue]
+    assert options2.printLevel == 2  # ty: ignore[unresolved-attribute]
 
     logger.info("\n%s", options)
     logger.info("\n")

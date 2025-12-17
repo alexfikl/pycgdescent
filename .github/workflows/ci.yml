@@ -47,9 +47,9 @@ jobs:
           just pip-install
           just ruff
 
-  pyright:
+  ty:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    name: Annotations (pyright)
+    name: Annotations (ty)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -62,7 +62,7 @@ jobs:
       - name: Main Script
         run: |
           just pip-install
-          just pyright
+          just ty
 
   pytest:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
