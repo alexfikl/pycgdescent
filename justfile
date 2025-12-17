@@ -132,6 +132,8 @@ ci-install:
         --config-settings setup-args="-Duse-blas=false" \
         --editable .
 
+    @echo -e "\e[1;32mvenv setup completed: '{{ venv }}'!\e[0m"
+
 [doc("Generate typing stubs for binary module")]
 stubgen:
     {{ PYTHON }} -m pybind11_stubgen \
