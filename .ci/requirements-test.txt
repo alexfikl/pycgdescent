@@ -27,7 +27,7 @@ numpy==2.2.6 ; python_full_version < '3.11'
     #   pycgdescent (pyproject.toml)
     #   contourpy
     #   matplotlib
-numpy==2.3.5 ; python_full_version >= '3.11'
+numpy==2.4.0 ; python_full_version >= '3.11'
     # via
     #   pycgdescent (pyproject.toml)
     #   contourpy
@@ -44,7 +44,7 @@ pygments==2.19.2
     # via
     #   pytest
     #   rich
-pyparsing==3.2.5
+pyparsing==3.3.1
     # via matplotlib
 pytest==9.0.2
     # via pycgdescent (pyproject.toml:test)
@@ -52,13 +52,13 @@ python-dateutil==2.9.0.post0
     # via matplotlib
 rich==14.2.0
     # via pycgdescent (pyproject.toml:test)
-ruff==0.14.9
+ruff==0.14.10
     # via pycgdescent (pyproject.toml:test)
 six==1.17.0
     # via python-dateutil
 tomli==2.3.0 ; python_full_version < '3.11'
     # via pytest
-ty==0.0.2
+ty==0.0.8
     # via pycgdescent (pyproject.toml:test)
 typing-extensions==4.15.0
     # via
