@@ -27,7 +27,7 @@ numpy==2.2.6 ; python_full_version < '3.11'
     #   pycgdescent (pyproject.toml)
     #   contourpy
     #   matplotlib
-numpy==2.4.0 ; python_full_version >= '3.11'
+numpy==2.4.1 ; python_full_version >= '3.11'
     # via
     #   pycgdescent (pyproject.toml)
     #   contourpy
@@ -58,7 +58,7 @@ six==1.17.0
     # via python-dateutil
 tomli==2.3.0 ; python_full_version < '3.11'
     # via pytest
-ty==0.0.10
+ty==0.0.11
     # via pycgdescent (pyproject.toml:test)
 typing-extensions==4.15.0
     # via
