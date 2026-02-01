@@ -128,8 +128,9 @@ lint.isort.required-imports = [
     "from __future__ import annotations",
 ]
 
-[tool.pytest.ini_options]
-testpaths = "tests"
+[tool.typos.default.extend-words]
+Parms = "Parms"
+Parm = "Parm"
 
 [tool.typos.files]
 extend-exclude = [
@@ -138,9 +139,8 @@ extend-exclude = [
     "patches/*.patch",
 ]
 
-[tool.typos.default.extend-words]
-Parms = "Parms"
-Parm = "Parm"
+[tool.pytest.ini_options]
+testpaths = "tests"
 
 [tool.yamlfix]
 line_length = 88
