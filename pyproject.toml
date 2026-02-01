@@ -141,6 +141,12 @@ extend-exclude = [
 
 [tool.pytest.ini_options]
 testpaths = "tests"
+addopts = [
+    "-rswx",
+    "--durations=25",
+    "--verbose",
+    "--capture=no",
+]
 
 [tool.yamlfix]
 line_length = 88
