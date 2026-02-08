@@ -62,26 +62,19 @@ test-requires = [
     "pytest",
 ]
 test-command = "python -m pytest {project}/tests"
-
-[tool.cibuildwheel.linux]
-skip = [
+linux.skip = [
     "*_i686",
 ]
-
-[tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET = "13.0" }
-
-[tool.cibuildwheel.windows]
-skip = [
+macos.environment = { MACOSX_DEPLOYMENT_TARGET = "13.0" }
+windows.skip = [
     "*-win32",
 ]
-before-build = "pip install delvewheel"
-repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+windows.before-build = "pip install delvewheel"
+windows.repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 
 [tool.ruff]
 target-version = "py310"
 line-length = 88
-
 preview = true
 lint.select = [
     "A",   # flake8-builtins
@@ -128,20 +121,18 @@ lint.isort.required-imports = [
     "from __future__ import annotations",
 ]
 
-[tool.typos.default.extend-words]
-Parms = "Parms"
-Parm = "Parm"
-
-[tool.typos.files]
-extend-exclude = [
+[tool.typos]
+default.extend-words.Parms = "Parms"
+default.extend-words.Parm = "Parm"
+files.extend-exclude = [
     "src/wrapper/*.c",
     "src/wrapper/*.h",
     "patches/*.patch",
 ]
 
-[tool.pytest.ini_options]
-testpaths = "tests"
-addopts = [
+[tool.pytest]
+ini_options.testpaths = "tests"
+ini_options.addopts = [
     "-rswx",
     "--durations=25",
     "--verbose",
