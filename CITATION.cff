@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: pycgdescent
+abstract: Python wrapper for the CG_DESCENT conjugate gradient optimization library by Hager and Zhang.
+version: 0.11.0
+date-released: "2026-03-09"
+license:
+  - MIT
+  - GPL-2.0-or-later
+repository-code: https://github.com/alexfikl/pycgdescent
+url: https://pycgdescent.readthedocs.io
+authors:
+  - family-names: Fikl
+    given-names: Alexandru
+    email: alexfikl@gmail.com
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Hager
+      given-names: William W.
+    - family-names: Zhang
+      given-names: Hongchao
+  title: "Algorithm 851: CG_DESCENT, a Conjugate Gradient Method With Guaranteed Descent"
+  journal: ACM Transactions on Mathematical Software
+  volume: 32
+  year: 2006
+  start: 113
+  end: 137
+  doi: 10.1145/1132973.1132979
+references:
+  - type: article
+    authors:
+      - family-names: Hager
+        given-names: William W.
+      - family-names: Zhang
+        given-names: Hongchao
+    title: The Limited Memory Conjugate Gradient Method
+    journal: SIAM Journal on Optimization
+    volume: 23
+    year: 2013
+    start: 2150
+    end: 2168
+    doi: 10.1137/120898097
