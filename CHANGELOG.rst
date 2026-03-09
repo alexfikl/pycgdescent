@@ -9,6 +9,10 @@ pycgdescent 0.11.0 (March 9, 2026)
 * Zero initialize working memory in CG_DESCENT.
 * Remove some unused variables in CG_DESCENT.
 
+**Maintenance**
+
+* Various maintenance updates (bumping CI dependencies, linting, fixing docs).
+
 pycgdescent 0.10.5 (October 13, 2025)
 -------------------------------------
 
