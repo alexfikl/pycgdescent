@@ -55,6 +55,7 @@ test = [ "matplotlib", "pytest", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
 [tool.cibuildwheel]
+build-frontend = "uv"
 build = [
     "cp3{10,11,12,13,14}-*",
 ]
