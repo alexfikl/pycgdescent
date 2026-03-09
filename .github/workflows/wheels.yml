@@ -42,6 +42,7 @@ jobs:
         uses: pypa/cibuildwheel@v3.4.0
         with:
           output-dir: wheelhouse
+          extras: uv
       - uses: actions/upload-artifact@v7
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
