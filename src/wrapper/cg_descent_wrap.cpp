@@ -28,21 +28,21 @@ namespace py = pybind11;
 
 #define CLASS_PROPERTY(NAME, TYPE)     \
     TYPE get_##NAME() const noexcept { \
-        return obj->NAME;              \
+        return obj.NAME;               \
     };                                 \
     void set_##NAME(TYPE v) {          \
-        obj->NAME = v;                 \
+        obj.NAME = v;                  \
     };
 
 #define CLASS_RO_PROPERTY(NAME, TYPE)  \
     TYPE get_##NAME() const noexcept { \
-        return obj->NAME;              \
+        return obj.NAME;               \
     };
 
-#define CLASS_RO_ARRAY_PROPERTY(NAME, TYPE)        \
-    py::array get_##NAME() const {                 \
-        WRAP_RAW_POINTER(NAME, obj->NAME, obj->n); \
-        return NAME;                               \
+#define CLASS_RO_ARRAY_PROPERTY(NAME, TYPE)      \
+    py::array get_##NAME() const {               \
+        WRAP_RAW_POINTER(NAME, obj.NAME, obj.n); \
+        return NAME;                             \
     };
 
 // }}}
@@ -51,21 +51,16 @@ namespace py = pybind11;
 
 class cg_parameter_wrapper {
    public:
-    cg_parameter_wrapper(cg_parameter * p) : obj(p) {}
-    cg_parameter_wrapper() : obj(new cg_parameter) {
-        cg_default(obj);
+    cg_parameter_wrapper(cg_parameter * p) {
+        std::memcpy(&obj, p, sizeof(obj));
+    }
+    cg_parameter_wrapper() {
+        std::memset(&obj, 0, sizeof(obj));
+        cg_default(&obj);
     }
     cg_parameter_wrapper(const cg_parameter_wrapper & w) {
-        obj = new cg_parameter;
-        memcpy(obj, w.obj, sizeof(cg_parameter));
+        memcpy(&obj, &w.obj, sizeof(obj));
     }
-
-    ~cg_parameter_wrapper() {
-        delete obj;
-    };
-    cg_parameter * data() {
-        return obj;
-    };
 
     CLASS_PROPERTY(PrintFinal, int)
     CLASS_PROPERTY(PrintLevel, int)
@@ -125,7 +120,7 @@ class cg_parameter_wrapper {
     CLASS_PROPERTY(qrule, double)
     CLASS_PROPERTY(qrestart, int)
 
-    cg_parameter * obj;
+    cg_parameter obj;
 };
 
 // }}}
@@ -134,12 +129,8 @@ class cg_parameter_wrapper {
 
 class cg_stats_wrapper {
    public:
-    cg_stats_wrapper() : obj(new cg_stats) {};
-    ~cg_stats_wrapper() {
-        delete obj;
-    };
-    cg_stats * data() {
-        return obj;
+    cg_stats_wrapper() {
+        memset(&obj, 0, sizeof(obj));
     };
 
     CLASS_RO_PROPERTY(f, double)
@@ -150,7 +141,7 @@ class cg_stats_wrapper {
     CLASS_RO_PROPERTY(nfunc, INT)
     CLASS_RO_PROPERTY(ngrad, INT)
 
-    cg_stats * obj;
+    cg_stats obj;
 };
 
 // }}}
@@ -159,9 +150,12 @@ class cg_stats_wrapper {
 
 class cg_iter_stats_wrapper {
    public:
-    cg_iter_stats_wrapper(cg_iter_stats * stats) : obj(stats) {};
-    cg_iter_stats_wrapper() : obj(nullptr) {};
-    ~cg_iter_stats_wrapper() {};
+    cg_iter_stats_wrapper(cg_iter_stats * stats) {
+        std::memcpy(&obj, stats, sizeof(obj));
+    };
+    cg_iter_stats_wrapper() {
+        std::memset(&obj, 0, sizeof(obj));
+    };
 
     CLASS_RO_PROPERTY(iter, INT)
     CLASS_RO_PROPERTY(alpha, double)
@@ -170,7 +164,7 @@ class cg_iter_stats_wrapper {
     CLASS_RO_ARRAY_PROPERTY(g, double)
     CLASS_RO_ARRAY_PROPERTY(d, double)
 
-    cg_iter_stats * obj;
+    cg_iter_stats obj;
 };
 
 // }}}}
@@ -231,7 +225,7 @@ int user_callback(cg_iter_stats * IterStats, void * User) {
     return (*w->m_callback)(wi);
 }
 
-std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
+std::tuple<cg::array, cg_stats_wrapper, bool> cg_descent_wrapper(
     cg::array x,
     double grad_tol,
     std::optional<cg_parameter_wrapper *> param,
@@ -242,8 +236,8 @@ std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
     std::optional<cg::array> work
 ) {
     int status = 0;
-    cg_stats_wrapper * stats = new cg_stats_wrapper;
-    cg_parameter * p = param.has_value() ? param.value()->data() : nullptr;
+    cg_stats_wrapper stats = cg_stats_wrapper();
+    cg_parameter * p = param.has_value() ? &param.value()->obj : nullptr;
     double * workptr =
         (work.has_value() ? static_cast<double *>(work.value().request().ptr) : nullptr);
 
@@ -264,8 +258,8 @@ std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
 
     status = cg_descent(
         ptr,
-        x.shape(0),
-        stats->data(),
+        n,
+        &stats.obj,
         p,
         grad_tol,
         user_value,
@@ -277,7 +271,7 @@ std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
     );
 
     py::capsule owner(ptr, [](void * p) { delete[] static_cast<double *>(p); });
-    return std::make_tuple(cg::array(n, ptr, owner), stats, status);
+    return std::make_tuple(cg::array(n, ptr, owner), std::move(stats), status);
 }
 
 // }}}
@@ -285,7 +279,7 @@ std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
 // {{{ cg_default wrapper
 
 void cg_default_wrapper(py::object param) {
-    cg_default(param.cast<cg_parameter_wrapper *>()->data());
+    cg_default(&param.cast<cg_parameter_wrapper *>()->obj);
 }
 
 // }}}
