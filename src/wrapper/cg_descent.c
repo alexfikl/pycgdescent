@@ -192,16 +192,16 @@ int cg_descent /*  return status of solution process:
     {
         if ( mem == 0 ) /* original CG_DESCENT without memory */
         {
-            work = (double *) malloc (4*n*sizeof (double)) ;
+            work = (double *) calloc (4*n, sizeof (double)) ;
         }
         else if ( Parm->LBFGS || (mem >= n) ) /* use L-BFGS */
         {
-            work = (double *) malloc ((2*mem*(n+1)+4*n)*sizeof (double)) ;
+            work = (double *) calloc ((2*mem*(n+1)+4*n), sizeof (double)) ;
         }
         else /* limited memory CG_DESCENT */
         {
             i = (mem+6)*n + (3*mem+9)*mem + 5 ;
-            work = (double *) malloc (i*sizeof (double)) ;
+            work = (double *) calloc (i, sizeof (double)) ;
         }
     }
     else work = Work ;
