@@ -56,7 +56,6 @@ docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
 [tool.cibuildwheel]
 build-frontend = "uv"
-config-settings = { setup-args = "-Duse-blas=false" }
 build = [
     "cp3{10,11,12,13,14}-*",
 ]

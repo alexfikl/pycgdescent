@@ -138,7 +138,6 @@ ci-install venv=".venv":
         --verbose \
         --requirement {{ REQUIREMENTS_DIR }}/requirements-test.txt \
         --no-build-isolation \
-        --config-settings setup-args="-Duse-blas=false" \
         --editable .
 
     echo -e "\e[1;32mvenv setup completed: '{{ venv }}'!\e[0m"
