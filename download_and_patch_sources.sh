@@ -47,6 +47,7 @@ declare -a patches=(
   '0005-add-iteration-callback.patch'
   '0006-add-step-size-limit.patch'
   '0007-cg_evaluate-initialize-df.patch'
+  '0008-zero-initialize-working-memory.patch'
 )
 
 pushd "${pkgname}-${pkgver}"

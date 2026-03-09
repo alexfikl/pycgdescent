@@ -1,0 +1,36 @@
+From 00a4143db247d03eba327d48bca8d74a7ca40ba4 Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Mon, 9 Mar 2026 15:15:26 +0200
+Subject: [PATCH] zero initialize working memory
+
+---
+ cg_descent.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index 7c14b87..7242ed7 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -192,16 +192,16 @@ int cg_descent /*  return status of solution process:
+     {
+         if ( mem == 0 ) /* original CG_DESCENT without memory */
+         {
+-            work = (double *) malloc (4*n*sizeof (double)) ;
++            work = (double *) calloc (4*n, sizeof (double)) ;
+         }
+         else if ( Parm->LBFGS || (mem >= n) ) /* use L-BFGS */
+         {
+-            work = (double *) malloc ((2*mem*(n+1)+4*n)*sizeof (double)) ;
++            work = (double *) calloc ((2*mem*(n+1)+4*n), sizeof (double)) ;
+         }
+         else /* limited memory CG_DESCENT */
+         {
+             i = (mem+6)*n + (3*mem+9)*mem + 5 ;
+-            work = (double *) malloc (i*sizeof (double)) ;
++            work = (double *) calloc (i, sizeof (double)) ;
+         }
+     }
+     else work = Work ;
+-- 
+2.53.0
+
