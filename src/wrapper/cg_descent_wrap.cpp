@@ -7,6 +7,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <cstring>
 #include <functional>
 #include <iostream>
 #include <optional>
@@ -248,10 +249,9 @@ std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
 
     int n = x.shape(0);
     double * ptr = new double[n];
-    auto xptr = x.unchecked();
-    for (int i = 0; i < n; ++i) {
-        ptr[i] = xptr(i);
-    }
+
+    auto xptr = static_cast<double *>(x.request().ptr);
+    std::memcpy(ptr, xptr, n * sizeof(double));
 
     cg::FnWrapper w(
         &value,
