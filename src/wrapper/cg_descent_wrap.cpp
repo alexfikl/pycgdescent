@@ -276,7 +276,8 @@ std::tuple<cg::array, cg_stats_wrapper *, bool> cg_descent_wrapper(
         &w
     );
 
-    return std::make_tuple(cg::array(n, ptr), stats, status);
+    py::capsule owner(ptr, [](void * p) { delete[] static_cast<double *>(p); });
+    return std::make_tuple(cg::array(n, ptr, owner), stats, status);
 }
 
 // }}}
