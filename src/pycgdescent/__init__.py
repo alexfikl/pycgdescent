@@ -710,7 +710,7 @@ def minimize(
 
     if work is not None:
         m = min_work_size(param, x0.size)
-        if work.size >= m:
+        if work.size < m:
             raise ValueError(f"'work' must have size >= {m}.")
 
     # }}}
