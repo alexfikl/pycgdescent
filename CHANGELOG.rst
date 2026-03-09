@@ -1,3 +1,14 @@
+pycgdescent 0.11.0 (March 9, 2026)
+----------------------------------
+
+**Bug Fixes**
+
+* Fix working memory size check.
+* Fix memory leak from returned array pointer.
+* Do not store pointers in wrapper classes to avoid leaks.
+* Zero initialize working memory in CG_DESCENT.
+* Remove some unused variables in CG_DESCENT.
+
 pycgdescent 0.10.5 (October 13, 2025)
 -------------------------------------
 

@@ -1,0 +1,92 @@
+From acea39a7cd0697e0a3a3647a12bf767ed420251b Mon Sep 17 00:00:00 2001
+From: Alexandru Fikl <alexfikl@gmail.com>
+Date: Mon, 9 Mar 2026 15:29:43 +0200
+Subject: [PATCH] remove unused variables
+
+---
+ cg_descent.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/cg_descent.c b/cg_descent.c
+index 7242ed7..65ad961 100644
+--- a/cg_descent.c
++++ b/cg_descent.c
+@@ -128,8 +128,8 @@ int cg_descent /*  return status of solution process:
+     void           *User   /* user provided pointer passed to functions */
+ )
+ {
+-    INT     i, iter, IterRestart, maxit, n5, nrestart, nrestartsub ;
+-    int     nslow, slowlimit, IterQuad, status, PrintLevel, QuadF, StopRule ;
++    INT     i, iter, IterRestart, maxit, nrestart, nrestartsub ;
++    int     nslow, slowlimit, IterQuad, status, PrintLevel, QuadF ;
+     double  delta2, Qk, Ck, fbest, gbest,
+             f, ftemp, gnorm, xnorm, gnorm2, dnorm2, denom,
+             t, dphi, dphi0, alpha,
+@@ -140,7 +140,7 @@ int cg_descent /*  return status of solution process:
+     int     l1, l2, j, k, mem, memsq, memk, memk_begin, mlast, mlast_sub,
+             mp, mp_begin, mpp, nsub, spp, spp1, SkFstart, SkFlast, Subspace,
+             UseMemory, Restart, LBFGS, InvariantSpace, IterSub, NumSub,
+-            IterSubStart, IterSubRestart, FirstFull, SubSkip, SubCheck,
++            IterSubRestart, FirstFull, SubSkip, SubCheck,
+             StartSkip, StartCheck, DenseCol1, NegDiag, memk_is_mem,
+            d0isg, qrestart ;
+     double  gHg, scale, gsubnorm2,  ratio, stgkeep,
+@@ -224,7 +224,6 @@ int cg_descent /*  return status of solution process:
+     Com.cg_grad = grad ;
+     Com.cg_valgrad = valgrad ;
+     Com.User = User ;
+-    StopRule = Parm->StopRule ;
+     LBFGS = FALSE ;
+     UseMemory = FALSE ;/* do not use memory */
+     Subspace = FALSE ; /* full space, check subspace condition if UseMemory */
+@@ -283,7 +282,6 @@ int cg_descent /*  return status of solution process:
+     gbest = INF ;
+     nslow = 0 ;
+     slowlimit = 2*n + Parm->nslow ;
+-    n5 = n % 5 ;
+ 
+     Ck = ZERO ;
+     Qk = ZERO ;
+@@ -974,7 +972,6 @@ int cg_descent /*  return status of solution process:
+                     /* reset subspace skipping to 0, need to test invariance */
+                     SubSkip = 0 ;
+                     IterSubRestart = 0 ;
+-                    IterSubStart = IterSub ;
+                     nsub = memk ; /* dimension of subspace */
+                     nrestartsub = (int) (((double) nsub)*Parm->restart_fac) ;
+                     mp_begin = mlast ;
+@@ -2134,7 +2131,7 @@ PRIVATE int cg_contract
+ )
+ {
+     int AWolfe, iter, PrintLevel, toggle, status ;
+-    double a, alpha, b, old, da, db, df, d1, dold, f, fa, fb, f1, fold,
++    double a, alpha, b, old, da, db, df, dold, f, fa, fb, f1, fold,
+            t, width ;
+     char *s ;
+     cg_parameter *Parm ;
+@@ -2149,7 +2146,6 @@ PRIVATE int cg_contract
+     fb = *fB ;
+     db = *dB ;
+     f1 = fb ;
+-    d1 = db ;
+     toggle = 0 ;
+     width = ZERO ;
+     for (iter = 0; iter < Parm->nshrink; iter++)
+@@ -4166,12 +4162,13 @@ PRIVATE void cg_printParms
+         printf ("    Do not print parameter structure\n") ;
+     if ( Parm->AWolfe)
+         printf ("    Approximate Wolfe line search\n") ;
+-    else
++    else {
+         printf ("    Wolfe line search") ;
+         if ( Parm->AWolfeFac > 0. )
+             printf (" ... switching to approximate Wolfe\n") ;
+         else
+             printf ("\n") ;
++    }
+     if ( Parm->StopRule )
+         printf ("    Stopping condition uses initial grad tolerance\n") ;
+     else
+-- 
+2.53.0
+

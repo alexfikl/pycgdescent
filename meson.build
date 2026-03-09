@@ -27,6 +27,7 @@ py.extension_module(
     '_cg_descent',
     ['src/wrapper/cg_descent.c', 'src/wrapper/cg_descent_wrap.cpp'],
     dependencies: [pybind11_dep, blas_dep],
+    c_args: ['-Wno-maybe-uninitialized'],
     install: true,
     subdir: 'pycgdescent',
 )
