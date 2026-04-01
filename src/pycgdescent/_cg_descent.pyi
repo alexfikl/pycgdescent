@@ -273,7 +273,7 @@ def cg_default(arg0: typing.Any) -> None: ...
 def cg_descent(
     x: typing.Annotated[numpy.typing.ArrayLike, numpy.float64],
     grad_tol: typing.SupportsFloat | typing.SupportsIndex,
-    param: pycgdescent._cg_descent.cg_parameter | None,
+    param: cg_parameter | None,
     value: collections.abc.Callable[
         [typing.Annotated[numpy.typing.ArrayLike, numpy.float64]], float
     ],
