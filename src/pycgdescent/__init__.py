@@ -52,12 +52,11 @@ __version__ = metadata.version("pycgdescent")
 
 Float: TypeAlias = np.float32 | np.float64 | float
 """Supported floating point number types."""
-Array: TypeAlias = np.ndarray[tuple[int, ...], np.dtype[np.float64]]
-"""Supported array type."""
+Array: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
+"""Supported vector (1D array) type."""
+Matrix: TypeAlias = np.ndarray[tuple[int, int], np.dtype[np.float64]]
+"""Supported matrix (2D array) type."""
 ArrayOrScalar: TypeAlias = Array | Float
-
-# NOTE: deprecated
-ArrayType = Array
 
 # {{{ wrap
 
