@@ -55,23 +55,23 @@ test = [ "matplotlib", "pytest", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
 [tool.cibuildwheel]
-build-frontend = "uv"
 build = [
     "cp3{10,11,12,13,14}-*",
 ]
+build-frontend = "uv"
+test-command = "python -m pytest {project}/tests"
 test-requires = [
     "pytest",
 ]
-test-command = "python -m pytest {project}/tests"
 linux.skip = [
     "*_i686",
 ]
 macos.environment = { MACOSX_DEPLOYMENT_TARGET = "13.0" }
+windows.before-build = "pip install delvewheel"
+windows.repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 windows.skip = [
     "*-win32",
 ]
-windows.before-build = "pip install delvewheel"
-windows.repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 
 [tool.ruff]
 target-version = "py310"
