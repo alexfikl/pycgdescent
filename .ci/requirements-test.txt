@@ -18,7 +18,9 @@ kiwisolver==1.5.0
     # via matplotlib
 markdown-it-py==4.2.0
     # via rich
-matplotlib==3.10.9
+matplotlib==3.10.9 ; python_full_version < '3.11'
+    # via pycgdescent (pyproject.toml:test)
+matplotlib==3.11.0 ; python_full_version >= '3.11'
     # via pycgdescent (pyproject.toml:test)
 mdurl==0.1.2
     # via markdown-it-py
@@ -27,7 +29,7 @@ numpy==2.2.6 ; python_full_version < '3.11'
     #   pycgdescent (pyproject.toml)
     #   contourpy
     #   matplotlib
-numpy==2.4.4 ; python_full_version >= '3.11'
+numpy==2.4.6 ; python_full_version >= '3.11'
     # via
     #   pycgdescent (pyproject.toml)
     #   contourpy
@@ -46,19 +48,19 @@ pygments==2.20.0
     #   rich
 pyparsing==3.3.2
     # via matplotlib
-pytest==9.0.3
+pytest==9.1.1
     # via pycgdescent (pyproject.toml:test)
 python-dateutil==2.9.0.post0
     # via matplotlib
 rich==15.0.0
     # via pycgdescent (pyproject.toml:test)
-ruff==0.15.13
+ruff==0.15.18
     # via pycgdescent (pyproject.toml:test)
 six==1.17.0
     # via python-dateutil
 tomli==2.4.1 ; python_full_version < '3.11'
     # via pytest
-ty==0.0.35
+ty==0.0.51
     # via pycgdescent (pyproject.toml:test)
 typing-extensions==4.15.0
     # via

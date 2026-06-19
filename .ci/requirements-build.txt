@@ -2,7 +2,7 @@
 #    uv pip compile --universal --python-version 3.10 -o .ci/requirements-build.txt .ci/requirements-build.in
 meson==1.11.1
     # via meson-python
-meson-python==0.19.0
+meson-python==0.20.0
     # via -r .ci/requirements-build.in
 ninja==1.13.0
     # via -r .ci/requirements-build.in
@@ -10,9 +10,9 @@ packaging==26.2
     # via
     #   meson-python
     #   pyproject-metadata
-pip==26.1.1
+pip==26.1.2
     # via -r .ci/requirements-build.in
-poetry-core==2.4.0
+poetry-core==2.4.1
     # via -r .ci/requirements-build.in
 pybind11==3.0.4
     # via -r .ci/requirements-build.in
