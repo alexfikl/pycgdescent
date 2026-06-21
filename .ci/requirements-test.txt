@@ -49,6 +49,10 @@ pygments==2.20.0
 pyparsing==3.3.2
     # via matplotlib
 pytest==9.1.1
+    # via
+    #   pycgdescent (pyproject.toml:test)
+    #   pytest-github-actions-annotate-failures
+pytest-github-actions-annotate-failures==0.4.2
     # via pycgdescent (pyproject.toml:test)
 python-dateutil==2.9.0.post0
     # via matplotlib
