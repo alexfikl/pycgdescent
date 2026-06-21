@@ -51,7 +51,7 @@ urls.Repository = "https://github.com/alexfikl/pycgdescent"
 [dependency-groups]
 dev = [ "pyproject-fmt", "reuse", "typos", "uv" ]
 # NOTE: typing dependencies: matplotlib, rich
-test = [ "matplotlib", "pytest", "rich", "ruff", "ty" ]
+test = [ "matplotlib", "pytest", "pytest-github-actions-annotate-failures", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]
 
 [tool.cibuildwheel]
