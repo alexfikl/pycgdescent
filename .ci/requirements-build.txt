@@ -16,7 +16,7 @@ poetry-core==2.4.1
     # via -r .ci/requirements-build.in
 pybind11==3.0.4
     # via -r .ci/requirements-build.in
-pyproject-metadata==0.11.0
+pyproject-metadata==0.12.1
     # via meson-python
 tomli==2.4.1 ; python_full_version < '3.11'
     # via meson-python
