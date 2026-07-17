@@ -51,7 +51,7 @@ def test_quadratic(tol: float) -> None:
     # {{{ setup
 
     # https://en.wikipedia.org/wiki/Conjugate_gradient_method#Numerical_example
-    A: cg.Matrix = np.array([[4.0, 1.0], [1.0, 3.0]])  # noqa: N806
+    A: cg.Matrix = np.array([[4.0, 1.0], [1.0, 3.0]])  # ruff:ignore[non-lowercase-variable-in-function]
     b: cg.Array = np.array([1.0, 2.0])
 
     x0: cg.Array = np.array([2.0, 1.0])

@@ -10,7 +10,7 @@ from importlib import metadata
 m = metadata.metadata("pycgdescent")
 project = m["Name"]
 author = m["Author-email"]
-copyright = f"2020 {author}"  # noqa: A001
+copyright = f"2020 {author}"  # ruff:ignore[builtin-variable-shadowing]
 version = m["Version"]
 release = version
 
