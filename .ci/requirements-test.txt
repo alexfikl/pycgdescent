@@ -62,14 +62,16 @@ pytest-github-actions-annotate-failures==0.4.2
 python-dateutil==2.9.0.post0
     # via matplotlib
 rich==15.0.0
-    # via pycgdescent (pyproject.toml:test)
+    # via
+    #   pycgdescent (pyproject.toml)
+    #   pycgdescent (pyproject.toml:test)
 ruff==0.16.3
     # via pycgdescent (pyproject.toml:test)
 six==1.17.0
     # via python-dateutil
 tomli==2.4.1 ; python_full_version < '3.11'
     # via pytest
-ty==0.0.71
+ty==0.0.72
     # via pycgdescent (pyproject.toml:test)
 typing-extensions==4.16.0
     # via
