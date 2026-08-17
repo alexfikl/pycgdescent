@@ -22,3 +22,4 @@ tags
 # subproject build artifacts
 src/subprojects/*
 !src/subprojects/*.wrap
+!src/subprojects/packagefiles/
