@@ -1,5 +1,5 @@
 meson-python
 ninja
-pip
 poetry-core
 pybind11
+uv

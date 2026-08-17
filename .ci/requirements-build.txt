@@ -10,8 +10,6 @@ packaging==26.3
     # via
     #   meson-python
     #   pyproject-metadata
-pip==26.2.1
-    # via -r .ci/requirements-build.in
 poetry-core==2.4.1
     # via -r .ci/requirements-build.in
 pybind11==3.1.0
@@ -20,3 +18,5 @@ pyproject-metadata==0.12.1
     # via meson-python
 tomli==2.4.1 ; python_full_version < '3.11'
     # via meson-python
+uv==0.12.5
+    # via -r .ci/requirements-build.in
