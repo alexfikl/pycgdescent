@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 import numpy.linalg as la
 import pytest
@@ -44,30 +46,32 @@ def test_optimize_options() -> None:
 # {{{ test_quadratic
 
 
+@dataclass(init=False)
+class Quadratic:
+    A: cg.Matrix
+    b: cg.Array
+    x: cg.Array
+
+    def __init__(self) -> None:
+        self.A = np.array([[4.0, 1.0], [1.0, 3.0]])
+        self.b = np.array([1.0, 2.0])
+        self.x = np.array([1.0 / 11.0, 7.0 / 11.0])
+        self.x0 = np.array([2.0, 1.0])
+
+    def fun(self, x: cg.Array) -> float:
+        return (x @ (self.A @ x) - x @ self.b).item()
+
+    def jac(self, g: cg.Array, x: cg.Array) -> None:
+        g[...] = self.A @ x - self.b
+
+    def funjac(self, g: cg.Array, x: cg.Array) -> float:
+        g[...] = self.A @ x - self.b
+        return (x @ g).item()
+
+
 @pytest.mark.parametrize("tol", [1.0e-8])
 def test_quadratic(tol: float) -> None:
     """Test optimization of a quadratic function with default options."""
-
-    # {{{ setup
-
-    # https://en.wikipedia.org/wiki/Conjugate_gradient_method#Numerical_example
-    A: cg.Matrix = np.array([[4.0, 1.0], [1.0, 3.0]])  # ruff:ignore[non-lowercase-variable-in-function]
-    b: cg.Array = np.array([1.0, 2.0])
-
-    x0: cg.Array = np.array([2.0, 1.0])
-    x_exact: cg.Array = np.array([1.0 / 11.0, 7.0 / 11.0])
-
-    def fun(x: cg.Array) -> float:
-        return (x @ (A @ x) - x @ b).item()
-
-    def jac(g: cg.Array, x: cg.Array) -> None:
-        g[...] = A @ x - b
-
-    def funjac(g: cg.Array, x: cg.Array) -> float:
-        g[...] = A @ x - b
-        return (x @ g).item()
-
-    # }}}
 
     # {{{ optimize
 
@@ -78,12 +82,14 @@ def test_quadratic(tol: float) -> None:
 
         return 1
 
+    model = Quadratic()
     options = cg.OptimizeOptions(PrintLevel=3)
+
     r = cg.minimize(
-        fun=fun,
-        x0=x0,
-        jac=jac,
-        funjac=funjac,
+        fun=model.fun,
+        x0=model.x0,
+        jac=model.jac,
+        funjac=model.funjac,
         tol=tol,
         callback=callback,
         options=options,
@@ -94,11 +100,11 @@ def test_quadratic(tol: float) -> None:
 
     # {{{ check
 
-    error = la.norm(r.x - x_exact) / la.norm(x_exact)
+    error = la.norm(r.x - model.x) / la.norm(model.x)
 
     logger.info("\n%s", r.pretty())
     logger.info("\n")
-    logger.info("Solution:  %s", x_exact)
+    logger.info("Solution:  %s", model.x)
     logger.info("Error:     %.16e", error)
 
     assert r.jac < tol
@@ -181,17 +187,7 @@ def test_rosenbrock(a: float, b: float, tol: float) -> None:
 def test_exceptions() -> None:
     """Test that exceptions raised by the callbacks propagate cleanly."""
 
-    # {{{ setup
-
-    A: cg.Matrix = np.array([[4.0, 1.0], [1.0, 3.0]])  # ruff:ignore[non-lowercase-variable-in-function]
-    b: cg.Array = np.array([1.0, 2.0])
-    x0: cg.Array = np.array([2.0, 1.0])
-
-    def fun(x: cg.Array) -> float:
-        return (x @ (A @ x) - x @ b).item()
-
-    def jac(g: cg.Array, x: cg.Array) -> None:
-        g[...] = A @ x - b
+    model = Quadratic()
 
     # }}}
 
@@ -201,7 +197,7 @@ def test_exceptions() -> None:
         raise RuntimeError("value boom")
 
     with pytest.raises(RuntimeError, match="value boom"):
-        cg.minimize(fun=fun_raise, x0=x0, jac=jac, tol=1.0e-8)
+        cg.minimize(fun=fun_raise, x0=model.x0, jac=model.jac, tol=1.0e-8)
 
     # }}}
 
@@ -211,7 +207,7 @@ def test_exceptions() -> None:
         raise RuntimeError("grad boom")
 
     with pytest.raises(RuntimeError, match="grad boom"):
-        cg.minimize(fun=fun, x0=x0, jac=jac_raise, tol=1.0e-8)
+        cg.minimize(fun=model.fun, x0=model.x0, jac=jac_raise, tol=1.0e-8)
 
     # }}}
 
@@ -221,7 +217,9 @@ def test_exceptions() -> None:
         raise RuntimeError("funjac boom")
 
     with pytest.raises(RuntimeError, match="funjac boom"):
-        cg.minimize(fun=fun, x0=x0, jac=jac, funjac=funjac_raise, tol=1.0e-8)
+        cg.minimize(
+            fun=model.fun, x0=model.x0, jac=model.jac, funjac=funjac_raise, tol=1.0e-8
+        )
 
     # }}}
 
@@ -231,7 +229,13 @@ def test_exceptions() -> None:
         raise RuntimeError("callback boom")
 
     with pytest.raises(RuntimeError, match="callback boom"):
-        cg.minimize(fun=fun, x0=x0, jac=jac, tol=1.0e-8, callback=callback_raise)
+        cg.minimize(
+            fun=model.fun,
+            x0=model.x0,
+            jac=model.jac,
+            tol=1.0e-8,
+            callback=callback_raise,
+        )
 
     # }}}
 
@@ -244,10 +248,10 @@ def test_exceptions() -> None:
         if calls["n"] > 2:
             raise RuntimeError("mid-run boom")
 
-        return fun(x)
+        return model.fun(x)
 
     with pytest.raises(RuntimeError, match="mid-run boom"):
-        cg.minimize(fun=fun_midraise, x0=x0, jac=jac, tol=1.0e-8)
+        cg.minimize(fun=fun_midraise, x0=model.x0, jac=model.jac, tol=1.0e-8)
 
     # }}}
 
@@ -317,6 +321,97 @@ def test_status() -> None:
     assert "Stopped by user callback" in r.message
 
     # }}}
+
+
+# }}}
+
+
+# {{{ test_ndarray_strided
+
+
+def test_ndarray_strided() -> None:
+    """Test that non-contiguous (strided) input arrays are handled correctly."""
+
+    # {{{ setup
+
+    model = Quadratic()
+    x0: cg.Array = np.array([1.0, 42.0, 2.0, 43.0])[::2]
+    assert not x0.flags.c_contiguous
+    assert np.array_equal(x0, [1.0, 2.0])
+
+    first: dict[str, cg.Array] = {}
+
+    def fun_capture(x: cg.Array) -> float:
+        if "x" not in first:
+            first["x"] = x.copy()
+
+        return model.fun(x)
+
+    # }}}
+
+    # {{{ optimize
+
+    r = cg.minimize(fun=fun_capture, x0=x0, jac=model.jac, tol=1.0e-8)
+    logger.info("\n%s", r.pretty())
+
+    # }}}
+
+    # {{{ check
+
+    # the value function must see the logical (converted) input, not raw memory
+    assert np.array_equal(first["x"], [1.0, 2.0])
+    assert np.allclose(r.x, model.x)
+    assert r.x.dtype == np.float64
+    assert r.x.flags.c_contiguous
+
+    # }}}
+
+
+# }}}
+
+
+# {{{ test_ndarray_dtype_conversion
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.int64])
+def test_ndarray_dtype_conversion(dtype: np.dtype) -> None:
+    """Test that non-float64 input arrays are converted to float64."""
+
+    # {{{ setup
+
+    model = Quadratic()
+    x0: cg.Array = np.array([2.0, 1.0], dtype=dtype)
+
+    # }}}
+
+    # {{{ optimize
+
+    r = cg.minimize(fun=model.fun, x0=x0, jac=model.jac, tol=1.0e-8)
+    logger.info("\n%s", r.pretty())
+
+    # }}}
+
+    # {{{ check
+
+    assert r.x.dtype == np.float64
+    assert np.allclose(r.x, model.x)
+
+    # }}}
+
+
+# }}}
+
+
+# {{{ test_ndarray_list_rejected
+
+
+def test_ndarray_list_rejected() -> None:
+    """Test that plain Python sequences are rejected instead of converted."""
+
+    model = Quadratic()
+
+    with pytest.raises(TypeError):
+        cg.minimize(fun=model.fun, x0=[2.0, 1.0], jac=model.jac, tol=1.0e-8)  # ty: ignore[invalid-argument-type]
 
 
 # }}}
