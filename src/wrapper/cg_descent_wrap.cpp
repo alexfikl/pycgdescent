@@ -260,19 +260,22 @@ std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
     auto * user_valgrad_p = valgrad.has_value() ? user_valgrad : nullptr;
     auto * user_callback_p = callback.has_value() ? user_callback : nullptr;
 
-    status = cg_descent(
-        ptr,
-        n,
-        &stats.obj,
-        p,
-        grad_tol,
-        user_value,
-        user_grad,
-        user_valgrad_p,
-        user_callback_p,
-        workptr,
-        &w
-    );
+    {
+        nb::gil_scoped_release release;
+        status = cg_descent(
+            ptr,
+            n,
+            &stats.obj,
+            p,
+            grad_tol,
+            user_value,
+            user_grad,
+            user_valgrad_p,
+            user_callback_p,
+            workptr,
+            &w
+        );
+    }
 
     nb::capsule owner(ptr, [](void * p) noexcept { delete[] static_cast<double *>(p); });
     return std::make_tuple(cg::ndarray(ptr, {(size_t)n}, owner), std::move(stats), status);
