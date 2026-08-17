@@ -1,3 +1,24 @@
+pycgdescent 0.12.0 (August 17, 2026)
+------------------------------------
+
+**Dependencies**
+
+* Switch build from ``pybind11`` to ``nanobind``.
+* ``rich`` is now an official dependency (used for logging).
+
+**Bug Fixes**
+
+* Release GIL when calling into the low-level C ``cg_descent`` function.
+* Return an ``int`` from ``cg_descent`` so the status is correct.
+* Catch exceptions in Python callbacks (previously undefined behavior).
+
+**Maintenance**
+
+* Added a ``CITATION.cff`` file.
+* Updated typing stubs.
+* Update to newest ``ruff``, ``ty``, etc.
+* Build ``abi3`` wheels for Python 3.12+.
+
 pycgdescent 0.11.0 (March 9, 2026)
 ----------------------------------
 
