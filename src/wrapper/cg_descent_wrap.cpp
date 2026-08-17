@@ -177,8 +177,8 @@ class cg_iter_stats_wrapper {
 
 namespace cg {
 
-typedef nb::ndarray<nb::numpy, double> ndarray;
-typedef nb::ndarray<nb::numpy, const double> cndarray;
+typedef nb::ndarray<nb::numpy, double, nb::c_contig> ndarray;
+typedef nb::ndarray<nb::numpy, const double, nb::c_contig> cndarray;
 
 typedef std::function<double(cndarray)> value_fn;
 typedef std::function<void(ndarray, cndarray)> grad_fn;
