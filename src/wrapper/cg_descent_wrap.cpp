@@ -11,6 +11,7 @@
 #include <cstring>
 #include <functional>
 #include <iostream>
+#include <map>
 #include <optional>
 
 #include "cg_user.h"
@@ -18,11 +19,6 @@
 namespace nb = nanobind;
 
 // {{{ macros
-
-#define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE)                                   \
-    auto NAME = nb::ndarray<nb::numpy, double>(                                 \
-        RAWNAME, {(size_t)(SIZE)}, nb::capsule(RAWNAME, [](void *) noexcept {}) \
-    );
 
 #define DEF_RO_PROPERTY(NAME) def_prop_ro(#NAME, &cl::get_##NAME)
 
@@ -179,63 +175,107 @@ class cg_iter_stats_wrapper {
 namespace cg {
 
 typedef nb::ndarray<nb::numpy, double> ndarray;
+typedef nb::ndarray<nb::numpy, const double> cndarray;
 
-typedef std::function<double(cg::ndarray)> value_fn;
-typedef std::function<void(cg::ndarray, cg::ndarray)> grad_fn;
-typedef std::function<double(cg::ndarray, cg::ndarray)> valgrad_fn;
+typedef std::function<double(cndarray)> value_fn;
+typedef std::function<void(ndarray, cndarray)> grad_fn;
+typedef std::function<double(ndarray, cndarray)> valgrad_fn;
 typedef std::function<int(cg_iter_stats_wrapper &)> callback_fn;
 
 class FnWrapper {
    public:
-    FnWrapper(value_fn * value, grad_fn * grad, valgrad_fn * valgrad, callback_fn * callback)
-        : m_value(value), m_grad(grad), m_valgrad(valgrad), m_callback(callback) {};
+    FnWrapper(
+        value_fn value,
+        grad_fn grad,
+        std::optional<valgrad_fn> valgrad,
+        std::optional<callback_fn> callback
+    )
+        : m_value(std::move(value)),
+          m_grad(std::move(grad)),
+          m_valgrad(std::move(valgrad)),
+          m_callback(std::move(callback)) {};
 
-    ~FnWrapper() {};
+    // NOTE: C trampolines passed to cg_descent.
+    static double c_func_value(double * x, INT n, void * User) {
+        nb::gil_scoped_acquire acquire;
+        return static_cast<FnWrapper *>(User)->call_value(x, n);
+    }
 
-    value_fn * m_value;
-    grad_fn * m_grad;
-    valgrad_fn * m_valgrad;
-    callback_fn * m_callback;
+    static void c_func_grad(double * g, double * x, INT n, void * User) {
+        nb::gil_scoped_acquire acquire;
+        static_cast<FnWrapper *>(User)->call_grad(g, x, n);
+    }
+
+    static double c_func_valgrad(double * g, double * x, INT n, void * User) {
+        nb::gil_scoped_acquire acquire;
+        return static_cast<FnWrapper *>(User)->call_valgrad(g, x, n);
+    }
+
+    static int c_func_callback(cg_iter_stats * IterStats, void * User) {
+        nb::gil_scoped_acquire acquire;
+        return static_cast<FnWrapper *>(User)->call_callback(IterStats);
+    }
+
+    // NOTE: function calls
+    double call_value(double * x, size_t n) {
+        return m_value(view_const(x, n));
+    }
+
+    void call_grad(double * g, double * x, size_t n) {
+        m_grad(view(g, n), view_const(x, n));
+    }
+
+    double call_valgrad(double * g, double * x, size_t n) {
+        return m_valgrad.value()(view(g, n), view_const(x, n));
+    }
+
+    int call_callback(cg_iter_stats * IterStats) {
+        cg_iter_stats_wrapper wi(IterStats);
+        return m_callback.value()(wi);
+    }
+
+   private:
+    ndarray view(double * ptr, size_t n) {
+        auto it = m_views.find(ptr);
+        if (it == m_views.end()) {
+            auto [res, _] = m_views.emplace(
+                ptr, ndarray(ptr, {(size_t)n}, nb::capsule(ptr, [](void *) noexcept {}))
+            );
+            it = res;
+        }
+
+        return it->second;
+    }
+
+    cndarray view_const(double * ptr, size_t n) {
+        auto it = m_const_views.find(ptr);
+        if (it == m_const_views.end()) {
+            auto [res, _] = m_const_views.emplace(
+                ptr, cndarray(ptr, {(size_t)n}, nb::capsule(ptr, [](void *) noexcept {}))
+            );
+            it = res;
+        }
+
+        return it->second;
+    }
+
+    value_fn m_value;
+    grad_fn m_grad;
+    std::optional<valgrad_fn> m_valgrad;
+    std::optional<callback_fn> m_callback;
+
+    std::map<double *, ndarray> m_views;
+    std::map<double *, cndarray> m_const_views;
 };
 
 };  // namespace cg
-
-double user_value(double * _x, INT n, void * User) {
-    cg::FnWrapper * w = static_cast<cg::FnWrapper *>(User);
-    WRAP_RAW_POINTER(x, _x, n);
-
-    return (*w->m_value)(x);
-}
-
-void user_grad(double * _g, double * _x, INT n, void * User) {
-    cg::FnWrapper * w = static_cast<cg::FnWrapper *>(User);
-    WRAP_RAW_POINTER(g, _g, n);
-    WRAP_RAW_POINTER(x, _x, n);
-
-    (*w->m_grad)(g, x);
-}
-
-double user_valgrad(double * _g, double * _x, INT n, void * User) {
-    cg::FnWrapper * w = static_cast<cg::FnWrapper *>(User);
-    WRAP_RAW_POINTER(g, _g, n);
-    WRAP_RAW_POINTER(x, _x, n);
-
-    return (*w->m_valgrad)(g, x);
-}
-
-int user_callback(cg_iter_stats * IterStats, void * User) {
-    cg::FnWrapper * w = static_cast<cg::FnWrapper *>(User);
-    cg_iter_stats_wrapper wi(IterStats);
-
-    return (*w->m_callback)(wi);
-}
 
 std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
     cg::ndarray x,
     double grad_tol,
     std::optional<cg_parameter_wrapper *> param,
-    cg::value_fn & value,
-    cg::grad_fn & grad,
+    cg::value_fn value,
+    cg::grad_fn grad,
     std::optional<cg::valgrad_fn> valgrad,
     std::optional<cg::callback_fn> callback,
     std::optional<cg::ndarray> work
@@ -251,14 +291,10 @@ std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
     auto xptr = static_cast<double *>(x.data());
     std::memcpy(ptr, xptr, n * sizeof(double));
 
-    cg::FnWrapper w(
-        &value,
-        &grad,
-        valgrad.has_value() ? &valgrad.value() : nullptr,
-        callback.has_value() ? &callback.value() : nullptr
-    );
-    auto * user_valgrad_p = valgrad.has_value() ? user_valgrad : nullptr;
-    auto * user_callback_p = callback.has_value() ? user_callback : nullptr;
+    auto * c_func_valgrad = valgrad.has_value() ? &cg::FnWrapper::c_func_valgrad : nullptr;
+    auto * c_func_callback = callback.has_value() ? &cg::FnWrapper::c_func_callback : nullptr;
+
+    cg::FnWrapper fns(std::move(value), std::move(grad), std::move(valgrad), std::move(callback));
 
     {
         nb::gil_scoped_release release;
@@ -268,12 +304,12 @@ std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
             &stats.obj,
             p,
             grad_tol,
-            user_value,
-            user_grad,
-            user_valgrad_p,
-            user_callback_p,
+            &cg::FnWrapper::c_func_value,
+            &cg::FnWrapper::c_func_grad,
+            c_func_valgrad,
+            c_func_callback,
             workptr,
-            &w
+            &fns
         );
     }
 
