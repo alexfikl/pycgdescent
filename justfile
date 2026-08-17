@@ -104,11 +104,11 @@ requirements_txt:
         -o requirements.txt pyproject.toml
 
 [doc("Update wrap files")]
-wrap_update:
+nanobind_wrap:
     meson wrap update
 
 [doc("Pin dependency versions to requirements.txt")]
-pin: requirements_txt requirements_test_txt requirements_build_txt
+pin: nanobind_wrap requirements_txt requirements_test_txt requirements_build_txt
 
 # }}}
 # {{{ develop
