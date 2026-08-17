@@ -3,7 +3,7 @@ project(
     'c',
     'cpp',
     license: 'GPL-2.0-or-later',
-    meson_version: '>=1.1.0',
+    meson_version: '>=1.3.0',
     default_options: ['buildtype=release', 'warning_level=2', 'cpp_std=c++17'],
     subproject_dir: 'src/subprojects',
 )
@@ -29,6 +29,7 @@ py.extension_module(
     ['src/wrapper/cg_descent.c', 'src/wrapper/cg_descent_wrap.cpp'],
     dependencies: [nanobind_dep, blas_dep],
     c_args: ['-Wno-maybe-uninitialized'],
+    limited_api: '3.12',
     install: true,
     subdir: 'pycgdescent',
 )
