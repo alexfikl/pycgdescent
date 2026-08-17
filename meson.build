@@ -12,6 +12,11 @@ py_mod = import('python')
 py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
+c_args = []
+if meson.get_compiler('c').get_id() == 'gcc'
+    c_args += ['-Wno-maybe-uninitialized']
+endif
+
 nanobind_dep = dependency('nanobind')
 if get_option('use-blas')
     blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'], required: false)
@@ -28,7 +33,7 @@ py.extension_module(
     '_cg_descent',
     ['src/wrapper/cg_descent.c', 'src/wrapper/cg_descent_wrap.cpp'],
     dependencies: [nanobind_dep, blas_dep],
-    c_args: ['-Wno-maybe-uninitialized'],
+    c_args: c_args,
     limited_api: '3.12',
     install: true,
     subdir: 'pycgdescent',
