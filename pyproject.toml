@@ -37,6 +37,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=2.1",
+    "rich>=14",
     "typing-extensions>=4.10",
 ]
 # NOTE: this is only here for readthedocs (keep in sync with the dependency group)
