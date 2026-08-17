@@ -28,7 +28,7 @@ algorithm by Hager and Zhang (published `here <https://doi.org/10.1145/1132973.1
 A previous wrapper can be found `here <https://github.com/martiniani-lab/PyCG_DESCENT>`__.
 Some differences:
 
-* This one only depends on `pybind11 <https://github.com/pybind/pybind11>`__.
+* This one only depends on `nanobind <https://github.com/wjakob/nanobind>`__.
 * Tries to emulate the interface of `scipy.optimize.minimize <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html>`__
   (still needs work).
 
