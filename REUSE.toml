@@ -40,3 +40,9 @@ path = "patches/**.patch"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022 Alexandru Fikl <alexfikl@gmail.com>"
 SPDX-License-Identifier = "GPL-2.0-or-later"
+
+[[annotations]]
+path = "src/subprojects/*.wrap"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "The Meson Team"
+SPDX-License-Identifier = "MIT"
