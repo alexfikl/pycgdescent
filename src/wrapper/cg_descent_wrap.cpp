@@ -40,8 +40,8 @@ namespace nb = nanobind;
     };
 
 #define CLASS_RO_ARRAY_PROPERTY(NAME, TYPE)                                          \
-    nb::ndarray<nb::numpy, double> get_##NAME() const {                              \
-        return nb::ndarray<nb::numpy, double>(                                       \
+    nb::ndarray<nb::numpy, const double> get_##NAME() const {                        \
+        return nb::ndarray<nb::numpy, const double>(                                 \
             obj.NAME, {(size_t)obj.n}, nb::capsule(obj.NAME, [](void *) noexcept {}) \
         );                                                                           \
     };
@@ -197,6 +197,8 @@ class FnWrapper {
 
     // NOTE: C trampolines passed to cg_descent.
     static double c_func_value(double * x, INT n, void * User) {
+        // NOTE: the call to cg_descent released the GIL, so we need to re-acquire
+        // it before calling back into Python to avoid fun crashes.
         nb::gil_scoped_acquire acquire;
         return static_cast<FnWrapper *>(User)->call_value(x, n);
     }
@@ -270,7 +272,7 @@ class FnWrapper {
 
 };  // namespace cg
 
-std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
+std::tuple<cg::ndarray, cg_stats_wrapper, int> cg_descent_wrapper(
     cg::ndarray x,
     double grad_tol,
     std::optional<cg_parameter_wrapper *> param,
@@ -321,8 +323,8 @@ std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
 
 // {{{ cg_default wrapper
 
-void cg_default_wrapper(nb::object param) {
-    cg_default(&nb::cast<cg_parameter_wrapper *>(param)->obj);
+void cg_default_wrapper(cg_parameter_wrapper * param) {
+    cg_default(&param->obj);
 }
 
 // }}}
