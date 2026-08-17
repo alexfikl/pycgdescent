@@ -103,6 +103,10 @@ requirements_txt:
     uv pip compile --upgrade --universal --python-version "3.10" \
         -o requirements.txt pyproject.toml
 
+[doc("Update wrap files")]
+wrap_update:
+    meson wrap update
+
 [doc("Pin dependency versions to requirements.txt")]
 pin: requirements_txt requirements_test_txt requirements_build_txt
 
@@ -118,6 +122,11 @@ develop:
         --no-build-isolation \
         --config-settings setup-args="-Duse-blas=true" \
         --editable .
+
+[doc("Download and install wrap files")]
+wrap-install:
+    mkdir -p src/subprojects
+    meson wrap install nanobind robin-map
 
 [doc("Editable install using pinned dependencies from requirements-test.txt")]
 ci-install venv=".venv":
