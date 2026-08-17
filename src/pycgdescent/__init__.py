@@ -40,15 +40,12 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from importlib import metadata
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, cast
+from typing import Any, ClassVar, TypeAlias
 
 import numpy as np
 from typing_extensions import override
 
 import pycgdescent._cg_descent as _cg
-
-if TYPE_CHECKING:
-    from numpy.typing import ArrayLike
 
 __version__ = metadata.version("pycgdescent")
 
@@ -84,19 +81,7 @@ def cg_descent(
     if param is None:
         param = _cg.cg_parameter()
 
-    return _cg.cg_descent(
-        x,
-        grad_tol,
-        param,
-        # NOTE: these are needed because pybind11_stubgen generated wider annotations
-        # for `cg_descent()` (and Callable is contravariant). Ideally, we could
-        # trick it into generating narrower annotations, but for now this will do.
-        cast("Callable[[ArrayLike], float]", value),
-        cast("Callable[[ArrayLike, ArrayLike], None]", grad),
-        cast("Callable[[ArrayLike, ArrayLike], float] | None", valgrad),
-        callback,
-        work,
-    )
+    return _cg.cg_descent(x, grad_tol, param, value, grad, valgrad, callback, work)
 
 
 # }}}
@@ -732,14 +717,7 @@ def minimize(
     # {{{ optimize
 
     x, stats, status = _cg.cg_descent(
-        x0,
-        tol,
-        param,
-        cast("Callable[[ArrayLike], float]", fun),
-        cast("Callable[[ArrayLike, ArrayLike], None]", jac),
-        cast("Callable[[ArrayLike, ArrayLike], float] | None", funjac),
-        wrap_callback(callback),
-        work,
+        x0, tol, param, fun, jac, funjac, wrap_callback(callback), work
     )
 
     # }}}
