@@ -3,7 +3,6 @@ build-backend = "mesonpy"
 requires = [
     "meson-python>=0.14",
     "ninja",
-    "pybind11>=2.6",
 ]
 
 [project]
@@ -50,7 +49,7 @@ urls.Documentation = "https://pycgdescent.readthedocs.io"
 urls.Repository = "https://github.com/alexfikl/pycgdescent"
 
 [dependency-groups]
-dev = [ "pyproject-fmt", "reuse", "typos", "uv" ]
+dev = [ "nanobind", "pyproject-fmt", "reuse", "typos", "uv" ]
 # NOTE: typing dependencies: matplotlib, rich
 test = [ "matplotlib", "pytest", "pytest-github-actions-annotate-failures", "rich", "ruff", "ty" ]
 docs = [ "sphinx>=6", "sphinx-autoapi", "sphinx-book-theme" ]

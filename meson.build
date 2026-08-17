@@ -5,13 +5,14 @@ project(
     license: 'GPL-2.0-or-later',
     meson_version: '>=1.1.0',
     default_options: ['buildtype=release', 'warning_level=2', 'cpp_std=c++17'],
+    subproject_dir: 'src/subprojects',
 )
 
 py_mod = import('python')
 py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
-pybind11_dep = dependency('pybind11', version: '>=2.11.0')
+nanobind_dep = dependency('nanobind')
 if get_option('use-blas')
     blas_dep = dependency(['openblas', 'OpenBLAS', 'cblas'], required: false)
     if not blas_dep.found()
@@ -26,7 +27,7 @@ endif
 py.extension_module(
     '_cg_descent',
     ['src/wrapper/cg_descent.c', 'src/wrapper/cg_descent_wrap.cpp'],
-    dependencies: [pybind11_dep, blas_dep],
+    dependencies: [nanobind_dep, blas_dep],
     c_args: ['-Wno-maybe-uninitialized'],
     install: true,
     subdir: 'pycgdescent',

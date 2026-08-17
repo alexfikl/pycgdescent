@@ -2,10 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
-#include <pybind11/functional.h>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <nanobind/nanobind.h>
+#include <nanobind/ndarray.h>
+#include <nanobind/stl/function.h>
+#include <nanobind/stl/optional.h>
+#include <nanobind/stl/tuple.h>
 
 #include <cstring>
 #include <functional>
@@ -14,17 +15,20 @@
 
 #include "cg_user.h"
 
-namespace py = pybind11;
+namespace nb = nanobind;
 
 // {{{ macros
 
-#define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE)                                  \
-    auto NAME = py::array(SIZE, RAWNAME, py::capsule(RAWNAME, [](void *) {})); \
-    assert(!NAME.owndata())
+#define WRAP_RAW_POINTER(NAME, RAWNAME, SIZE)                                   \
+    auto NAME = nb::ndarray<nb::numpy, double>(                                 \
+        RAWNAME, {(size_t)(SIZE)}, nb::capsule(RAWNAME, [](void *) noexcept {}) \
+    );
 
-#define DEF_RO_PROPERTY(NAME) def_property_readonly(#NAME, &cl::get_##NAME)
+#define DEF_RO_PROPERTY(NAME) def_prop_ro(#NAME, &cl::get_##NAME)
 
-#define DEF_PROPERTY(NAME) def_property(#NAME, &cl::get_##NAME, &cl::set_##NAME)
+#define DEF_RO_ARRAY_PROPERTY(NAME) def_prop_ro(#NAME, &cl::get_##NAME, nb::rv_policy::automatic)
+
+#define DEF_PROPERTY(NAME) def_prop_rw(#NAME, &cl::get_##NAME, &cl::set_##NAME)
 
 #define CLASS_PROPERTY(NAME, TYPE)     \
     TYPE get_##NAME() const noexcept { \
@@ -39,10 +43,11 @@ namespace py = pybind11;
         return obj.NAME;               \
     };
 
-#define CLASS_RO_ARRAY_PROPERTY(NAME, TYPE)      \
-    py::array get_##NAME() const {               \
-        WRAP_RAW_POINTER(NAME, obj.NAME, obj.n); \
-        return NAME;                             \
+#define CLASS_RO_ARRAY_PROPERTY(NAME, TYPE)                                          \
+    nb::ndarray<nb::numpy, double> get_##NAME() const {                              \
+        return nb::ndarray<nb::numpy, double>(                                       \
+            obj.NAME, {(size_t)obj.n}, nb::capsule(obj.NAME, [](void *) noexcept {}) \
+        );                                                                           \
     };
 
 // }}}
@@ -146,7 +151,7 @@ class cg_stats_wrapper {
 
 // }}}
 
-// {{{ cg_iter_stats_wrapper
+// {{{ cg_iter_stats wrapper
 
 class cg_iter_stats_wrapper {
    public:
@@ -173,11 +178,11 @@ class cg_iter_stats_wrapper {
 
 namespace cg {
 
-typedef py::array_t<double, py::array::c_style | py::array::forcecast> array;
+typedef nb::ndarray<nb::numpy, double> ndarray;
 
-typedef std::function<double(array)> value_fn;
-typedef std::function<void(array, array)> grad_fn;
-typedef std::function<double(array, array)> valgrad_fn;
+typedef std::function<double(cg::ndarray)> value_fn;
+typedef std::function<void(cg::ndarray, cg::ndarray)> grad_fn;
+typedef std::function<double(cg::ndarray, cg::ndarray)> valgrad_fn;
 typedef std::function<int(cg_iter_stats_wrapper &)> callback_fn;
 
 class FnWrapper {
@@ -225,26 +230,25 @@ int user_callback(cg_iter_stats * IterStats, void * User) {
     return (*w->m_callback)(wi);
 }
 
-std::tuple<cg::array, cg_stats_wrapper, bool> cg_descent_wrapper(
-    cg::array x,
+std::tuple<cg::ndarray, cg_stats_wrapper, bool> cg_descent_wrapper(
+    cg::ndarray x,
     double grad_tol,
     std::optional<cg_parameter_wrapper *> param,
     cg::value_fn & value,
     cg::grad_fn & grad,
     std::optional<cg::valgrad_fn> valgrad,
     std::optional<cg::callback_fn> callback,
-    std::optional<cg::array> work
+    std::optional<cg::ndarray> work
 ) {
     int status = 0;
     cg_stats_wrapper stats = cg_stats_wrapper();
     cg_parameter * p = param.has_value() ? &param.value()->obj : nullptr;
-    double * workptr =
-        (work.has_value() ? static_cast<double *>(work.value().request().ptr) : nullptr);
+    double * workptr = (work.has_value() ? static_cast<double *>(work.value().data()) : nullptr);
 
-    int n = x.shape(0);
+    int n = (int)x.shape(0);
     double * ptr = new double[n];
 
-    auto xptr = static_cast<double *>(x.request().ptr);
+    auto xptr = static_cast<double *>(x.data());
     std::memcpy(ptr, xptr, n * sizeof(double));
 
     cg::FnWrapper w(
@@ -270,25 +274,25 @@ std::tuple<cg::array, cg_stats_wrapper, bool> cg_descent_wrapper(
         &w
     );
 
-    py::capsule owner(ptr, [](void * p) { delete[] static_cast<double *>(p); });
-    return std::make_tuple(cg::array(n, ptr, owner), std::move(stats), status);
+    nb::capsule owner(ptr, [](void * p) noexcept { delete[] static_cast<double *>(p); });
+    return std::make_tuple(cg::ndarray(ptr, {(size_t)n}, owner), std::move(stats), status);
 }
 
 // }}}
 
 // {{{ cg_default wrapper
 
-void cg_default_wrapper(py::object param) {
-    cg_default(&param.cast<cg_parameter_wrapper *>()->obj);
+void cg_default_wrapper(nb::object param) {
+    cg_default(&nb::cast<cg_parameter_wrapper *>(param)->obj);
 }
 
 // }}}
 
-PYBIND11_MODULE(_cg_descent, m) {
+NB_MODULE(_cg_descent, m) {
     {
         typedef cg_parameter_wrapper cl;
-        py::class_<cl>(m, "cg_parameter")
-            .def(py::init())
+        nb::class_<cl>(m, "cg_parameter")
+            .def(nb::init<>())
             .DEF_PROPERTY(PrintFinal)
             .DEF_PROPERTY(PrintLevel)
             .DEF_PROPERTY(PrintParms)
@@ -350,7 +354,7 @@ PYBIND11_MODULE(_cg_descent, m) {
 
     {
         typedef cg_stats_wrapper cl;
-        py::class_<cl>(m, "cg_stats")
+        nb::class_<cl>(m, "cg_stats")
             .DEF_RO_PROPERTY(f)
             .DEF_RO_PROPERTY(gnorm)
             .DEF_RO_PROPERTY(iter)
@@ -362,27 +366,26 @@ PYBIND11_MODULE(_cg_descent, m) {
 
     {
         typedef cg_iter_stats_wrapper cl;
-        py::class_<cl>(m, "cg_iter_stats")
+        nb::class_<cl>(m, "cg_iter_stats")
             .DEF_RO_PROPERTY(iter)
             .DEF_RO_PROPERTY(alpha)
-            .DEF_RO_PROPERTY(x)
+            .DEF_RO_ARRAY_PROPERTY(x)
             .DEF_RO_PROPERTY(f)
-            .DEF_RO_PROPERTY(g)
-            .DEF_RO_PROPERTY(d);
+            .DEF_RO_ARRAY_PROPERTY(g)
+            .DEF_RO_ARRAY_PROPERTY(d);
     }
 
     m.def("cg_default", &cg_default_wrapper);
     m.def(
         "cg_descent",
         &cg_descent_wrapper,
-        py::arg("x").none(false),
-        py::arg("grad_tol").none(false),
-        py::arg("param").none(true),
-        py::arg("value").none(false),
-        py::arg("grad").none(false),
-        py::arg("valgrad").none(true),
-        py::arg("callback").none(true),
-        py::arg("work").none(true),
-        py::return_value_policy::take_ownership
+        nb::arg("x").none(false),
+        nb::arg("grad_tol").none(false),
+        nb::arg("param").none(true),
+        nb::arg("value").none(false),
+        nb::arg("grad").none(false),
+        nb::arg("valgrad").none(true),
+        nb::arg("callback").none(true),
+        nb::arg("work").none(true)
     );
 }
