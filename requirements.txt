@@ -10,7 +10,7 @@ numpy==2.4.6 ; python_full_version == '3.11.*'
     # via pycgdescent (pyproject.toml)
 numpy==2.5.2 ; python_full_version >= '3.12'
     # via pycgdescent (pyproject.toml)
-pygments==2.20.0
+pygments==2.21.0
     # via rich
 rich==15.0.0
     # via pycgdescent (pyproject.toml)

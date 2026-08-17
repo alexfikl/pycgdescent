@@ -47,7 +47,7 @@ pillow==12.3.0
     # via matplotlib
 pluggy==1.6.0
     # via pytest
-pygments==2.20.0
+pygments==2.21.0
     # via
     #   pytest
     #   rich
