@@ -153,10 +153,10 @@ ci-install venv=".venv":
 
 [doc("Generate typing stubs for binary module")]
 stubgen:
-    {{ PYTHON }} -m pybind11_stubgen \
-        --numpy-array-use-type-var \
-        --output src \
-        pycgdescent._cg_descent
+    {{ PYTHON }} -m nanobind.stubgen \
+        -i src \
+        -m pycgdescent._cg_descent \
+        -o src/pycgdescent/_cg_descent.pyi
     @ruff format --quiet src/pycgdescent/_cg_descent.pyi
 
 [doc("Remove various build artifacts")]
