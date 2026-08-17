@@ -76,7 +76,7 @@ def cg_descent(
     callback: Callable[[_cg.cg_iter_stats], int] | None = None,
     work: Array | None = None,
     param: _cg.cg_parameter | None = None,
-) -> tuple[Array, _cg.cg_stats, bool]:
+) -> tuple[Array, _cg.cg_stats, int]:
     """A thin wrapper around the original ``cg_descent`` implementation."""
     if param is None:
         param = _cg.cg_parameter()
@@ -726,7 +726,7 @@ def minimize(
         x=x,
         success=status == 0,
         status=int(status),
-        message=STATUS_TO_MESSAGE[status],
+        message=STATUS_TO_MESSAGE.get(int(status), f"Unknown status: {int(status)}"),
         fun=stats.f,
         jac=stats.gnorm,
         nfev=stats.nfunc,
