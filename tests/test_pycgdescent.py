@@ -175,6 +175,153 @@ def test_rosenbrock(a: float, b: float, tol: float) -> None:
 # }}}
 
 
+# {{{ test_exceptions
+
+
+def test_exceptions() -> None:
+    """Test that exceptions raised by the callbacks propagate cleanly."""
+
+    # {{{ setup
+
+    A: cg.Matrix = np.array([[4.0, 1.0], [1.0, 3.0]])  # ruff:ignore[non-lowercase-variable-in-function]
+    b: cg.Array = np.array([1.0, 2.0])
+    x0: cg.Array = np.array([2.0, 1.0])
+
+    def fun(x: cg.Array) -> float:
+        return (x @ (A @ x) - x @ b).item()
+
+    def jac(g: cg.Array, x: cg.Array) -> None:
+        g[...] = A @ x - b
+
+    # }}}
+
+    # {{{ value
+
+    def fun_raise(x: cg.Array) -> float:
+        raise RuntimeError("value boom")
+
+    with pytest.raises(RuntimeError, match="value boom"):
+        cg.minimize(fun=fun_raise, x0=x0, jac=jac, tol=1.0e-8)
+
+    # }}}
+
+    # {{{ grad
+
+    def jac_raise(g: cg.Array, x: cg.Array) -> None:
+        raise RuntimeError("grad boom")
+
+    with pytest.raises(RuntimeError, match="grad boom"):
+        cg.minimize(fun=fun, x0=x0, jac=jac_raise, tol=1.0e-8)
+
+    # }}}
+
+    # {{{ funjac
+
+    def funjac_raise(g: cg.Array, x: cg.Array) -> float:
+        raise RuntimeError("funjac boom")
+
+    with pytest.raises(RuntimeError, match="funjac boom"):
+        cg.minimize(fun=fun, x0=x0, jac=jac, funjac=funjac_raise, tol=1.0e-8)
+
+    # }}}
+
+    # {{{ callback
+
+    def callback_raise(info: cg.CallbackInfo) -> int:
+        raise RuntimeError("callback boom")
+
+    with pytest.raises(RuntimeError, match="callback boom"):
+        cg.minimize(fun=fun, x0=x0, jac=jac, tol=1.0e-8, callback=callback_raise)
+
+    # }}}
+
+    # {{{ mid-run
+
+    calls: dict[str, int] = {"n": 0}
+
+    def fun_midraise(x: cg.Array) -> float:
+        calls["n"] += 1
+        if calls["n"] > 2:
+            raise RuntimeError("mid-run boom")
+
+        return fun(x)
+
+    with pytest.raises(RuntimeError, match="mid-run boom"):
+        cg.minimize(fun=fun_midraise, x0=x0, jac=jac, tol=1.0e-8)
+
+    # }}}
+
+
+# }}}
+
+
+# {{{ test_status
+
+
+def test_status() -> None:
+    """Test that the termination status is returned as an exact int code."""
+
+    # {{{ setup
+
+    A: cg.Matrix = np.array([[4.0, 1.0], [1.0, 3.0]])  # ruff:ignore[non-lowercase-variable-in-function]
+    b: cg.Array = np.array([1.0, 2.0])
+    x0: cg.Array = np.array([2.0, 1.0])
+
+    def fun(x: cg.Array) -> float:
+        return (x @ (A @ x) - x @ b).item()
+
+    def jac(g: cg.Array, x: cg.Array) -> None:
+        g[...] = A @ x - b
+
+    # }}}
+
+    # {{{ success
+
+    r = cg.minimize(fun=fun, x0=x0, jac=jac, tol=1.0e-8)
+    assert r.success
+    assert r.status == 0
+    assert "Convergence" in r.message
+
+    # }}}
+
+    # {{{ maxit
+
+    options = cg.OptimizeOptions(maxit=1)
+    r = cg.minimize(fun=fun, x0=x0, jac=jac, tol=1.0e-12, options=options)
+    assert not r.success
+    assert r.status == 2
+    assert "Maximum number of iterations" in r.message
+
+    # }}}
+
+    # {{{ nan
+
+    def fun_nan(x: cg.Array) -> float:
+        return float("nan")
+
+    r = cg.minimize(fun=fun_nan, x0=x0, jac=jac, tol=1.0e-8)
+    assert not r.success
+    assert r.status == 11
+    assert "NaN or Inf" in r.message
+
+    # }}}
+
+    # {{{ callback stop
+
+    def callback_stop(info: cg.CallbackInfo) -> int:
+        return 0
+
+    r = cg.minimize(fun=fun, x0=x0, jac=jac, tol=1.0e-8, callback=callback_stop)
+    assert not r.success
+    assert r.status == 13
+    assert "Stopped by user callback" in r.message
+
+    # }}}
+
+
+# }}}
+
+
 if __name__ == "__main__":
     import sys
 
