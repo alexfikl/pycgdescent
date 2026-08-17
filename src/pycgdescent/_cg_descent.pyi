@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Annotated
 
 import numpy
 from numpy.typing import NDArray
@@ -248,22 +249,35 @@ class cg_iter_stats:
     @property
     def alpha(self) -> float: ...
     @property
-    def x(self) -> NDArray[numpy.float64]: ...
+    def x(self) -> Annotated[NDArray[numpy.float64], dict(writable=False)]: ...
     @property
     def f(self) -> float: ...
     @property
-    def g(self) -> NDArray[numpy.float64]: ...
+    def g(self) -> Annotated[NDArray[numpy.float64], dict(writable=False)]: ...
     @property
-    def d(self) -> NDArray[numpy.float64]: ...
+    def d(self) -> Annotated[NDArray[numpy.float64], dict(writable=False)]: ...
 
-def cg_default(arg: object, /) -> None: ...
+def cg_default(arg: cg_parameter, /) -> None: ...
 def cg_descent(
     x: NDArray[numpy.float64],
     grad_tol: float,
     param: cg_parameter | None,
-    value: Callable[[NDArray[numpy.float64]], float],
-    grad: Callable[[NDArray[numpy.float64], NDArray[numpy.float64]], None],
-    valgrad: Callable[[NDArray[numpy.float64], NDArray[numpy.float64]], float] | None,
+    value: Callable[[Annotated[NDArray[numpy.float64], dict(writable=False)]], float],
+    grad: Callable[
+        [
+            NDArray[numpy.float64],
+            Annotated[NDArray[numpy.float64], dict(writable=False)],
+        ],
+        None,
+    ],
+    valgrad: Callable[
+        [
+            NDArray[numpy.float64],
+            Annotated[NDArray[numpy.float64], dict(writable=False)],
+        ],
+        float,
+    ]
+    | None,
     callback: Callable[[cg_iter_stats], int] | None,
     work: NDArray[numpy.float64] | None,
-) -> tuple[NDArray[numpy.float64], cg_stats, bool]: ...
+) -> tuple[NDArray[numpy.float64], cg_stats, int]: ...
