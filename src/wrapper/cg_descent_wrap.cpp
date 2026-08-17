@@ -8,10 +8,13 @@
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/tuple.h>
 
+#include <cmath>
 #include <cstring>
+#include <exception>
 #include <functional>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <optional>
 
 #include "cg_user.h"
@@ -197,25 +200,34 @@ class FnWrapper {
 
     // NOTE: C trampolines passed to cg_descent.
     static double c_func_value(double * x, INT n, void * User) {
-        // NOTE: the call to cg_descent released the GIL, so we need to re-acquire
-        // it before calling back into Python to avoid fun crashes.
-        nb::gil_scoped_acquire acquire;
-        return static_cast<FnWrapper *>(User)->call_value(x, n);
+        auto * w = static_cast<FnWrapper *>(User);
+        return w->guarded([w, x, n] { return w->call_value(x, n); }, [] { return NAN; });
     }
 
     static void c_func_grad(double * g, double * x, INT n, void * User) {
-        nb::gil_scoped_acquire acquire;
-        static_cast<FnWrapper *>(User)->call_grad(g, x, n);
+        auto * w = static_cast<FnWrapper *>(User);
+        w->guarded([w, g, x, n] { w->call_grad(g, x, n); }, [w, g, n] { poison(g, n); });
     }
 
     static double c_func_valgrad(double * g, double * x, INT n, void * User) {
-        nb::gil_scoped_acquire acquire;
-        return static_cast<FnWrapper *>(User)->call_valgrad(g, x, n);
+        auto * w = static_cast<FnWrapper *>(User);
+        return w->guarded(
+            [w, g, x, n] { return w->call_valgrad(g, x, n); },
+            [w, g, n] {
+                poison(g, n);
+                return NAN;
+            }
+        );
     }
 
     static int c_func_callback(cg_iter_stats * IterStats, void * User) {
-        nb::gil_scoped_acquire acquire;
-        return static_cast<FnWrapper *>(User)->call_callback(IterStats);
+        auto * w = static_cast<FnWrapper *>(User);
+        return w->guarded([w, IterStats] { return w->call_callback(IterStats); }, [] { return 0; });
+    }
+
+    void rethrow() const {
+        if (m_error)
+            std::rethrow_exception(m_error);
     }
 
     // NOTE: function calls
@@ -237,6 +249,29 @@ class FnWrapper {
     }
 
    private:
+    // NOTE: wrap the C shims to
+    // 1. Re-acquire the GIL after cg_descent releases it.
+    // 2. Catch an exception and hold it (returns NaN if any exception was caught).
+    template <typename Fn, typename OnError>
+    auto guarded(Fn && fn, OnError && on_error) -> decltype(fn()) {
+        nb::gil_scoped_acquire acquire;
+
+        if (m_error)
+            return on_error();
+
+        try {
+            return fn();
+        } catch (...) {
+            m_error = std::current_exception();
+            return on_error();
+        }
+    }
+
+    static void poison(double * g, size_t n) {
+        for (size_t i = 0; i < n; ++i)
+            g[i] = NAN;
+    }
+
     ndarray view(double * ptr, size_t n) {
         auto it = m_views.find(ptr);
         if (it == m_views.end()) {
@@ -268,6 +303,7 @@ class FnWrapper {
 
     std::map<double *, ndarray> m_views;
     std::map<double *, cndarray> m_const_views;
+    std::exception_ptr m_error;
 };
 
 };  // namespace cg
@@ -288,10 +324,10 @@ std::tuple<cg::ndarray, cg_stats_wrapper, int> cg_descent_wrapper(
     double * workptr = (work.has_value() ? static_cast<double *>(work.value().data()) : nullptr);
 
     int n = (int)x.shape(0);
-    double * ptr = new double[n];
+    std::unique_ptr<double[]> ptr(new double[n]);
 
     auto xptr = static_cast<double *>(x.data());
-    std::memcpy(ptr, xptr, n * sizeof(double));
+    std::memcpy(ptr.get(), xptr, n * sizeof(double));
 
     auto * c_func_valgrad = valgrad.has_value() ? &cg::FnWrapper::c_func_valgrad : nullptr;
     auto * c_func_callback = callback.has_value() ? &cg::FnWrapper::c_func_callback : nullptr;
@@ -301,7 +337,7 @@ std::tuple<cg::ndarray, cg_stats_wrapper, int> cg_descent_wrapper(
     {
         nb::gil_scoped_release release;
         status = cg_descent(
-            ptr,
+            ptr.get(),
             n,
             &stats.obj,
             p,
@@ -315,8 +351,13 @@ std::tuple<cg::ndarray, cg_stats_wrapper, int> cg_descent_wrapper(
         );
     }
 
-    nb::capsule owner(ptr, [](void * p) noexcept { delete[] static_cast<double *>(p); });
-    return std::make_tuple(cg::ndarray(ptr, {(size_t)n}, owner), std::move(stats), status);
+    // NOTE: propagate any exception captured by the callbacks.
+    fns.rethrow();
+
+    nb::capsule owner(ptr.get(), [](void * p) noexcept { delete[] static_cast<double *>(p); });
+    return std::make_tuple(
+        cg::ndarray(ptr.release(), {(size_t)n}, owner), std::move(stats), status
+    );
 }
 
 // }}}
