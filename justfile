@@ -131,10 +131,10 @@ ci-install venv=".venv":
     fi
 
     # install build dependencies (need to be first due to  --no-build-isolation)
-    uv pip install --requirement {{ REQUIREMENTS_DIR }}/requirements-build.txt
+    pip install --requirement {{ REQUIREMENTS_DIR }}/requirements-build.txt
 
     # install all other pinned dependencies
-    uv pip install \
+    pip install \
         --verbose \
         --requirement {{ REQUIREMENTS_DIR }}/requirements-test.txt \
         --no-build-isolation \

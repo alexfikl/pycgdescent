@@ -2,4 +2,3 @@ meson-python
 ninja
 poetry-core
 pybind11
-uv
