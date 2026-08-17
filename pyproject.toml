@@ -67,8 +67,6 @@ linux.skip = [
     "*_i686",
 ]
 macos.environment = { MACOSX_DEPLOYMENT_TARGET = "13.0" }
-windows.before-build = "pip install delvewheel"
-windows.repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 windows.skip = [
     "*-win32",
 ]
