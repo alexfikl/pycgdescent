@@ -113,7 +113,7 @@ pin: requirements_txt requirements_test_txt requirements_build_txt
 develop:
     @rm -rf build
     @rm -rf dist
-    {{ PYTHON }} -m pip install \
+    uv pip install \
         --verbose \
         --no-build-isolation \
         --config-settings setup-args="-Duse-blas=true" \
@@ -131,10 +131,10 @@ ci-install venv=".venv":
     fi
 
     # install build dependencies (need to be first due to  --no-build-isolation)
-    {{ PYTHON }} -m pip install --requirement {{ REQUIREMENTS_DIR }}/requirements-build.txt
+    uv pip install --requirement {{ REQUIREMENTS_DIR }}/requirements-build.txt
 
     # install all other pinned dependencies
-    {{ PYTHON }} -m pip install \
+    uv pip install \
         --verbose \
         --requirement {{ REQUIREMENTS_DIR }}/requirements-test.txt \
         --no-build-isolation \
