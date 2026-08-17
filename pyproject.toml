@@ -7,7 +7,7 @@ requires = [
 
 [project]
 name = "pycgdescent"
-version = "0.11.0"
+version = "0.12.0"
 description = "Python wrapper for the CG_DESCENT library"
 readme = "README.rst"
 keywords = [
