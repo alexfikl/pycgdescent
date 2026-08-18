@@ -8,11 +8,12 @@
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/tuple.h>
 
+#include <algorithm>
 #include <cmath>
+#include <concepts>
 #include <cstring>
 #include <exception>
 #include <functional>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <optional>
@@ -206,15 +207,17 @@ class FnWrapper {
 
     static void c_func_grad(double * g, double * x, INT n, void * User) {
         auto * w = static_cast<FnWrapper *>(User);
-        w->guarded([w, g, x, n] { w->call_grad(g, x, n); }, [w, g, n] { poison(g, n); });
+        w->guarded(
+            [w, g, x, n] { w->call_grad(g, x, n); }, [g, n] { std::ranges::fill(g, g + n, NAN); }
+        );
     }
 
     static double c_func_valgrad(double * g, double * x, INT n, void * User) {
         auto * w = static_cast<FnWrapper *>(User);
         return w->guarded(
             [w, g, x, n] { return w->call_valgrad(g, x, n); },
-            [w, g, n] {
-                poison(g, n);
+            [g, n] {
+                std::ranges::fill(g, g + n, NAN);
                 return NAN;
             }
         );
@@ -252,11 +255,11 @@ class FnWrapper {
     // NOTE: wrap the C shims to
     // 1. Re-acquire the GIL after cg_descent releases it.
     // 2. Catch an exception and hold it (returns NaN if any exception was caught).
-    template <typename Fn, typename OnError>
+    template <std::invocable Fn, std::invocable OnError>
     auto guarded(Fn && fn, OnError && on_error) -> decltype(fn()) {
         nb::gil_scoped_acquire acquire;
 
-        if (m_error)
+        if (m_error) [[unlikely]]
             return on_error();
 
         try {
@@ -267,14 +270,9 @@ class FnWrapper {
         }
     }
 
-    static void poison(double * g, size_t n) {
-        for (size_t i = 0; i < n; ++i)
-            g[i] = NAN;
-    }
-
     ndarray view(double * ptr, size_t n) {
         auto it = m_views.find(ptr);
-        if (it == m_views.end()) {
+        if (it == m_views.end()) [[unlikely]] {
             auto [res, _] = m_views.emplace(
                 ptr, ndarray(ptr, {(size_t)n}, nb::capsule(ptr, [](void *) noexcept {}))
             );
@@ -286,7 +284,7 @@ class FnWrapper {
 
     cndarray view_const(double * ptr, size_t n) {
         auto it = m_const_views.find(ptr);
-        if (it == m_const_views.end()) {
+        if (it == m_const_views.end()) [[unlikely]] {
             auto [res, _] = m_const_views.emplace(
                 ptr, cndarray(ptr, {(size_t)n}, nb::capsule(ptr, [](void *) noexcept {}))
             );
@@ -324,7 +322,7 @@ std::tuple<cg::ndarray, cg_stats_wrapper, int> cg_descent_wrapper(
     double * workptr = (work.has_value() ? static_cast<double *>(work.value().data()) : nullptr);
 
     int n = (int)x.shape(0);
-    std::unique_ptr<double[]> ptr(new double[n]);
+    auto ptr = std::make_unique_for_overwrite<double[]>(n);
 
     auto xptr = static_cast<double *>(x.data());
     std::memcpy(ptr.get(), xptr, n * sizeof(double));
