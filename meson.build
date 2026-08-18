@@ -4,7 +4,12 @@ project(
     'cpp',
     license: 'GPL-2.0-or-later',
     meson_version: '>=1.3.0',
-    default_options: ['buildtype=release', 'warning_level=2', 'cpp_std=c++20'],
+    default_options: [
+        'buildtype=release',
+        'warning_level=2',
+        'c_std=c17',
+        'cpp_std=c++20',
+    ],
     subproject_dir: 'src/subprojects',
 )
 
