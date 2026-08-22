@@ -459,13 +459,13 @@ NB_MODULE(_cg_descent, m) {
     m.def(
         "cg_descent",
         &cg_descent_wrapper,
-        nb::arg("x").none(false),
-        nb::arg("grad_tol").none(false),
-        nb::arg("param").none(true),
-        nb::arg("value").none(false),
-        nb::arg("grad").none(false),
-        nb::arg("valgrad").none(true),
-        nb::arg("callback").none(true),
-        nb::arg("work").none(true)
+        nb::arg("x"),
+        nb::arg("grad_tol"),
+        nb::arg("param").none(),
+        nb::arg("value"),
+        nb::arg("grad"),
+        nb::arg("valgrad").none(),
+        nb::arg("callback").none(),
+        nb::arg("work").none()
     );
 }
