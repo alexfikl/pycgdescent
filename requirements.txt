@@ -4,6 +4,8 @@ markdown-it-py==4.2.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
+nanobind-backend==1.0.0
+    # via pycgdescent (pyproject.toml)
 numpy==2.2.6 ; python_full_version < '3.11'
     # via pycgdescent (pyproject.toml)
 numpy==2.4.6 ; python_full_version == '3.11.*'
