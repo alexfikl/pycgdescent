@@ -37,11 +37,6 @@ endif
 # Discussion in WrapDB PR #1556 as to whether or not the following is necessary:
 # dep_compile_args += ['-fno-strict-aliasing']
 
-freethreaded = py.get_variable('Py_GIL_DISABLED', 0) != 0
-if freethreaded
-  dep_compile_args += ['-DNB_FREE_THREADED']
-endif
-
 if not get_option('debug')
   dep_compile_args += ['-DNB_COMPACT_ASSERTIONS']
 
@@ -88,7 +83,15 @@ else
   )
 endif
 
-nanobind_sources = files('src/nb_combined.cpp')
+nanobind_sources = []
+
+# Split mode: the frontend is header-only and delegates the heavy lifting to a
+# separate 'nanobind_backend' module at runtime, so libnanobind is not compiled
+# into the extension. This yields a single stable-ABI wheel per platform.
+dep_compile_args += [
+  '-DNB_BACKEND_MODULE=nanobind_backend',
+  '-DNB_BACKEND_PYPI=nanobind-backend',
+]
 
 nanobind_dep = declare_dependency(
   sources: nanobind_sources,
