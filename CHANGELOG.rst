@@ -1,5 +1,18 @@
+pycgdescent 0.12.1 (August 22, 2026)
+-------------------------------------
+
+**Dependencies**
+
+* Added ``nanobind-backend`` dependency.
+
+**Maintenance**
+
+* Build ``abi3`` wheels for all supported Python 3.10+ using the new "split mode"
+  from ``nanobind`` 3.0.0. This requires the additional ``nanobind-backend``
+  dependency
+
 pycgdescent 0.12.0 (August 17, 2026)
-------------------------------------
+-------------------------------------
 
 **Dependencies**
 
