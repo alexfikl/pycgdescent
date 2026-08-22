@@ -121,7 +121,6 @@ develop:
         --verbose \
         --no-build-isolation \
         --config-settings setup-args="-Duse-blas=true" \
-        --config-settings setup-args="-Dpython.allow_limited_api=false" \
         --editable .
 
 [doc("Download and install wrap files")]
@@ -147,7 +146,6 @@ ci-install venv=".venv":
     pip install \
         --verbose \
         --requirement {{ REQUIREMENTS_DIR }}/requirements-test.txt \
-        --config-settings setup-args="-Dpython.allow_limited_api=false" \
         --no-build-isolation \
         --editable .
 

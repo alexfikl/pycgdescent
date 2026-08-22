@@ -39,7 +39,7 @@ py.extension_module(
     ['src/wrapper/cg_descent.c', 'src/wrapper/cg_descent_wrap.cpp'],
     dependencies: [nanobind_dep, blas_dep],
     c_args: c_args,
-    limited_api: '3.12',
+    limited_api: '3.10',
     install: true,
     subdir: 'pycgdescent',
 )
